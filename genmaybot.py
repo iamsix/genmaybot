@@ -517,9 +517,10 @@ class TestBot(SingleServerIRCBot):
             imdbid = re.search("tt\\d{7}", url)
             imdburl = ('http://www.imdb.com/title/' + imdbid.group(0) + '/')
             opener = urllib2.build_opener()
-            opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+            opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)"),
+                                 ('Range', "bytes=0-40960")]
             pagetmp = opener.open(imdburl)
-            page = BeautifulSoup(pagetmp.read(50096))
+            page = BeautifulSoup(pagetmp.read(40960))
             opener.close()
             
             movietitle = decode_htmlentities(self.remove_html_tags(str(page.find('title'))).replace(" - IMDb", ""))
@@ -573,13 +574,18 @@ class TestBot(SingleServerIRCBot):
         title = ""
         try:
             opener = urllib2.build_opener()
-            opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+            
+            
+            readlength = 5096
+            if url.find("amazon.") != -1: 
+                readlength = 100096 #because amazon is coded like shit
+                
+            opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)"),    
+                                 ('Range',"bytes=0-" + str(readlength))]
 
             pagetmp = opener.open(url)
             
-            readlength = 50096
-            if url.find("amazon.") != -1: 
-                readlength = 100096 #because amazon is coded like shit
+
                 
             page = pagetmp.read(readlength)
             opener.close()

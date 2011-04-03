@@ -5,8 +5,6 @@
 #  python genmaybot.py irc.0id.net "#chan" Nickname
 #
 
-# commit test comment
-
 #? look in to !seen functionality 
 ##? look in to using real eggdrop-like authenticated user commands for it 
 ###? Investigate flight tracker info
@@ -33,8 +31,6 @@ class TestBot(SingleServerIRCBot):
         self.doingcommand = False
         self.lastspamtime = time.time() - 60
         self.lastquakecheck = ""
-        self.spammycommands = True
-        self.commandcooldowns = False        
         
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
@@ -79,14 +75,6 @@ class TestBot(SingleServerIRCBot):
              
         if e.arguments()[0].strip() == self.identpassword + " clearbans":
             spam ={}
-        
-        if e.arguments()[0].strip() == self.identpassword + " spammy":
-            self.spammycommands = not self.spammycommands
-            c.privmsg(from_nick, "spammy commands %s" % self.spammycommands)
-
-        if e.arguments()[0].strip() == self.identpassword + " cooldown":
-            self.commandcooldowns = not self.commandcooldowns
-            c.privmsg(from_nick, "command cooldowns %s" % self.commandcooldowns)
         
         say = ""
         if e.arguments()[0][0:1] == "!":
@@ -173,18 +161,6 @@ class TestBot(SingleServerIRCBot):
       
       t=threading.Timer(60,self.quake_alert, [context])
       t.start()
-      
-    def commandcooldown(self):        
-        if not self.spammycommands:
-            return False
-        
-        if self.commandcooldowns:        
-            if time.time() - self.lastspamtime > 60:
-                return True
-            else:
-                return False
-        else:
-            return True
     
     def isspam(self, user):
       global spam
@@ -714,42 +690,6 @@ class TestBot(SingleServerIRCBot):
         pass
       return
       
-#    def top_link(self, chan, cur_context):
-#      global spam_time
-#      global spam_count    
-#
-#      if spam_count==0:
-#        spam_count +=1
-#        spam_time = time.time()
-#        #return xchat.EAT_NONE
-#      else:
-#        if (time.time() - spam_time) > 30:
-#          if spam_count < 2:
-#            spam_time = time.time()
-#            spam_count = 0
-#          else:
-#            spam_count=0
-#            return
-#        else:
-#          return
-#
-##      conn = MySQLdb.connect (host = "localhost",
-##                                user = "root",
-##                                passwd = "identpassword",
-##                                db = "irc_links")
-##                                
-#
-##      cursor = conn.cursor()
-##      if (cursor.execute("SELECT url, title FROM links ORDER BY reposted DESC LIMIT 1")):
-##        result = cursor.fetchone()
-##        title = result[1]
-##        url = result[0]
-#      
-#      cur_context.privmsg(chan, "Title: " + title[0:100] + " (" + url + ")")
-#        
-#      #conn.close()
-#      return   
-      
     def last_link(self, nothing):
 
       conn = MySQLdb.connect (host = "localhost",
@@ -790,79 +730,10 @@ class TestBot(SingleServerIRCBot):
         fml = fml.replace('&amp;', "&")
         fml = decode_htmlentities(fml)
         
-        #chanwin = xchat.find_context(server="irc.0id.net", channel=chan)
         return fml
-        #print fml
       except:
         pass
         return
-
-#
-#trackerinfo={}
-#
-#class http_client(asyncore.dispatcher):
-#    global trackerinfo
-#    
-#    def __init__(self, host, port, channel, nickname, server, ircport):
-#        asyncore.dispatcher.__init__(self)
-#        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-#
-#        self.connect( (host, port) )
-#        self.buffer = 'If the fifo is not empty\n'
-#        self.channel=channel
-#        self.nickname=nickname
-#        self.server=server
-#        self.ircport=ircport
-#
-#        print self.server, self.ircport
-#    def handle_close(self):
-#        self.close()
-#
-#    def handle_read(self):
-#
-#        buf = self.recv(8192)
-#        chunks = buf.split('\n')[:-1]
-#        #print chunks
-#        for data in chunks:
-#          if data[0:3]=="UR#" and data[3:].isdigit():
-#            self.buffer = "IM#" + data[3:] +"\n"
-#            trackerinfo['botid'] = data[3:]
-#
-#            #self.say_hello()
-#          elif data[0:4]=="HI2U" and data[4:] == trackerinfo['botid']:
-#            #print "received hello from server!"
-#            trackerinfo['last_contact'] = time.time()
-#            self.say_hello()
-#          #elif data[0:10]=="VOTE":
-#          #  self.buffer = "IVOTE" + str(random.randint(0,100000)) + "\n"
-#          elif data[0:10]=="R_U_ON_IRC":
-#           # print "Telling server i'm on IRC!"
-#            self.buffer ="IM_ON_IRC\n"
-#            bot = TestBot(self.channel, self.nickname, self.server, self.ircport)
-#            botThread = threading.Thread(target=bot.start)
-#            botThread.start()
-#          elif data[0:8] == "QUIT_PLZ":
-#            print "I was told to quit IRC!"
-#          else:
-#            #print "Didn't receive expected response!"
-#            self.close()
-#            
-#    def handle_connect(self):
-#        pass
-#        
-#    def writable(self):
-#        return (len(self.buffer) > 0)
-#    
-#    def handle_expt(self):
-#        self.close()
-#
-#    def handle_write(self):
-#        sent = self.send(self.buffer)
-#        self.buffer = self.buffer[sent:]
-#        
-#    def say_hello(self):
-#      self.buffer = "OHI!\n"
-#      #print "Sending hi!"
 
 def decode_htmlentities(string):
     entity_re = re.compile("&(#?)(x?)(\w+);")
@@ -908,8 +779,6 @@ def main():
 
     bot = TestBot(channel, nickname, server, port)
     bot.start()
-    #c = http_client('da.endoftheinternet.org', 21234, channel, nickname, server, port)
-    #asyncore.loop()
 
 if __name__ == "__main__":
     main()

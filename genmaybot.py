@@ -2,13 +2,13 @@
 #
 #To run this bot use the following command:
 #
-#  python relbot-nosql.py irc.0id.net "#chan" Nickname
+#  python genmaybot.py irc.0id.net "#chan" Nickname
 #
 
-#? look in to using real eggdrop-like authenticated user commands for it 
-##? Investigate flight tracker info
+#? look in to !seen functionality 
+##? look in to using real eggdrop-like authenticated user commands for it 
+###? Investigate flight tracker info
 ##### Look in to command enable/disable lists (per channel?)
-########## add config file for keys/passwords
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
@@ -39,6 +39,8 @@ class TestBot(SingleServerIRCBot):
         self.wolframAPIkey = config.get("APIkeys","wolframAPIkey")
         self.fmlAPIkey = config.get("APIkeys","fmlAPIkey")
         self.identpassword = config.get("irc","identpassword")
+        self.sqlpassword = config.get("mysql","sqlpassword")
+        self.sqlusername = config.get("mysql","sqlusername")
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -586,6 +588,7 @@ class TestBot(SingleServerIRCBot):
               pass
             
 #        IMDBAPI CODE
+#        -not in use because it's unreliable
 #           try:
 #              imdbid = re.search("tt\\d{7}", url)
 #              imdburl = ('http://www.imdbapi.com/?i=&t=' + imdbid.group(0))
@@ -649,8 +652,8 @@ class TestBot(SingleServerIRCBot):
         urlhash = hashlib.sha224(url).hexdigest()
 
         conn = MySQLdb.connect (host = "localhost",
-                                  user = "pysix",
-                                  passwd = self.identpassword,
+                                  user = self.sqlusername,
+                                  passwd = self.sqlpassword,
                                   db = "irc_links")   
         cursor = conn.cursor()
         query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
@@ -762,8 +765,8 @@ class TestBot(SingleServerIRCBot):
     def last_link(self):
 
       conn = MySQLdb.connect (host = "localhost",
-                                user = "pysix",
-                                passwd = self.identpassword,
+                                user = self.sqlusername,
+                                passwd = self.sqlpassword,
                                 db = "irc_links")
                                 
       cursor = conn.cursor()

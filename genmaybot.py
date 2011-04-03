@@ -265,6 +265,7 @@ class TestBot(SingleServerIRCBot):
           pass
         
     def google_convert(self, term):
+        term = urllib.quote(term)
         url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
         request = urllib2.Request(url, None, {})
         request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
@@ -749,7 +750,7 @@ class TestBot(SingleServerIRCBot):
 #      #conn.close()
 #      return   
       
-    def last_link(self):
+    def last_link(self, nothing):
 
       conn = MySQLdb.connect (host = "localhost",
                                 user = self.sqlusername,

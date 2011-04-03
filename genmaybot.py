@@ -129,7 +129,7 @@ class TestBot(SingleServerIRCBot):
 
     def bangcommand(self, line):
         command = line.split(" ")[0]
-        args = line[len(command)+1:]
+        args = line[len(command)+1:].strip()
         
         bangcommands = {
                     "!w"        : self.get_weather,
@@ -236,7 +236,7 @@ class TestBot(SingleServerIRCBot):
             except:
                 pass
 
-    def get_quake(self):
+    def get_quake(self, nothing):
       try:       
         request = urllib2.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
         dom = xml.dom.minidom.parse(request)
@@ -250,7 +250,7 @@ class TestBot(SingleServerIRCBot):
       except:
         pass
 
-    def get_woot(self):
+    def get_woot(self, nothing):
       try:
           url = "http://www.woot.com/salerss.aspx"
           req = urllib2.Request(url)
@@ -292,7 +292,7 @@ class TestBot(SingleServerIRCBot):
         return self.remove_html_tags(result)
     
     def google_sunrise(self, term):
-        url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
+        url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=sunrise+in+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
         request = urllib2.Request(url, None, {})
         request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
         response = urllib2.urlopen(request).read()
@@ -312,7 +312,8 @@ class TestBot(SingleServerIRCBot):
           result = "Sunrise in %s: %s %s (%s)" % (setcity,settime,setday,settimeword)
        
           #print result
-        except:
+        except Exception as inst:
+          print inst
           pass
           return
         result = result.replace("<sup>","^")
@@ -320,7 +321,7 @@ class TestBot(SingleServerIRCBot):
         return self.remove_html_tags(result)
         
     def google_sunset(self, term):
-        url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
+        url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=sunset+in+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
         request = urllib2.Request(url, None, {})
         request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
         response = urllib2.urlopen(request).read()
@@ -763,7 +764,7 @@ class TestBot(SingleServerIRCBot):
       conn.close()
       return "Title: " + self.get_title(url) + " (" + url + ")"
         
-    def get_fml(self):
+    def get_fml(self, nothing):
         
       try:
         fmlxml = urllib2.urlopen("http://api.betacie.com/view/random?key=%s&language=en" % self.fmlAPIkey).read()

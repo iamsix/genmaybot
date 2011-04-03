@@ -5,6 +5,8 @@
 #  python genmaybot.py irc.0id.net "#chan" Nickname
 #
 
+# commit test comment
+
 #? look in to !seen functionality 
 ##? look in to using real eggdrop-like authenticated user commands for it 
 ###? Investigate flight tracker info

@@ -5,17 +5,17 @@
 #  python relbot-nosql.py irc.0id.net "#chan" Nickname
 #
 
-#
-###### Investigate flight tracker info
-################### Look in to command enable/disable lists (per channel?)
-#
+#? look in to using real eggdrop-like authenticated user commands for it 
+##? Investigate flight tracker info
+##### Look in to command enable/disable lists (per channel?)
+########## add config file for keys/passwords
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 import time, urllib2, json, urllib, asyncore
 from htmlentitydefs import name2codepoint as n2cp
 import xml.dom.minidom, threading, MySQLdb
-import sys, hashlib, socket, re, datetime
+import sys, hashlib, socket, re, datetime, ConfigParser
 from BeautifulSoup import BeautifulSoup
 
 socket.setdefaulttimeout(5)
@@ -29,12 +29,16 @@ class TestBot(SingleServerIRCBot):
         self.channel = channel
         self.doingcommand = False
         self.lastspamtime = time.time() - 60
-        self.spammycommands = True
-        self.commandcooldowns = False
         self.lastquakecheck = ""
-        self.wolframAPIkey = ""
-        self.fmlAPIkey = ""
-        self.password = ""
+        self.spammycommands = True
+        self.commandcooldowns = False        
+        
+        config = ConfigParser.ConfigParser()
+        config.readfp(open('genmaybot.cfg'))
+        
+        self.wolframAPIkey = config.get("APIkeys","wolframAPIkey")
+        self.fmlAPIkey = config.get("APIkeys","fmlAPIkey")
+        self.identpassword = config.get("irc","identpassword")
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -44,14 +48,14 @@ class TestBot(SingleServerIRCBot):
            c.join(self.channel)
 
     def on_welcome(self, c, e):
-        c.privmsg("NickServ", "identify " + self.password)
+        c.privmsg("NickServ", "identify " + self.identpassword)
         c.join(self.channel)       
         self.quake_alert(c) 
 
-    def on_join(self,c,e):
-        if e.source().split('!')[0][0:6] == "Python":
-            print "saw python"
-            sys.exit(0)        
+#    def on_join(self,c,e):
+#        if e.source().split('!')[0][0:6] == "Python":
+#            print "saw python"
+#            sys.exit(0)        
             
     def on_invite(self, c, e):
         c.join(e.arguments()[0])
@@ -64,18 +68,18 @@ class TestBot(SingleServerIRCBot):
         
         from_nick = e.source().split("!")[0]
         
-        if e.arguments()[0].strip() == self.password + " die":
+        if e.arguments()[0].strip() == self.identpassword + " die":
              print "got die command"
              sys.exit(0)
              
-        if e.arguments()[0].strip() == self.password + " clearbans":
+        if e.arguments()[0].strip() == self.identpassword + " clearbans":
             spam ={}
         
-        if e.arguments()[0].strip() == self.password + " spammy":
+        if e.arguments()[0].strip() == self.identpassword + " spammy":
             self.spammycommands = not self.spammycommands
             c.privmsg(from_nick, "spammy commands %s" % self.spammycommands)
 
-        if e.arguments()[0].strip() == self.password + " cooldown":
+        if e.arguments()[0].strip() == self.identpassword + " cooldown":
             self.commandcooldowns = not self.commandcooldowns
             c.privmsg(from_nick, "command cooldowns %s" % self.commandcooldowns)
         
@@ -554,7 +558,7 @@ class TestBot(SingleServerIRCBot):
             page = BeautifulSoup(pagetmp.read(50096))
             opener.close()
             
-            movietitle = decode_htmlentities((self.remove_html_tags(str(page.find('title'))).replace(" - IMDb", "")))
+            movietitle = decode_htmlentities(self.remove_html_tags(str(page.find('title'))).replace(" - IMDb", ""))
             movietitle = "Title: " + movietitle
 
             
@@ -646,7 +650,7 @@ class TestBot(SingleServerIRCBot):
 
         conn = MySQLdb.connect (host = "localhost",
                                   user = "pysix",
-                                  passwd = self.password,
+                                  passwd = self.identpassword,
                                   db = "irc_links")   
         cursor = conn.cursor()
         query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
@@ -703,8 +707,6 @@ class TestBot(SingleServerIRCBot):
         title = pattern.sub('', title)      
         title = decode_htmlentities(title.decode("utf-8")).encode("utf-8")
 
-
-        #title = title.encode("utf-8")
         titler = "%s%s%s" % (repost, title, days)
 
         #title = MySQLdb.escape_string(title)
@@ -742,7 +744,7 @@ class TestBot(SingleServerIRCBot):
 #
 ##      conn = MySQLdb.connect (host = "localhost",
 ##                                user = "root",
-##                                passwd = "password",
+##                                passwd = "identpassword",
 ##                                db = "irc_links")
 ##                                
 #
@@ -761,7 +763,7 @@ class TestBot(SingleServerIRCBot):
 
       conn = MySQLdb.connect (host = "localhost",
                                 user = "pysix",
-                                passwd = self.password,
+                                passwd = self.identpassword,
                                 db = "irc_links")
                                 
       cursor = conn.cursor()

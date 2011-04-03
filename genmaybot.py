@@ -8,7 +8,7 @@
 #? look in to !seen functionality 
 ##? look in to using real eggdrop-like authenticated user commands for it 
 ###? Investigate flight tracker info
-##### Look in to command enable/disable lists (per channel?)
+##### Look in to command enable/disable/cooldown lists (per channel?)
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
@@ -23,7 +23,8 @@ socket.setdefaulttimeout(5)
 spam ={}
 
 class TestBot(SingleServerIRCBot):
-
+    
+  
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
@@ -85,13 +86,16 @@ class TestBot(SingleServerIRCBot):
             self.commandcooldowns = not self.commandcooldowns
             c.privmsg(from_nick, "command cooldowns %s" % self.commandcooldowns)
         
-        if e.arguments()[0][0:2] == "!g":
-          term = urllib.quote(e.arguments()[0][2:].strip() + " wikipedia")
-          self.google_it(term, from_nick, c) 
+        say = ""
+        if e.arguments()[0][0:1] == "!":
+            say = self.bangcommand(e.arguments()[0])
+        if say:
+            c.privmsg(from_nick, say[0:600]) 
         
         if e.arguments()[0] == "ban jeffers":
           print from_nick
           c.privmsg(self.channel, "!ban jeffers")
+        
           
     def on_pubmsg(self, c, e):
         if self.doingcommand:
@@ -106,52 +110,45 @@ class TestBot(SingleServerIRCBot):
           url = re.search("(?P<url>https?://[^\s]+)", e.arguments()[0])
           if url:
             say = self.url_posted(url.group(1))
-          elif e.arguments()[0] == "!fml":
-            say = self.get_fml()
-          elif e.arguments()[0][0:7] =="!sunset":
-            term = urllib.quote("sunset in " + e.arguments()[0][8:])
-            say = self.google_sunset(term)
-          elif e.arguments()[0][0:8] =="!sunrise":
-            term = urllib.quote("sunrise in " + e.arguments()[0][9:])
-            say = self.google_sunrise(term)
-          elif e.arguments()[0][0:3] == "!c ":
-            term = urllib.quote(e.arguments()[0][3:])
-            say = self.google_convert(term)
-          elif e.arguments()[0][0:9] == "!lastlink":
-            say = self.last_link()
-          elif e.arguments()[0][0:8] == "!wolfram" and self.commandcooldown():
-            say = self.get_wolfram(e.arguments()[0][9:])
-            if say: self.lastspamtime = time.time()
-          elif e.arguments()[0][0:3] == "!w ":
-            say = self.get_weather(e.arguments()[0][3:])
-          elif e.arguments()[0] == "!woot":
-            say = self.get_woot()
-          elif e.arguments()[0] == "!q":
-            say = self.get_quake()
-          elif e.arguments()[0][0:5] == "!beer":
-            url = self.google_url("site:beeradvocate.com " + e.arguments()[0][5:],"/beer/profile/[0-9]*/")
-            if url:
-                say = self.advocate_beer(url)
-          elif e.arguments()[0][0:6] == "!wiki " and self.commandcooldown():
-            url = self.google_url("site:wikipedia.org " + e.arguments()[0][6:],"wikipedia.org/wiki")
-            if url:
-                say = (self.get_wiki(url).decode('utf-8') + " [ %s ]" % self.shorten_url(url)).encode('utf-8')
-            if say: self.lastspamtime = time.time()
-          elif e.arguments()[0][0:6] == "!imdb ":
-            url = self.google_url("site:imdb.com/title " + e.arguments()[0][6:],"imdb.com/title/tt\\d{7}/")
-            if url:
-                say = (self.get_imdb(url).decode('utf-8') + " [ %s ]" % url).encode('utf-8')
+          elif e.arguments()[0][0:1] == "!":
+            say = self.bangcommand(e.arguments()[0])
                 
           if say:
               if not self.isspam(from_nick):
                   say = say.replace("join", "join")
                   say = say.replace("come", "come") 
                   c.privmsg(e.target(), say[0:600])     
-        except:
+        except Exception as inst: 
+          print inst
           pass
 
         self.doingcommand = False
         return
+
+    def bangcommand(self, line):
+        command = line.split(" ")[0]
+        args = line[len(command)+1:]
+        
+        bangcommands = {
+                    "!w"        : self.get_weather,
+                    "!c"        : self.google_convert,
+                    "!q"        : self.get_quake,
+                    "!fml"      : self.get_fml,
+                    "!beer"     : self.advocate_beer,
+                    "!woot"     : self.get_woot,
+                    "!lastlink" : self.last_link,
+                    "!wolfram"  : self.get_wolfram,
+                    "!wiki"     : self.get_wiki,
+                    "!imdb"     : self.get_imdb,
+                    "!sunrise"  : self.google_sunrise,
+                    "!sunset"   : self.google_sunset,
+                    }
+        
+        say = ""
+        if command in bangcommands:
+            say = bangcommands[command](args)
+                
+        return say
 
     def quake_alert(self, context):
       try:
@@ -348,7 +345,8 @@ class TestBot(SingleServerIRCBot):
         result = result.replace("&#215;","x")
         return self.remove_html_tags(result)
 
-    def advocate_beer(self, url):
+    def advocate_beer(self, query):
+        url = self.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]*/")
         #url = "http://beeradvocate.com/beer/profile/306/1212/"
         socket.setdefaulttimeout(30)
         try:
@@ -469,38 +467,14 @@ class TestBot(SingleServerIRCBot):
        
        return chanmsg
       
-    def google_it(self, term, from_nick, context):
-      #print "Term: " + term + " From: " + from_nick
-      
-      url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=' + term)
-
-      request = urllib2.Request(url, None, {'Referer': 'http://irc.00id.net'})
-      response = urllib2.urlopen(request)
-
-      # Process the JSON string.
-      results_json = json.load(response)
-      # now have some fun with the results..
-      
-      results = results_json['responseData']['results']
-      
-      
-      for result in results:
-        if result['visibleUrl'].find('wikipedia'):
-          answer = urllib.unquote(result['content'])
-          answer = answer.replace("From <b>Wikipedia</b>, the free encyclopedia. Jump to: navigation, search. ", "")
-          
-          answer = answer.replace("<b>", "\x02")
-          answer = answer.replace("</b>","\x0F")
-          answer = decode_htmlentities(answer)
-          answer = answer + " (" + result['url'] + ")"
-          answer = answer.encode('utf-8')
-        
-          context.privmsg(from_nick, answer)
-          #context.privmsg(from_nick, " ")
-          break
-          
-    def get_wiki(self, url):
+    def get_wiki(self, searchterm, urlposted=False):
       title = ""
+      
+      if urlposted:
+          url = searchterm
+      else:
+          url = self.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
+      
       if url.find("wikipedia.org/wiki/") != -1:
 
         try:
@@ -538,17 +512,25 @@ class TestBot(SingleServerIRCBot):
           title = title[0:420]
           if title.rfind(".")!=-1:
             title = title[0:title.rfind(".")+1]
-        except:
-            title = self.remove_html_tags(re.search('\<p\>(.*?\.) ',page).group(1))
+            
+          if not urlposted:
+            title = title + " [ %s ]" % self.shorten_url(url)
+        except Exception as inst: 
+          print inst
+          title = self.remove_html_tags(re.search('\<p\>(.*?\.) ',page).group(1))
           #print title
           #title = title.encode("utf-8")
       return title 
 
-    def get_imdb(self, url):
+    def get_imdb(self, searchterm, urlposted=False):
         title = ""
         movietitle = ""
         rating = ""
         summary = ""
+        if urlposted:
+            url = searchterm
+        else:
+            url = self.google_url("site:imdb.com/title " + searchterm,"imdb.com/title/tt\\d{7}/")
         
         if url.find("imdb.com/title/tt") != -1:
           try:
@@ -583,9 +565,12 @@ class TestBot(SingleServerIRCBot):
                     summary = re.sub("\&.*?\;", " ", summary)
                     summary = summary.replace("\n", " ")
                     summary = " - " + summary
-            
-          except:
-              pass
+                    
+            title = movietitle + rating + summary       
+            if not urlposted:
+                title = title + " [ %s ]" % url
+          except Exception as inst: 
+            print inst
             
 #        IMDBAPI CODE
 #        -not in use because it's unreliable
@@ -601,8 +586,7 @@ class TestBot(SingleServerIRCBot):
 #
 #           except:
 #              pass
-        
-        title = movietitle + rating + summary
+         
         return title.encode('utf-8')
     
     def get_title(self, url):
@@ -691,8 +675,8 @@ class TestBot(SingleServerIRCBot):
         
         
         title = ""        
-        wiki = self.get_wiki(url)
-        imdb = self.get_imdb(url)
+        wiki = self.get_wiki(url, True)
+        imdb = self.get_imdb(url, True)
         if wiki:
             title = wiki
         elif imdb:

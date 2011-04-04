@@ -132,6 +132,7 @@ class TestBot(SingleServerIRCBot):
                     "!imdb"     : self.get_imdb,
                     "!sunrise"  : self.google_sunrise,
                     "!sunset"   : self.google_sunset,
+                    "!stock"    : self.get_stock_quote,
                     }
         
         say = ""
@@ -155,9 +156,9 @@ class TestBot(SingleServerIRCBot):
             self.lastquakecheck = updated	 
             for channel in self.channels:  
                 context.privmsg(channel, "Latest Earthquake: " + qtitle)
-      except:
-       #print "except-quake"
-        pass
+      except Exception as inst: 
+          print inst
+          pass
       
       t=threading.Timer(60,self.quake_alert, [context])
       t.start()
@@ -497,13 +498,48 @@ class TestBot(SingleServerIRCBot):
             title = title[0:title.rfind(".")+1]
             
           if not urlposted:
-            title = title + " [ %s ]" % self.shorten_url(url)
+            title = (title.decode('utf-8') + " [ %s ]" % self.shorten_url(url)).encode('utf-8')
         except Exception as inst: 
           print inst
           title = self.remove_html_tags(re.search('\<p\>(.*?\.) ',page).group(1))
           #print title
           #title = title.encode("utf-8")
       return title 
+  
+    def get_stock_quote(self, stock):
+    # For the f argument in the url here are the values:
+    #     code   description                
+    #                                       
+    #     l1     price                      
+    #     c1     change                     
+    #     v      volume                     
+    #     a2     avg_daily_volume           
+    #     x      stock_exchange             
+    #     j1     market_cap                 
+    #     b4     book_value                 
+    #     j4     ebitda                     
+    #     d      dividend_per_share         
+    #     y      dividend_yield             
+    #     e      earnings_per_share         
+    #     k      52_week_high               
+    #     j      52_week_low                
+    #     m3     50day_moving_avg           
+    #     m4     200day_moving_avg          
+    #     r      price_earnings_ratio       
+    #     r5     price_earnings_growth_ratio
+    #     p5     price_sales_ratio          
+    #     p6     price_book_ratio           
+    #     s7     short_ratio  
+    
+      opener = urllib2.build_opener()
+      opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+      pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1va2" % stock)
+      quote = pagetmp.read(1024)
+      opener.close()
+    
+      price,change,volume,avg_volume = quote.split(",")
+    
+      return "[%s] Price: %s Change: %s Volume/Avg Volume: %s/%s" % (stock,price,change,volume,avg_volume)
 
     def get_imdb(self, searchterm, urlposted=False):
         title = ""
@@ -579,7 +615,7 @@ class TestBot(SingleServerIRCBot):
             opener = urllib2.build_opener()
             
             
-            readlength = 5096
+            readlength = 10240
             if url.find("amazon.") != -1: 
                 readlength = 100096 #because amazon is coded like shit
                 

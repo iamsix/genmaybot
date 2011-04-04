@@ -12,7 +12,7 @@
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-import time, urllib2, json, urllib, asyncore
+import time, urllib2, json, urllib, asyncore, locale
 from htmlentitydefs import name2codepoint as n2cp
 import xml.dom.minidom, threading, MySQLdb
 import sys, hashlib, socket, re, datetime, ConfigParser
@@ -40,6 +40,8 @@ class TestBot(SingleServerIRCBot):
         self.identpassword = config.get("irc","identpassword")
         self.sqlpassword = config.get("mysql","sqlpassword")
         self.sqlusername = config.get("mysql","sqlusername")
+        
+        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -110,6 +112,7 @@ class TestBot(SingleServerIRCBot):
                   c.privmsg(e.target(), say[0:600])     
         except Exception as inst: 
           print inst
+          print e.arguments()[0]
           pass
 
         self.doingcommand = False
@@ -193,9 +196,10 @@ class TestBot(SingleServerIRCBot):
           return False
 
     def get_wolfram(self, input):
-
+        socket.setdefaulttimeout(30)
         url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s" % (self.wolframAPIkey, urllib.quote(input))
         dom = xml.dom.minidom.parse(urllib2.urlopen(url))
+        socket.setdefaulttimeout(10)
 
         if (dom.getElementsByTagName("queryresult")[0].getAttribute("success") == "false"):
             try:
@@ -465,7 +469,6 @@ class TestBot(SingleServerIRCBot):
           opener = urllib2.build_opener()
           opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
           pagetmp = opener.open(url)
-
           page = pagetmp.read()
           opener.close()
 
@@ -501,6 +504,7 @@ class TestBot(SingleServerIRCBot):
             title = (title.decode('utf-8') + " [ %s ]" % self.shorten_url(url)).encode('utf-8')
         except Exception as inst: 
           print inst
+          print "!wiki " + searchterm
           title = self.remove_html_tags(re.search('\<p\>(.*?\.) ',page).group(1))
           #print title
           #title = title.encode("utf-8")
@@ -533,13 +537,20 @@ class TestBot(SingleServerIRCBot):
     
       opener = urllib2.build_opener()
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
-      pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1va2" % stock)
+      pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1va2j1" % stock)
       quote = pagetmp.read(1024)
       opener.close()
     
-      price,change,volume,avg_volume = quote.split(",")
-    
-      return "[%s] Price: %s Change: %s Volume/Avg Volume: %s/%s" % (stock,price,change,volume,avg_volume)
+      price,change,volume,avg_volume,mkt_cap = quote.split(",")
+      if price != "0.00": #assume no price = no result
+      
+         if change != "N/A":
+             change = change + '({0:.2%})'.format((float(change)/(float(price) - float(change))))
+         if volume != "N/A":
+             volume = '{0:n}'.format(int(volume))
+             avg_volume = '{0:n}'.format(int(avg_volume))
+         
+         return "[%s] Price: %s Change: %s Cap: %s Volume (Avg): %s (%s)" % (stock,price,change,mkt_cap.strip(),volume,avg_volume)
 
     def get_imdb(self, searchterm, urlposted=False):
         title = ""
@@ -591,6 +602,7 @@ class TestBot(SingleServerIRCBot):
                 title = title + " [ %s ]" % url
           except Exception as inst: 
             print inst
+            print "!imdb " + searchterm
             
 #        IMDBAPI CODE
 #        -not in use because it's unreliable
@@ -613,8 +625,6 @@ class TestBot(SingleServerIRCBot):
         title = ""
         try:
             opener = urllib2.build_opener()
-            
-            
             readlength = 10240
             if url.find("amazon.") != -1: 
                 readlength = 100096 #because amazon is coded like shit
@@ -732,6 +742,7 @@ class TestBot(SingleServerIRCBot):
       
       except Exception as inst: 
         print inst
+        print url
         pass
       return
       

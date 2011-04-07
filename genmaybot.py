@@ -6,16 +6,15 @@
 #
 
 #? look in to !seen functionality 
-##? look in to using real eggdrop-like authenticated user commands for it 
 ###? Investigate flight tracker info
-##### Look in to command enable/disable/cooldown lists (per channel?)
+#random descision maker?
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 import time, urllib2, json, urllib, asyncore, locale
 from htmlentitydefs import name2codepoint as n2cp
 import xml.dom.minidom, threading, MySQLdb
-import sys, hashlib, socket, re, datetime, ConfigParser
+import sys, os, hashlib, socket, re, datetime, ConfigParser
 from BeautifulSoup import BeautifulSoup
 
 socket.setdefaulttimeout(5)
@@ -31,6 +30,8 @@ class TestBot(SingleServerIRCBot):
         self.doingcommand = False
         self.lastspamtime = time.time() - 60
         self.lastquakecheck = ""
+        self.commandaccesslist = {}
+        self.commandcooldownlast = {}
         
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
@@ -40,6 +41,7 @@ class TestBot(SingleServerIRCBot):
         self.identpassword = config.get("irc","identpassword")
         self.sqlpassword = config.get("mysql","sqlpassword")
         self.sqlusername = config.get("mysql","sqlusername")
+        self.botadmins = config.get("irc","botadmins").split(",")
         
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
         
@@ -64,31 +66,77 @@ class TestBot(SingleServerIRCBot):
         c.join(e.arguments()[0])
 
     def on_privmsg(self, c, e):
-        global spam
         #print "PRIVMSG: " + e.arguments()[0]
         #print "Target: " + e.target()
         #print "Source: " + e.source()
         
         from_nick = e.source().split("!")[0]
+        line = e.arguments()[0].strip()
         
-        if e.arguments()[0].strip() == self.identpassword + " die":
-             print "got die command"
-             sys.exit(0)
-             
-        if e.arguments()[0].strip() == self.identpassword + " clearbans":
-            spam ={}
+        if line == "die" or \
+           line == "clearbans" or\
+           line[0:6] == "enable" or\
+           line[0:7] == "disable" or\
+           line[0:8] == "cooldown":
+                self.admincommand = line
+                c.who(from_nick) 
         
         say = ""
-        if e.arguments()[0][0:1] == "!":
+        if line[0:1] == "!":
             say = self.bangcommand(e.arguments()[0])
         if say:
             c.privmsg(from_nick, say[0:600]) 
         
-        if e.arguments()[0] == "ban jeffers":
+        if line == "ban jeffers":
           print from_nick
           c.privmsg(self.channel, "!ban jeffers")
+    
+    def on_whoreply(self, c,e):
+        global spam
+        nick = e.arguments()[4]
+        line = self.admincommand
+        self.admincommand = ""
+        if e.arguments()[5].find("r") != -1 and line != "" and self.isbotadmin(nick):       
+            if line == "die":
+                print "got die command from " + nick 
+                sys.exit(0)
+            elif line == "clearbans":
+                print nick + "cleared bans"
+                spam ={}
+                c.privmsg(nick, "All bans cleared")
+            elif line[0:6] == "enable":
+                command = line.split(" ")[1]
+                if command in self.commandaccesslist:
+                    del self.commandaccesslist[command]
+                    c.privmsg(nick, command + " enabled")
+                else:
+                    c.privmsg(nick, command + " not disabled")
+            elif line[0:7] == "disable":
+                command = line.split(" ")[1]
+                self.commandaccesslist[command] = "Disable"
+                c.privmsg(nick, command + " disabled")
+            elif line[0:8] == "cooldown":
+                if len(line.split(" ")) == 3:
+                    command = line.split(" ")[1]
+                    cooldown = line.split(" ")[2]
+                    if cooldown.isdigit():
+                        cooldown = int(cooldown)
+                        if cooldown == 0:
+                            del self.commandaccesslist[command]
+                        else:
+                            self.commandaccesslist[command] = cooldown
+                            self.commandcooldownlast[command] = time.time() - cooldown   
+                            c.privmsg(nick, command + " cooldown set to " + str(cooldown) + " seconds (set to 0 to disable)")
+                    else:
+                        c.privmsg(nick, "bad format: 'cooldown !wiki 30' (30 second cooldown on !wiki)")
+                else:
+                    c.privmsg(nick, "not enough args")
+                
+        else:
+            print "attempted admin command: " + line + " from " + nick
+                
+            
         
-          
     def on_pubmsg(self, c, e):
         if self.doingcommand:
             return
@@ -106,7 +154,7 @@ class TestBot(SingleServerIRCBot):
             say = self.bangcommand(e.arguments()[0])
                 
           if say:
-              if not self.isspam(from_nick):
+              if not self.isspam(from_nick) or self.isbotadmin(from_nick):
                   say = say.replace("join", "join")
                   say = say.replace("come", "come") 
                   c.privmsg(e.target(), say[0:600])     
@@ -139,7 +187,7 @@ class TestBot(SingleServerIRCBot):
                     }
         
         say = ""
-        if command in bangcommands:
+        if command in bangcommands and self.commandaccess(command):
             say = bangcommands[command](args)
                 
         return say
@@ -166,6 +214,25 @@ class TestBot(SingleServerIRCBot):
       t=threading.Timer(60,self.quake_alert, [context])
       t.start()
     
+    def isbotadmin(self, nick):
+        if nick in self.botadmins:
+             return True
+        else:
+             return False
+    
+    def commandaccess(self, command):
+        if command in self.commandaccesslist:
+            if type(self.commandaccesslist[command]) == int:
+                if time.time() - self.commandcooldownlast[command] < self.commandaccesslist[command]:
+                    return False
+                else:
+                    self.commandcooldownlast[command] = time.time()
+                    return True
+            elif self.commandaccesslist[command] == "Disable":
+                return False
+        else: #if there's no entry it's assumed to be enabled
+            return True
+                
     def isspam(self, user):
       global spam
 

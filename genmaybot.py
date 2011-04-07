@@ -13,9 +13,14 @@ from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 import time, urllib2, json, urllib, asyncore, locale
 from htmlentitydefs import name2codepoint as n2cp
-import xml.dom.minidom, threading, MySQLdb
+import xml.dom.minidom, threading
 import sys, os, hashlib, socket, re, datetime, ConfigParser
 from BeautifulSoup import BeautifulSoup
+
+try:
+    import MySQLdb
+except ImportError:
+    pass
 
 socket.setdefaulttimeout(5)
 
@@ -41,6 +46,7 @@ class TestBot(SingleServerIRCBot):
         self.identpassword = config.get("irc","identpassword")
         self.sqlpassword = config.get("mysql","sqlpassword")
         self.sqlusername = config.get("mysql","sqlusername")
+        self.sqlmode = config.get("mysql","mysqlmode")
         self.botadmins = config.get("irc","botadmins").split(",")
         
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
@@ -747,44 +753,46 @@ class TestBot(SingleServerIRCBot):
 
         repost=""
         days = ""        
-        urlhash = hashlib.sha224(url).hexdigest()
-
-        conn = MySQLdb.connect (host = "localhost",
-                                  user = self.sqlusername,
-                                  passwd = self.sqlpassword,
-                                  db = "irc_links")   
-        cursor = conn.cursor()
-        query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
-        result = cursor.execute(query)
         
-        if result !=0:
-            result = cursor.fetchone()
+        if self.sqlmode > 0:
+            urlhash = hashlib.sha224(url).hexdigest()
+    
+            conn = MySQLdb.connect (host = "localhost",
+                                      user = self.sqlusername,
+                                      passwd = self.sqlpassword,
+                                      db = "irc_links")   
+            cursor = conn.cursor()
+            query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
+            result = cursor.execute(query)
             
-            repost="LOL REPOST %s " % (result[0] + 1)
-        
-            orig = result[1]
-            now = datetime.datetime.now()
-            delta = now - orig
-#            
-            plural = ""
-            if delta.days > 0:
-              if delta.days > 1:
-                plural = "s"
-              days = " (posted %s day%s ago)" % (str(delta.days), plural)
-            else:
-              hrs = int(round(delta.seconds/3600.0,0))
-              if hrs == 0:
-                mins = delta.seconds/60
-                if mins > 1:
-                  plural = "s"
-                days = " (posted %s minute%s ago)" % (str(mins), plural)
-                if mins == 0:
-                    repost=""
-                    days=""
-              else:
-                if hrs > 1:
-                  plural = "s"
-                days = " (posted %s hour%s ago)" % (str(hrs), plural)
+            if result !=0:
+                result = cursor.fetchone()
+                
+                repost="LOL REPOST %s " % (result[0] + 1)
+            
+                orig = result[1]
+                now = datetime.datetime.now()
+                delta = now - orig
+                         
+                plural = ""
+                if delta.days > 0:
+                  if delta.days > 1:
+                    plural = "s"
+                  days = " (posted %s day%s ago)" % (str(delta.days), plural)
+                else:
+                  hrs = int(round(delta.seconds/3600.0,0))
+                  if hrs == 0:
+                    mins = delta.seconds/60
+                    if mins > 1:
+                      plural = "s"
+                    days = " (posted %s minute%s ago)" % (str(mins), plural)
+                    if mins == 0:
+                        repost=""
+                        days=""
+                  else:
+                    if hrs > 1:
+                      plural = "s"
+                    days = " (posted %s hour%s ago)" % (str(hrs), plural)
                 
         
         
@@ -809,12 +817,14 @@ class TestBot(SingleServerIRCBot):
         title = decode_htmlentities(title.decode("utf-8")).encode("utf-8")
 
         titler = "%s%s%s" % (repost, title, days)
-
-        #title = MySQLdb.escape_string(title)
-        #url = MySQLdb.escape_string(url)
-        #query = "INSERT INTO links (url, title, hash) VALUES ('%s','%s','%s') ON DUPLICATE KEY UPDATE reposted=reposted+1,title='%s'" % (url, title, urlhash, title)       
-        #cursor.execute(query)
-        conn.close()
+        
+        if self.sqlmode == 2:
+            title = MySQLdb.escape_string(title)
+            url = MySQLdb.escape_string(url)
+            query = "INSERT INTO links (url, title, hash) VALUES ('%s','%s','%s') ON DUPLICATE KEY UPDATE reposted=reposted+1,title='%s'" % (url, title, urlhash, title)       
+            cursor.execute(query)
+        if self.sqlmode > 0:
+            conn.close()
         
         return titler
 
@@ -826,19 +836,21 @@ class TestBot(SingleServerIRCBot):
       return
       
     def last_link(self, nothing):
-
-      conn = MySQLdb.connect (host = "localhost",
-                                user = self.sqlusername,
-                                passwd = self.sqlpassword,
-                                db = "irc_links")
-                                
-      cursor = conn.cursor()
-      if (cursor.execute("SELECT url FROM links ORDER BY id DESC LIMIT 1")):
-        result = cursor.fetchone()
-        url = result[0]
-
-      conn.close()
-      return "Title: " + self.get_title(url) + " (" + url + ")"
+     if self.sqlmode > 0:
+          conn = MySQLdb.connect (host = "localhost",
+                                    user = self.sqlusername,
+                                    passwd = self.sqlpassword,
+                                    db = "irc_links")
+                                    
+          cursor = conn.cursor()
+          if (cursor.execute("SELECT url FROM links ORDER BY id DESC LIMIT 1")):
+            result = cursor.fetchone()
+            url = result[0]
+    
+          conn.close()
+          return "Title: " + self.get_title(url) + " (" + url + ")"
+     else:
+        return ""
         
     def get_fml(self, nothing):
         

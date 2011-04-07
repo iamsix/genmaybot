@@ -77,7 +77,8 @@ class TestBot(SingleServerIRCBot):
            line == "clearbans" or\
            line[0:6] == "enable" or\
            line[0:7] == "disable" or\
-           line[0:8] == "cooldown":
+           line[0:8] == "cooldown" or\
+           line[0:6] == "status":
                 self.admincommand = line
                 c.who(from_nick) 
         
@@ -105,16 +106,18 @@ class TestBot(SingleServerIRCBot):
                 spam ={}
                 c.privmsg(nick, "All bans cleared")
             elif line[0:6] == "enable":
-                command = line.split(" ")[1]
-                if command in self.commandaccesslist:
-                    del self.commandaccesslist[command]
-                    c.privmsg(nick, command + " enabled")
-                else:
-                    c.privmsg(nick, command + " not disabled")
+                if len(line.split(" ")) == 2:
+                    command = line.split(" ")[1]
+                    if command in self.commandaccesslist:
+                        del self.commandaccesslist[command]
+                        c.privmsg(nick, command + " enabled")
+                    else:
+                        c.privmsg(nick, command + " not disabled")
             elif line[0:7] == "disable":
-                command = line.split(" ")[1]
-                self.commandaccesslist[command] = "Disable"
-                c.privmsg(nick, command + " disabled")
+                if len(line.split(" ")) == 2:
+                    command = line.split(" ")[1]
+                    self.commandaccesslist[command] = "Disable"
+                    c.privmsg(nick, command + " disabled")
             elif line[0:8] == "cooldown":
                 if len(line.split(" ")) == 3:
                     command = line.split(" ")[1]
@@ -123,6 +126,7 @@ class TestBot(SingleServerIRCBot):
                         cooldown = int(cooldown)
                         if cooldown == 0:
                             del self.commandaccesslist[command]
+                            c.privmsg(nick, command + " cooldown disabled")
                         else:
                             self.commandaccesslist[command] = cooldown
                             self.commandcooldownlast[command] = time.time() - cooldown   
@@ -131,6 +135,13 @@ class TestBot(SingleServerIRCBot):
                         c.privmsg(nick, "bad format: 'cooldown !wiki 30' (30 second cooldown on !wiki)")
                 else:
                     c.privmsg(nick, "not enough args")
+            elif line[0:6] == "status":
+                if len(line.split(" ")) == 2:
+                    command = line.split(" ")[1]
+                    if command in self.commandaccesslist:
+                        c.privmsg(nick, command + " " + str(self.commandaccesslist[command]) + " (Seconds cooldown if it's a number)")
+                    else:
+                        c.privmsg(nick, command + " Enabled")
                 
         else:
             print "attempted admin command: " + line + " from " + nick

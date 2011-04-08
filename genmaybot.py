@@ -151,9 +151,7 @@ class TestBot(SingleServerIRCBot):
                 
         else:
             print "attempted admin command: " + line + " from " + nick
-                
-            
-        
+                      
     def on_pubmsg(self, c, e):
         if self.doingcommand:
             return
@@ -322,6 +320,7 @@ class TestBot(SingleServerIRCBot):
           resp = urllib2.urlopen(req).read()
       
           product = re.search('\<woot:product quantity=\"[0-9]*?\"\>(.*?)\<\/woot:product\>',resp).group(1)
+          product = decode_htmlentities(product)
       
           price = re.search("<woot:price>(.*?)<\/woot:price>", resp).group(1)
       
@@ -330,33 +329,23 @@ class TestBot(SingleServerIRCBot):
           pass
         
     def google_convert(self, term):
-        term = urllib.quote(term)
-        url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term
-        request = urllib2.Request(url, None, {})
-        request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
-        request.add_header('Range', "bytes=0-40960")
-        response = urllib2.urlopen(request).read()
-
-        m = re.search('(calculator-40.gif.*?\<b\>)(.*?)(\<\/b\>)', response)
-        
-        #print self.remove_html_tags(m.group(2))
-        
+        url = "http://www.google.com/ig/calculator?q=%s" % urllib.quote(term)
+        result = ""
         try:
-          result = m.group(2)
-          #print result
-        except:
-          try:
-            #print "we got to this point"
-            m = re.search('Search Results</h2>.*?\<b\>(.*?)(\<\/b\>\<\/h2\>\<\/div\>\<input id\=exchange_rate)', response)
-            result = m.group(1)
-          except:
-            #print "We didn't find anything."
+            response = urllib2.urlopen(url).read() 
+            response = response.replace("\xa0"," ").decode('unicode-escape')
+            response = re.sub("([a-z]+):", '"\\1" :', response)
+            response = response.replace("<sup>","^(")
+            response = response.replace("</sup>",")")
+            response = response.replace("&#215;","x")
+            response = json.loads(response)
+            if not response['error']:
+                result = "%s = %s" % (response['lhs'],response['rhs'])
+        except Exception as inst: 
+            print inst
             pass
-            return
-        result = result.replace("<sup>","^")
-        result = result.replace("&#215;","x")
         
-        return self.remove_html_tags(result)
+        return result
     
     def google_sunrise(self, term):
         url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=sunrise+in+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % term

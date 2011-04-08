@@ -37,6 +37,7 @@ class TestBot(SingleServerIRCBot):
         self.lastquakecheck = ""
         self.commandaccesslist = {}
         self.commandcooldownlast = {}
+        self.lastcalcresult = ""
         
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
@@ -329,6 +330,7 @@ class TestBot(SingleServerIRCBot):
           pass
         
     def google_convert(self, term):
+        term = term.replace("ANS", self.lastcalcresult)
         url = "http://www.google.com/ig/calculator?q=%s" % urllib.quote(term)
         result = ""
         try:
@@ -341,6 +343,7 @@ class TestBot(SingleServerIRCBot):
             response = json.loads(response)
             if not response['error']:
                 result = "%s = %s" % (response['lhs'],response['rhs'])
+                self.lastcalcresult = response['rhs']
         except Exception as inst: 
             print inst
             pass

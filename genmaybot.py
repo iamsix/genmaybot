@@ -564,13 +564,14 @@ class TestBot(SingleServerIRCBot):
               page = unicode(page[0].extract())
 
           title = self.remove_html_tags(re.search('(?s)\<p\>(.*?)\<\/p\>',page).group(1))
-          title = title.encode("utf-8")
+          title = title.encode("utf-8", 'ignore')
           title = title.replace("<","");
           rembracket = re.compile(r'\[.*?\]')
           title = rembracket.sub('',title)
           #title = re.sub("\&.*?\;", " ", title)
           title = title.replace("\n", " ")
-          title = decode_htmlentities(title.decode("utf-8")).encode("utf-8")
+          
+          title = decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
 
           title = title[0:420]
           if title.rfind(".")!=-1:
@@ -669,7 +670,7 @@ class TestBot(SingleServerIRCBot):
                     summary = removelink.sub('',summary)
                     summary = self.remove_html_tags(summary)
                     summary = summary.replace('&raquo;', "")
-                    summary = decode_htmlentities(summary.decode("utf-8"))
+                    summary = decode_htmlentities(summary.decode("utf-8", 'ignore'))
                     summary = re.sub("\&.*?\;", " ", summary)
                     summary = summary.replace("\n", " ")
                     summary = " - " + summary
@@ -803,10 +804,10 @@ class TestBot(SingleServerIRCBot):
             if title.find("imgur: the simple") != -1:
               title = ""
 
-        title = title.replace("\n", " ")        
+        title = title.replace("\n", " ")
         pattern = re.compile('whatsisname', re.IGNORECASE)
         title = pattern.sub('', title)      
-        title = decode_htmlentities(title.decode("utf-8")).encode("utf-8")
+        title = decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
 
         titler = "%s%s%s" % (repost, title, days)
         

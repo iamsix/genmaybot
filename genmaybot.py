@@ -97,6 +97,7 @@ class TestBot(SingleServerIRCBot):
         
         if line == "ban jeffers":
           print from_nick
+          c.privmsg(from_nick, "NO U! " + from_nick)
           c.privmsg(self.channel, "!ban jeffers")
     
     def on_whoreply(self, c,e):
@@ -175,8 +176,7 @@ class TestBot(SingleServerIRCBot):
                   say = say.replace("come", "come") 
                   c.privmsg(e.target(), say[0:600])     
         except Exception as inst: 
-          print inst
-          print e.arguments()[0]
+          print e.arguments()[0] + " : " + str(inst)
           pass
 
         self.doingcommand = False
@@ -231,11 +231,8 @@ class TestBot(SingleServerIRCBot):
       t.start()
     
     def isbotadmin(self, nick):
-        if nick in self.botadmins:
-             return True
-        else:
-             return False
-    
+        return nick in self.botadmins
+   
     def commandaccess(self, command):
         if command in self.commandaccesslist:
             if type(self.commandaccesslist[command]) == int:
@@ -345,7 +342,7 @@ class TestBot(SingleServerIRCBot):
                 result = "%s = %s" % (response['lhs'],response['rhs'])
                 self.lastcalcresult = response['rhs']
         except Exception as inst: 
-            print inst
+            print "!c" + term + " : " + str(inst)
             pass
         
         return result
@@ -578,13 +575,11 @@ class TestBot(SingleServerIRCBot):
             title = title[0:title.rfind(".")+1]
             
           if not urlposted:
-            title = (title.decode('utf-8') + " [ %s ]" % self.shorten_url(url)).encode('utf-8')
+            title = (title.decode('utf-8') + " [ %s ]" % self.shorten_url(url)).encode('utf-8', 'ignore')
         except Exception as inst: 
-          print inst
-          print "!wiki " + searchterm
+          print "!wiki " + searchterm + " : " + str(inst)
           title = self.remove_html_tags(re.search('\<p\>(.*?\.) ',page).group(1))
-          #print title
-          #title = title.encode("utf-8")
+
       return title 
   
     def get_stock_quote(self, stock):
@@ -679,8 +674,7 @@ class TestBot(SingleServerIRCBot):
             if not urlposted:
                 title = title + " [ %s ]" % url
           except Exception as inst: 
-            print inst
-            print "!imdb " + searchterm
+            print "!imdb " + searchterm + ": " + str(inst)
             
 #        IMDBAPI CODE
 #        -not in use because it's unreliable
@@ -697,7 +691,7 @@ class TestBot(SingleServerIRCBot):
 #           except:
 #              pass
          
-        return title.encode('utf-8')
+        return title.encode('utf-8', 'ignore')
     
     def get_title(self, url):
         title = ""
@@ -823,8 +817,7 @@ class TestBot(SingleServerIRCBot):
 
       
       except Exception as inst: 
-        print inst
-        print url
+        print url + ": " + str(inst)
         pass
       return
       
@@ -841,7 +834,7 @@ class TestBot(SingleServerIRCBot):
             url = result[0]
     
           conn.close()
-          return "Title: " + self.get_title(url) + " (" + url + ")"
+          return "Title: " + self.get_title(url) + " [ " + url + " ]"
      else:
         return ""
         

@@ -200,6 +200,7 @@ class TestBot(SingleServerIRCBot):
                     "!sunrise"  : self.google_sunrise,
                     "!sunset"   : self.google_sunset,
                     "!stock"    : self.get_stock_quote,
+                    "!wu"       : self.get_weather2,
                     }
         
         say = ""
@@ -342,7 +343,7 @@ class TestBot(SingleServerIRCBot):
                 result = "%s = %s" % (response['lhs'],response['rhs'])
                 self.lastcalcresult = response['rhs']
         except Exception as inst: 
-            print "!c" + term + " : " + str(inst)
+            print "!c " + term + " : " + str(inst)
             pass
         
         return result
@@ -496,6 +497,32 @@ class TestBot(SingleServerIRCBot):
         return shorturl
       except:
         return ""
+    
+    
+    def get_weather2(self, zip):
+        url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.quote(zip)
+        dom = xml.dom.minidom.parse(urllib2.urlopen(url))
+        city = dom.getElementsByTagName('display_location')[0].getElementsByTagName('full')[0].childNodes[0].data
+        if city != ", ":
+            temp_f = dom.getElementsByTagName('temp_f')[0].childNodes[0].data
+            temp_c = dom.getElementsByTagName('temp_c')[0].childNodes[0].data
+            try:
+                condition = dom.getElementsByTagName('weather')[0].childNodes[0].data
+            except:
+                condition = ""
+            try:
+                humidity = dom.getElementsByTagName('relative_humidity')[0].childNodes[0].data
+            except:
+                humidity = ""
+            try:
+                wind = dom.getElementsByTagName('wind_string')[0].childNodes[0].data
+            except:
+                humidity = ""
+            
+            degree_symbol = unichr(176)
+            chanmsg = "%s / %s / %s%sF %s%sC / Humidity: %s / Wind: %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind)
+            chanmsg = chanmsg.encode('utf-8')
+            return chanmsg
 
     def get_weather(self, zip):
 
@@ -535,8 +562,10 @@ class TestBot(SingleServerIRCBot):
           url = searchterm
       else:
           url = self.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
-      
-      if url.find("wikipedia.org/wiki/") != -1:
+          
+      if not url:
+          pass
+      elif url.find("wikipedia.org/wiki/") != -1:
 
         try:
           opener = urllib2.build_opener()
@@ -630,12 +659,15 @@ class TestBot(SingleServerIRCBot):
         movietitle = ""
         rating = ""
         summary = ""
+        
         if urlposted:
             url = searchterm
         else:
             url = self.google_url("site:imdb.com/title " + searchterm,"imdb.com/title/tt\\d{7}/")
-        
-        if url.find("imdb.com/title/tt") != -1:
+      
+        if not url:
+          pass
+        elif url.find("imdb.com/title/tt") != -1:
           try:
             imdbid = re.search("tt\\d{7}", url)
             imdburl = ('http://www.imdb.com/title/' + imdbid.group(0) + '/')

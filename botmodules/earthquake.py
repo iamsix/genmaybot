@@ -1,4 +1,4 @@
-import urllib2, xml.dom.minidom
+import urllib2, xml.dom.minidom, datetime
 
 
 def get_quake(nothing):
@@ -17,8 +17,8 @@ def get_quake(nothing):
 get_quake.command = "!q"
 
 
-def quake_alert(context, channels):
-    #alerts (in near-realtime) all joined channels about new quakes
+def quake_alert():
+    #returns a new quake only if it hasn't returned it before - for use in alerts
       try:       
         request = urllib2.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
         dom = xml.dom.minidom.parse(request)
@@ -30,14 +30,11 @@ def quake_alert(context, channels):
         if not quake_alert.lastquakecheck:
             quake_alert.lastquakecheck = updated
         if updated > quake_alert.lastquakecheck :
-            self.lastquakecheck = updated     
-            for channel in channels:  
-                context.privmsg(channel, "Latest Earthquake: " + qtitle)
+            quake_alert.lastquakecheck = updated     
+            return "Latest Earthquake: " + qtitle
       except Exception as inst: 
           print inst
           pass
-      
-      t=threading.Timer(60,quake_alert, [context])
-      t.start()
+
 quake_alert.lastquakecheck = ""
 quake_alert.alert = True

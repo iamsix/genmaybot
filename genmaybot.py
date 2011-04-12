@@ -53,7 +53,7 @@ class TestBot(SingleServerIRCBot):
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
         c.join(self.channel)       
-        self.quake_alert(c)  
+        self.alerts(c)  
             
     def on_invite(self, c, e):
         c.join(e.arguments()[0])
@@ -78,8 +78,10 @@ class TestBot(SingleServerIRCBot):
         
         say = ""
         if line[0:1] == "!":
+            command = line.split(" ")[0]
+            args = line[len(command)+1:].strip()
             try:
-                say = self.bangcommand(e.arguments()[0])
+                say = self.bangcommands[command](args)
             except:
                 pass
         if say:
@@ -158,17 +160,17 @@ class TestBot(SingleServerIRCBot):
         
         try:
           say = ""  
-          
-          if from_nick == "jeffers" and line.find("page effigy") != -1:
-              say = "http://is.gd/jeffers"
-            
+                      
           url = re.search("(?P<url>https?://[^\s]+)", e.arguments()[0])
           if url:
             args = url.group(1)
             command = "url_titler"
         
           if command in self.bangcommands:
-            say = self.bangcommands[command](args)
+            if hasattr(self.bangcommands[command], 'requiresnick'):
+                say = self.bangcommands[command](args, from_nick)
+            else:
+                say = self.bangcommands[command](args)
                 
           if say:
               if (not self.isspam(from_nick) and self.commandaccess(command)) or self.isbotadmin(from_nick):
@@ -189,7 +191,7 @@ class TestBot(SingleServerIRCBot):
                filenames.append(os.path.join('./botmodules', fn))
                
         self.bangcommands = {}
-        self.botalerts = {}
+        self.botalerts = []
                
         for filename in filenames:
             name = os.path.basename(filename)[:-3]
@@ -203,30 +205,8 @@ class TestBot(SingleServerIRCBot):
                         command = str(func.command)
                         self.bangcommands[command] = func
                     elif hasattr(func, 'alert'):
-                        self.botalerts[name] = func
-
-    def quake_alert(self, context):
-      try:
-        request = urllib2.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
-        dom = xml.dom.minidom.parse(request)
-        latest_quakenode = dom.getElementsByTagName('entry')[0]
-        updated = latest_quakenode.getElementsByTagName('updated')[0].childNodes[0].data
-        qtitle = latest_quakenode.getElementsByTagName('title')[0].childNodes[0].data
-        updated = datetime.datetime.strptime(updated, "%Y-%m-%dT%H:%M:%SZ")
-        request.close()
-        if not self.lastquakecheck:
-            self.lastquakecheck = updated
-        if updated > self.lastquakecheck :
-            self.lastquakecheck = updated	 
-            for channel in self.channels:  
-                context.privmsg(channel, "Latest Earthquake: " + qtitle)
-      except Exception as inst: 
-          print inst
-          pass
-      
-      t=threading.Timer(60,self.quake_alert, [context])
-      t.start()
-    
+                        self.botalerts.append(func)    
+                 
     def isbotadmin(self, nick):
         return nick in self.botadmins
    
@@ -270,6 +250,21 @@ class TestBot(SingleServerIRCBot):
           self.spam[user]['count'] = 0
           self.spam[user]['limit'] = 15
           return False
+  
+    def alerts(self, context):
+      try: 
+        for command in self.botalerts:
+            say = command()
+            if say:
+              for channel in self.channels:  
+                context.privmsg(channel, "Latest Earthquake: " + qtitle)
+      except Exception as inst: 
+          print "quakealert: " + str(inst)
+          pass
+      
+      t=threading.Timer(60,self.alerts, [context])
+      t.start()
+  
   
 def main():
     #print sys.argv

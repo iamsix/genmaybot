@@ -12,22 +12,17 @@
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 import time, urllib2, asyncore, imp
-import xml.dom.minidom
 import sys, os, socket, re, datetime, ConfigParser, threading
 
 socket.setdefaulttimeout(5)
 
-
-
 class TestBot(SingleServerIRCBot):
-    
   
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
         self.doingcommand = False
-      
-        self.lastquakecheck = ""
+
         self.commandaccesslist = {}
         self.commandcooldownlast = {}
 
@@ -59,10 +54,6 @@ class TestBot(SingleServerIRCBot):
         c.join(e.arguments()[0])
 
     def on_privmsg(self, c, e):
-        #print "PRIVMSG: " + e.arguments()[0]
-        #print "Target: " + e.target()
-        #print "Source: " + e.source()
-        
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
         
@@ -160,12 +151,16 @@ class TestBot(SingleServerIRCBot):
         
         try:
           say = ""  
-                      
+          
+          #urls are somewhat special because they don't require a command:
+          if command == "url_titler":
+              #if (unlikely) someone typed the line 'url_titler something' it would fire this event
+              return                              
           url = re.search("(?P<url>https?://[^\s]+)", e.arguments()[0])
           if url:
             args = url.group(1)
             command = "url_titler"
-        
+                
           if command in self.bangcommands:
             if hasattr(self.bangcommands[command], 'requiresnick'):
                 say = self.bangcommands[command](args, from_nick)
@@ -257,7 +252,7 @@ class TestBot(SingleServerIRCBot):
             say = command()
             if say:
               for channel in self.channels:  
-                context.privmsg(channel, "Latest Earthquake: " + qtitle)
+                context.privmsg(channel, say)
       except Exception as inst: 
           print "quakealert: " + str(inst)
           pass

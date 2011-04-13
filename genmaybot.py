@@ -156,34 +156,31 @@ class TestBot(SingleServerIRCBot):
         
         try:
           say = []  
+          saytmp = []
           
           #commands names are defined by the module as function.command = "!command"
           if command in self.bangcommands:
-            if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): 
-                return
-            saytmp = self.bangcommands[command](args)
-            if type(saytmp) != tuple:
-                say.append(saytmp)
-            elif saytmp[1] == "public":
-                linesource = self.channel
-                say.append(saytmp[0])
+            if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): return
+            saytmp.append(self.bangcommands[command](args))
           else:        
-          #lineparsers take the whole line and nick for EVERY line
-          #ensure the lineparser function is short and simple. Try to not to add too many of them
+            #lineparsers take the whole line and nick for EVERY line
+            #ensure the lineparser function is short and simple. Try to not to add too many of them
             for command in self.lineparsers:
                 if linesource in self.channels and hasattr(command, 'pivateonly'): continue
-                saytmp = command(line, from_nick)
-                if saytmp:
-                    if type(saytmp) != tuple:
-                        say.append(saytmp)
-                    else:
-                        if saytmp[1] in self.channels:
-                            linesource = saytmp[1]
-                            say.append(saytmp[0])
-                        else:
-                            say.append("bot not in targeted channel")
-                        
-                
+                saytmp.append(command(line, from_nick))
+        
+          if saytmp:
+             for sayline in saytmp:
+               if sayline:
+                   if type(sayline) != tuple:
+                        say.append(sayline)
+                   else:
+                     if sayline[1] in self.channels:
+                        linesource = sayline[1]
+                        say.append(sayline[0])
+                     else:
+                        say.append("bot not in targeted channel")
+   
           if say:
               if linesource == from_nick or self.isbotadmin(from_nick) or (not self.isspam(from_nick) and self.commandaccess(command)):
                   for sayline in say:

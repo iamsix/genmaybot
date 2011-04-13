@@ -2,6 +2,7 @@ from BeautifulSoup import BeautifulSoup
 import re, urllib2, botmodules.tools as tools
 
 def get_wiki(searchterm, urlposted=False):
+    #read the first paragraph of a wikipedia article
   if urlposted:
       url = searchterm
   else:

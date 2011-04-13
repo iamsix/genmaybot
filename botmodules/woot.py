@@ -1,6 +1,7 @@
 import urllib2, re, botmodules.tools as tools
  
 def get_woot(nothing):
+    #display the current woot.com sale
       try:
           url = "http://www.woot.com/salerss.aspx"
           req = urllib2.Request(url)

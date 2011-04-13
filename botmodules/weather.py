@@ -1,6 +1,7 @@
 import urllib2, urllib, xml.dom.minidom
 
 def get_weather( zip):
+    #google weather of place specified in 'zip'
 
        url = "http://www.google.com/ig/api?weather=" + urllib.quote(zip)
        dom = xml.dom.minidom.parse(urllib2.urlopen(url))
@@ -36,6 +37,7 @@ def get_weather( zip):
 get_weather.command = "!w"
    
 def get_weather2(zip):
+    #wunderground weather of place specified in 'zip'
         url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.quote(zip)
         dom = xml.dom.minidom.parse(urllib2.urlopen(url))
         city = dom.getElementsByTagName('display_location')[0].getElementsByTagName('full')[0].childNodes[0].data

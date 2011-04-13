@@ -3,6 +3,8 @@ import locale, urllib2
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 def get_stock_quote(stock):
+    # stock quotes from Yahoo Finance
+    # http://cliffngan.net/a/13
   # For the f argument in the url here are the values:
   #     code   description                
   #                                       

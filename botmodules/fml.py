@@ -1,6 +1,7 @@
 import urllib2, botmodules.tools as tools
 
 def get_fml(nothing):  
+    #queries a random fmylife.com passage
   try:
     fmlxml = urllib2.urlopen("http://api.betacie.com/view/random?key=%s&language=en" % tools.config.fmlAPIkey).read()
     start = fmlxml.find("<text>") + 6

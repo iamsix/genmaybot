@@ -7,6 +7,8 @@ except ImportError:
     pass
 
 def url_posted(url):
+    #checks if the URL is a dupe (if mysql is enabled)
+    #detects if a wikipedia or imdb url is posted and does the appropriate command for it
 
   try:
 
@@ -96,6 +98,7 @@ def url_posted(url):
 url_posted.command = "url_titler"
 
 def get_title(url):
+    #extracts the title tag from a page
     title = ""
     try:
         opener = urllib2.build_opener()
@@ -137,6 +140,7 @@ def get_title(url):
     return title
 
 def last_link(nothing):
+    #displays last link posted (requires mysql)
     if tools.config.sqlmode > 0:
       conn = MySQLdb.connect (host = "localhost",
                                 user = tools.config.sqlusername,

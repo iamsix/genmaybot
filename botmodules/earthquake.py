@@ -33,7 +33,7 @@ def quake_alert():
             quake_alert.lastquakecheck = updated     
             return "Latest Earthquake: " + qtitle
       except Exception as inst: 
-          print inst
+          print "quakealert: " + str(inst)
           pass
 
 quake_alert.lastquakecheck = ""

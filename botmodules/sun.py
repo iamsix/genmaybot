@@ -1,10 +1,12 @@
 import urllib2, urllib, re, botmodules.tools as tools
 
 def google_sunrise(term):
+    #returns the next sunrise time and time from now of the place specified it 'term'
     return google_sun(term, "Sunrise")
 google_sunrise.command = "!sunrise"
     
 def google_sunset(term):
+    #returns the next sunset time and time from now of the place specified it 'term'
     return google_sun(term, "Sunset")
 google_sunset.command = "!sunset"
 

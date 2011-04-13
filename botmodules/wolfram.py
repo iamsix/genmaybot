@@ -1,6 +1,7 @@
 import urllib, urllib2, xml.dom.minidom, socket, botmodules.tools as tools
 
 def get_wolfram(input):
+    #query 'input' on wolframalpha and get the plaintext result back
     socket.setdefaulttimeout(30)
     url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s" % (tools.config.wolframAPIkey, urllib.quote(input))
     dom = xml.dom.minidom.parse(urllib2.urlopen(url))

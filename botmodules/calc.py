@@ -1,6 +1,7 @@
 import urllib2, urllib, json, re
 
 def google_convert(term):
+    #google calculator
         term = term.replace("ANS", google_convert.lastresult)
         url = "http://www.google.com/ig/calculator?q=%s" % urllib.quote(term)
         result = ""

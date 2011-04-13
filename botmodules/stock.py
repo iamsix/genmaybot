@@ -1,6 +1,6 @@
 import locale, urllib2
 
-locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 def get_stock_quote(stock):
     # stock quotes from Yahoo Finance

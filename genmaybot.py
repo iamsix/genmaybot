@@ -84,9 +84,10 @@ class TestBot(SingleServerIRCBot):
           c.privmsg(self.channel, "!ban jeffers")
     
     def on_whoreply(self, c,e):
-        nick = e.arguments()[4]
-        line = self.admincommand
-        self.admincommand = ""
+      nick = e.arguments()[4]
+      line = self.admincommand
+      self.admincommand = ""
+      try:
         if e.arguments()[5].find("r") != -1 and line != "" and self.isbotadmin(nick):       
             if line == "die":
                 print "got die command from " + nick 
@@ -118,7 +119,8 @@ class TestBot(SingleServerIRCBot):
                     if cooldown.isdigit():
                         cooldown = int(cooldown)
                         if cooldown == 0:
-                            del self.commandaccesslist[command]
+                            if command in self.commandaccesslist:
+                                del self.commandaccesslist[command]
                             c.privmsg(nick, command + " cooldown disabled")
                         else:
                             self.commandaccesslist[command] = cooldown
@@ -138,6 +140,8 @@ class TestBot(SingleServerIRCBot):
                 
         else:
             print "attempted admin command: " + line + " from " + nick
+      except Exception as inst:
+          print "admin exception: " + line + " : " + inst
                       
     def on_pubmsg(self, c, e):
         if self.doingcommand:
@@ -254,7 +258,7 @@ class TestBot(SingleServerIRCBot):
               for channel in self.channels:  
                 context.privmsg(channel, say)
       except Exception as inst: 
-          print "quakealert: " + str(inst)
+          print "alerts: " + str(inst)
           pass
       
       t=threading.Timer(60,self.alerts, [context])

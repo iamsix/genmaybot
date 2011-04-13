@@ -87,12 +87,11 @@ class TestBot(SingleServerIRCBot):
                   
             if say:
                 for sayline in say: 
-                    if len(sayline) == 1:
+                    if type(sayline) != tuple:
                         c.privmsg(from_nick, sayline[0:600])
                     elif sayline[1] == "public":
                         c.privmsg(self.channel, sayline[0][0:600])
-                        
-        
+                           
         except Exception as inst: 
             print line + " : " + str(inst)
     
@@ -190,7 +189,7 @@ class TestBot(SingleServerIRCBot):
           if say:
               if (not self.isspam(from_nick) and self.commandaccess(command)) or self.isbotadmin(from_nick):
                 for sayline in say:
-                  if len(sayline) == 1:  
+                  if type(sayline) != tuple:
                       sayline = sayline.replace("join", "join")
                       sayline = sayline.replace("come", "come") 
                       c.privmsg(e.target(), sayline[0:600])     

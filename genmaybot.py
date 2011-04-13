@@ -35,9 +35,9 @@ class TestBot(SingleServerIRCBot):
         else:
             print "No command modules loaded!"
         if self.botalerts:
-            print 'Loaded alerts: %s' % ','.join((command.__name__ for command in self.botalerts))
+            print 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts))
         if self.lineparsers:
-            print 'Loaded line parsers: %s' % ','.join((command.__name__ for command in self.lineparsers))
+            print 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
         
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
@@ -73,21 +73,28 @@ class TestBot(SingleServerIRCBot):
                 self.admincommand = line
                 c.who(from_nick) 
         
-        say = ""
-        if line[0:1] == "!":
+        say = []
+        try:
             command = line.split(" ")[0]
             args = line[len(command)+1:].strip()
-            try:
-                say = self.bangcommands[command](args)
-            except:
-                pass
-        if say:
-            c.privmsg(from_nick, say[0:600]) 
+            if command in self.bangcommands:
+                say.append(self.bangcommands[command](args))
+                
+            for command in self.lineparsers:
+              saytmp = command(line, from_nick)
+              if saytmp:
+                  say.append(saytmp)
+                  
+            if say:
+                for sayline in say: 
+                    if len(sayline) == 1:
+                        c.privmsg(from_nick, sayline[0:600])
+                    elif sayline[1] == "public":
+                        c.privmsg(self.channel, sayline[0][0:600])
+                        
         
-        if line == "ban jeffers":
-          print from_nick
-          c.privmsg(from_nick, "NO U! " + from_nick)
-          c.privmsg(self.channel, "!ban jeffers")
+        except Exception as inst: 
+            print line + " : " + str(inst)
     
     def on_whoreply(self, c,e):
       nick = e.arguments()[4]
@@ -109,9 +116,9 @@ class TestBot(SingleServerIRCBot):
                 else:
                     c.privmsg(nick, "No command modules loaded!")
                 if self.botalerts:
-                    c.privmsg(nick, 'Loaded alerts: %s' % ','.join((command.__name__ for command in self.botalerts)))
+                    c.privmsg(nick, 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts)))
                 if self.lineparsers:
-                    c.privmsg(nick, 'Loaded line parsers: %s' % ','.join((command.__name__ for command in self.lineparsers)))
+                    c.privmsg(nick, 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers)))
             elif line[0:6] == "enable":
                 if len(line.split(" ")) == 2:
                     command = line.split(" ")[1]
@@ -183,9 +190,10 @@ class TestBot(SingleServerIRCBot):
           if say:
               if (not self.isspam(from_nick) and self.commandaccess(command)) or self.isbotadmin(from_nick):
                 for sayline in say:
-                  sayline = sayline.replace("join", "join")
-                  sayline = sayline.replace("come", "come") 
-                  c.privmsg(e.target(), sayline[0:600])     
+                  if len(sayline) == 1:  
+                      sayline = sayline.replace("join", "join")
+                      sayline = sayline.replace("come", "come") 
+                      c.privmsg(e.target(), sayline[0:600])     
         except Exception as inst: 
           print e.arguments()[0] + " : " + str(inst)
           pass

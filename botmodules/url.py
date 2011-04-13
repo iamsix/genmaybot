@@ -6,6 +6,14 @@ try:
 except ImportError:
     pass
 
+def url_parser(line, nick):
+    url = re.search("(?P<url>https?://[^\s]+)", line)
+    if url:
+        return url_posted(url.group(1))
+    else:
+        return ""
+url_parser.lineparser = True
+
 def url_posted(url):
     #checks if the URL is a dupe (if mysql is enabled)
     #detects if a wikipedia or imdb url is posted and does the appropriate command for it
@@ -94,16 +102,6 @@ def url_posted(url):
     print url + ": " + str(inst)
     pass
   return
-#url_posted is special, it has a command assigned to it
-#url_posted.command = "url_titler"
-
-def url_parser(line, nick):
-    url = re.search("(?P<url>https?://[^\s]+)", line)
-    if url:
-        return url_posted(url.group(1))
-    else:
-        return ""
-url_parser.lineparser = True
 
 def get_title(url):
     #extracts the title tag from a page

@@ -32,6 +32,12 @@ class TestBot(SingleServerIRCBot):
         
         if self.bangcommands:
             print 'Loaded command modules: %s' % self.bangcommands.keys()
+        else:
+            print "No command modules loaded!"
+        if self.botalerts:
+            print 'Loaded alerts: %s' % ','.join((command.__name__ for command in self.botalerts))
+        if self.lineparsers:
+            print 'Loaded line parsers: %s' % ','.join((command.__name__ for command in self.lineparsers))
         
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
@@ -98,7 +104,14 @@ class TestBot(SingleServerIRCBot):
                 c.privmsg(nick, "All bans cleared")
             elif line == "reload":
                 self.loadmodules()
-                c.privmsg(nick, "Modules reloaded: %s" % self.bangcommands.keys())
+                if self.bangcommands:
+                    c.privmsg(nick, 'Loaded command modules: %s' % self.bangcommands.keys())
+                else:
+                    c.privmsg(nick, "No command modules loaded!")
+                if self.botalerts:
+                    c.privmsg(nick, 'Loaded alerts: %s' % ','.join((command.__name__ for command in self.botalerts)))
+                if self.lineparsers:
+                    c.privmsg(nick, 'Loaded line parsers: %s' % ','.join((command.__name__ for command in self.lineparsers)))
             elif line[0:6] == "enable":
                 if len(line.split(" ")) == 2:
                     command = line.split(" ")[1]
@@ -154,28 +167,25 @@ class TestBot(SingleServerIRCBot):
         args = line[len(command)+1:].strip()
         
         try:
-          say = ""  
+          say = []  
           
-          #urls are somewhat special because they don't require a command:
-          if command == "url_titler":
-              #if (unlikely) someone typed the line 'url_titler something' it would fire this event
-              return                              
-          url = re.search("(?P<url>https?://[^\s]+)", e.arguments()[0])
-          if url:
-            args = url.group(1)
-            command = "url_titler"
-                
+          #commands names are defined by the module as function.command = "!command"
           if command in self.bangcommands:
-            if hasattr(self.bangcommands[command], 'requiresnick'):
-                say = self.bangcommands[command](args, from_nick)
-            else:
-                say = self.bangcommands[command](args)
+              say.append(self.bangcommands[command](args))
+                
+          #lineparsers take the whole line and nick for EVERY line
+          #ensure the lineparser function is short and simple. Try to not to add too many of them
+          for command in self.lineparsers:
+              saytmp = command(line, from_nick)
+              if saytmp:
+                  say.append(saytmp)
                 
           if say:
               if (not self.isspam(from_nick) and self.commandaccess(command)) or self.isbotadmin(from_nick):
-                  say = say.replace("join", "join")
-                  say = say.replace("come", "come") 
-                  c.privmsg(e.target(), say[0:600])     
+                for sayline in say:
+                  sayline = sayline.replace("join", "join")
+                  sayline = sayline.replace("come", "come") 
+                  c.privmsg(e.target(), sayline[0:600])     
         except Exception as inst: 
           print e.arguments()[0] + " : " + str(inst)
           pass
@@ -191,6 +201,7 @@ class TestBot(SingleServerIRCBot):
                
         self.bangcommands = {}
         self.botalerts = []
+        self.lineparsers = []
                
         for filename in filenames:
             name = os.path.basename(filename)[:-3]
@@ -204,7 +215,9 @@ class TestBot(SingleServerIRCBot):
                         command = str(func.command)
                         self.bangcommands[command] = func
                     elif hasattr(func, 'alert'):
-                        self.botalerts.append(func)    
+                        self.botalerts.append(func)
+                    elif hasattr(func, 'lineparser'):
+                        self.lineparsers.append(func) 
                  
     def isbotadmin(self, nick):
         return nick in self.botadmins

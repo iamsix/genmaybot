@@ -95,7 +95,15 @@ def url_posted(url):
     pass
   return
 #url_posted is special, it has a command assigned to it
-url_posted.command = "url_titler"
+#url_posted.command = "url_titler"
+
+def url_parser(line, nick):
+    url = re.search("(?P<url>https?://[^\s]+)", line)
+    if url:
+        return url_posted(url.group(1))
+    else:
+        return ""
+url_parser.lineparser = True
 
 def get_title(url):
     #extracts the title tag from a page

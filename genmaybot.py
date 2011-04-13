@@ -158,28 +158,28 @@ class TestBot(SingleServerIRCBot):
           say = []  
           saytmp = []
           
-          #commands names are defined by the module as function.command = "!command"
+          #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
             if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): return
             saytmp.append(self.bangcommands[command](args))
           else:        
             #lineparsers take the whole line and nick for EVERY line
             #ensure the lineparser function is short and simple. Try to not to add too many of them
+            #Multiple lineparsers can output data, leading to multiple 'say' lines
             for command in self.lineparsers:
                 if linesource in self.channels and hasattr(command, 'pivateonly'): continue
                 saytmp.append(command(line, from_nick))
         
-          if saytmp:
-             for sayline in saytmp:
-               if sayline:
-                   if type(sayline) != tuple:
-                        say.append(sayline)
-                   else:
-                     if sayline[1] in self.channels:
-                        linesource = sayline[1]
-                        say.append(sayline[0])
-                     else:
-                        say.append("bot not in targeted channel")
+          for sayline in saytmp:
+            if sayline:
+               if type(sayline) != tuple:
+                    say.append(sayline)
+               else:
+                 if sayline[1] in self.channels:
+                    linesource = sayline[1]
+                    say.append(sayline[0])
+                 else:
+                    say.append("bot not in targeted channel")
    
           if say:
               if linesource == from_nick or self.isbotadmin(from_nick) or (not self.isspam(from_nick) and self.commandaccess(command)):

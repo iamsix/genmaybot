@@ -1,5 +1,4 @@
-import locale, urllib2
-
+import locale, urllib2, csv
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -37,8 +36,7 @@ def get_stock_quote(stock):
     pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=nl1c1va2j1" % stock)
     quote = pagetmp.read(1024)
     opener.close()
-  
-    name,price,change,volume,avg_volume,mkt_cap = quote.split(",")
+    name,price,change,volume,avg_volume,mkt_cap = [r for r in csv.reader([quote])][0]
     if price != "0.00": #assume no price = no result
        name = name.replace('"','')
     

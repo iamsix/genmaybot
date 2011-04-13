@@ -176,9 +176,13 @@ class TestBot(SingleServerIRCBot):
                 if saytmp:
                     if type(saytmp) != tuple:
                         say.append(saytmp)
-                    elif saytmp[1] == "public":
-                        linesource = self.channel
-                        say.append(saytmp[0])
+                    else:
+                        if saytmp[1] in self.channels:
+                            linesource = saytmp[1]
+                            say.append(saytmp[0])
+                        else:
+                            say.append("bot not in targeted channel")
+                        
                 
           if say:
               if linesource == from_nick or self.isbotadmin(from_nick) or (not self.isspam(from_nick) and self.commandaccess(command)):

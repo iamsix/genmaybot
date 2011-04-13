@@ -12,7 +12,7 @@ def get_wolfram(input):
             related = dom.getElementsByTagName("relatedexample")[0].getAttribute("input")
             get_wolfram(related)
         except Exception as inst:
-            print "!wolframrelated " + input + " : " + inst
+            print "!wolframrelated " + input + " : " + str(inst)
     else:
         try:
             query = dom.getElementsByTagName("plaintext")[0].childNodes[0].data
@@ -21,5 +21,5 @@ def get_wolfram(input):
             
             return output.encode("utf-8")
         except Exception as inst:
-            print "!wolfram " + input + " : " + inst
+            print "!wolfram " + input + " : " + str(inst)
 get_wolfram.command = "!wolfram"

@@ -22,6 +22,7 @@ def url_posted(url):
 
     repost=""
     days = ""        
+    conn = None
     
     if tools.config.sqlmode > 0:
         urlhash = hashlib.sha224(url).hexdigest()

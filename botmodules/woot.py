@@ -1,4 +1,4 @@
-import urllib2, re, xml.dom.minidom, botmodules.tools as tools
+import urllib2, xml.dom.minidom, botmodules.tools as tools
  
 def get_woot(nothing):
     #display the current woot.com sale

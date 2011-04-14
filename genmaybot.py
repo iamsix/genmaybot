@@ -23,7 +23,7 @@ class TestBot(SingleServerIRCBot):
         self.channel = channel
         self.doingcommand = False
 
-        self.commandaccesslist = {}
+        self.commandaccesslist = {}    
         self.commandcooldownlast = {}
 
         self.spam ={}

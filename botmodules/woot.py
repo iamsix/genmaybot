@@ -1,16 +1,15 @@
-import urllib2, re, botmodules.tools as tools
+import urllib2, re, xml.dom.minidom, botmodules.tools as tools
  
 def get_woot(nothing):
     #display the current woot.com sale
       try:
           url = "http://www.woot.com/salerss.aspx"
-          req = urllib2.Request(url)
-          resp = urllib2.urlopen(req).read()
+          dom = xml.dom.minidom.parse(urllib2.urlopen(url))
       
-          product = re.search('\<woot:product quantity=\"[0-9]*?\"\>(.*?)\<\/woot:product\>',resp).group(1)
+          product = dom.getElementsByTagName("woot:product")[0].childNodes[0].data
           product = tools.decode_htmlentities(product)
       
-          price = re.search("<woot:price>(.*?)<\/woot:price>", resp).group(1)
+          price = dom.getElementsByTagName("woot:price")[0].childNodes[0].data
       
           return product + " [" + price + "]"
       except:

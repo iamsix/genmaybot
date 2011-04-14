@@ -18,11 +18,7 @@ def google_sun(term, sun):
     request.add_header('Range', "bytes=0-40960")
     response = urllib2.urlopen(request).read()
 
-    if sun == "Sunset":
-        m = re.search('(sunset-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( - \<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
-    else:
-        m = re.search('(sunrise-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( -\s*\<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
-    #print self.remove_html_tags(m.group(2))
+    m = re.search('(-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( -\s*\<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
     
     try:
       settime = m.group(2)
@@ -38,7 +34,6 @@ def google_sun(term, sun):
     except:
       pass
       return
-    result = result.replace("<sup>","^")
-    result = result.replace("&#215;","x")
+
     return tools.remove_html_tags(result)
 

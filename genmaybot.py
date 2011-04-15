@@ -184,7 +184,7 @@ class TestBot(SingleServerIRCBot):
                     say.append("bot not in targeted channel")
    
           if say:
-              if linesource == from_nick or self.isbotadmin(from_nick) or (not self.isspam(from_nick) and self.commandaccess(command)):
+              if linesource == from_nick or self.isbotadmin(from_nick) or (self.commandaccess(command) and not self.isspam(from_nick)):
                   for sayline in say:
                       sayline = sayline.replace("join", "join")
                       sayline = sayline.replace("come", "come") 

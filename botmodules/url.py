@@ -1,10 +1,12 @@
 import re, urllib2, hashlib, datetime, botmodules.tools as tools
-import botmodules.wiki as wikiurl, botmodules.imdb as imdburl
 
-try:
-    import MySQLdb
-except ImportError:
-    pass
+
+try: import MySQLdb
+except ImportError: pass
+try: import botmodules.wiki as wikiurl
+except ImportError: pass
+try: import botmodules.imdb as imdburl
+except ImportError: pass
 
 def url_parser(line, nick):
     url = re.search("(?P<url>https?://[^\s]+)", line)
@@ -21,8 +23,7 @@ def url_posted(url):
   try:
 
     repost=""
-    days = ""        
-    conn = None
+    days = ""
     
     if tools.config.sqlmode > 0:
         urlhash = hashlib.sha224(url).hexdigest()
@@ -64,11 +65,9 @@ def url_posted(url):
                   plural = "s"
                 days = " (posted %s hour%s ago)" % (str(hrs), plural)
             
-    
-    
-    title = ""        
-    wiki = wikiurl.get_wiki(url, True)
-    imdb = imdburl.get_imdb(url, True)
+    title = "" 
+    if wikiurl: wiki = wikiurl.get_wiki(url, True)
+    if imdburl: imdb = imdburl.get_imdb(url, True)
     if wiki:
         title = wiki
     elif imdb:
@@ -117,9 +116,7 @@ def get_title(url):
                              ('Range',"bytes=0-" + str(readlength))]
 
         pagetmp = opener.open(url)
-        
 
-            
         page = pagetmp.read(readlength)
         opener.close()
 

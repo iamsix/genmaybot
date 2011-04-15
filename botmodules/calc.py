@@ -7,7 +7,7 @@ def google_convert(term):
         result = ""
         try:
             response = urllib2.urlopen(url).read() 
-            response = response.replace("\xa0"," ").decode('unicode-escape')
+            response = response.replace("\xa0",",").decode('unicode-escape')
             response = re.sub("([a-z]+):", '"\\1" :', response)
             response = response.replace("<sup>","^(")
             response = response.replace("</sup>",")")

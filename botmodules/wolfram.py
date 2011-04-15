@@ -10,7 +10,7 @@ def get_wolfram(input):
     if (dom.getElementsByTagName("queryresult")[0].getAttribute("success") == "false"):
         try:
             related = dom.getElementsByTagName("relatedexample")[0].getAttribute("input")
-            get_wolfram(related)
+            return get_wolfram(related)
         except Exception as inst:
             print "!wolframrelated " + input + " : " + str(inst)
     else:

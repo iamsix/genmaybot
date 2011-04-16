@@ -11,6 +11,7 @@ def get_weather(zip, nick):
    dom = xml.dom.minidom.parse(urllib2.urlopen(url))
    
    if not dom.getElementsByTagName('problem_cause'):
+       degree_symbol = unichr(176)
        city = dom.getElementsByTagName('city')[0].getAttribute('data')
        temp_f = dom.getElementsByTagName('current_conditions')[0].getElementsByTagName('temp_f')[0].getAttribute('data')
        temp_c = dom.getElementsByTagName('current_conditions')[0].getElementsByTagName('temp_c')[0].getAttribute('data')
@@ -28,10 +29,22 @@ def get_weather(zip, nick):
         condition = dom.getElementsByTagName('current_conditions')[0].getElementsByTagName('condition')[0].getAttribute('data')
        except:
         condition = "" 
+        
+       try:
+        high_f = dom.getElementsByTagName('forecast_conditions')[0].getElementsByTagName('high')[0].getAttribute('data')
+        high_c = str(int((5.0/9.0) * float(int(high_f) -32)))+ degree_symbol + "C"
+        high_f = "High: " + high_f + degree_symbol + "F"
+        low_f = dom.getElementsByTagName('forecast_conditions')[0].getElementsByTagName('low')[0].getAttribute('data')
+        low_c = str(int((5.0/9.0) * float(int(low_f) -32))) + degree_symbol + "C"
+        low_f = "Low: " + low_f + degree_symbol + "F"
+       except:
+           high_f = ""
+           low_f = ""
+           high_c = ""
+           low_c = ""
+
        
-       degree_symbol = unichr(176)
-       
-       chanmsg = "%s / %s / %s%sF %s%sC / %s / %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind)
+       chanmsg = "%s / %s / %s%sF %s%sC / %s / %s / %s %s - %s %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind, high_f, high_c,low_f,low_c)
        chanmsg = chanmsg.encode('utf-8')
    else:
        chanmsg = get_weather2(zip)

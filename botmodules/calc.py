@@ -1,8 +1,9 @@
 import urllib2, urllib, json, re
 
-def google_convert(term):
+def google_convert(term, nick):
     #google calculator
-        term = term.replace("ANS", google_convert.lastresult)
+        if nick in google_convert.lastresult:
+            term = term.replace("ANS", google_convert.lastresult[nick])
         url = "http://www.google.com/ig/calculator?q=%s" % urllib.quote(term)
         result = ""
         try:
@@ -15,11 +16,12 @@ def google_convert(term):
             response = json.loads(response)
             if not response['error']:
                 result = "%s = %s" % (response['lhs'],response['rhs'])
-                google_convert.lastresult = response['rhs']
+                google_convert.lastresult[nick] = str(response['rhs'])
         except Exception as inst: 
             print "!c " + term + " : " + str(inst)
             pass
         
         return result
 google_convert.command = "!c"
-google_convert.lastresult = ""
+google_convert.lastresult = {}
+

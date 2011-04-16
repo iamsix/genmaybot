@@ -1,16 +1,20 @@
 import urllib2, urllib, re, botmodules.tools as tools
+try: import botmodules.userlocation as user
+except: pass
 
-def google_sunrise(term):
+def google_sunrise(term, nick):
     #returns the next sunrise time and time from now of the place specified it 'term'
-    return google_sun(term, "Sunrise")
+    return google_sun(term, "Sunrise", nick)
 google_sunrise.command = "!sunrise"
     
-def google_sunset(term):
+def google_sunset(term, nick):
     #returns the next sunset time and time from now of the place specified it 'term'
-    return google_sun(term, "Sunset")
+    return google_sun(term, "Sunset", nick)
 google_sunset.command = "!sunset"
 
-def google_sun(term, sun):
+def google_sun(term, sun, nick):
+    if term == "" and user:
+       term = user.get_location(nick)
     term = urllib.quote(term)
     url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+in+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, term)
     request = urllib2.Request(url, None, {})

@@ -1,7 +1,7 @@
 import urllib2, xml.dom.minidom, datetime
 
 
-def get_quake(nothing):
+def get_quake(nothing, nick):
     #returns the latest earthquake on USGS
       try:       
         qtitle,updated,ago = get_quake_data()        

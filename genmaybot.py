@@ -73,7 +73,7 @@ class TestBot(SingleServerIRCBot):
         line = e.arguments()[0].strip()
         command = line.split(" ")[0]
         
-        if self.admincommands[command] and self.isbotadmin(from_nick):
+        if command in self.admincommands and self.isbotadmin(from_nick):
             self.admincommand = line
             c.who(from_nick) 
                 
@@ -87,7 +87,11 @@ class TestBot(SingleServerIRCBot):
       try:
         if e.arguments()[5].find("r") != -1 and line != "":
             say = self.admincommands[command](line, nick, self)
-            c.privmsg(nick, say)
+            if type(say) == tuple:
+                for line in say:
+                    c.privmsg(nick, line)
+            else:   
+                c.privmsg(nick, say)
 
       except Exception as inst:
           print "admin exception: " + line + " : " + str(inst)
@@ -106,7 +110,7 @@ class TestBot(SingleServerIRCBot):
           #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
             if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): return
-            saytmp.append(self.bangcommands[command](args))
+            saytmp.append(self.bangcommands[command](args, from_nick))
           else:        
             #lineparsers take the whole line and nick for EVERY line
             #ensure the lineparser function is short and simple. Try to not to add too many of them

@@ -5,16 +5,20 @@
 #  python genmaybot.py irc.0id.net "#chan" Nickname
 #
 
-#? look in to !seen functionality 
-###? Investigate flight tracker info
-#random descision maker?
-
-#KOMODO TEST COMMIT
+### look in to !seen functionality 
+# |- on_join, on_part, on_kick, on_nick, on_disconnect, on_quit
+# |  -use on_whoreply to confirm the users are who their nick is?
+# |-db-users_table: user UNQ | hostmask | last action | <user_aliases> | <user_knownhostmasks>
+# |-db-user_aliases: user UNQ | alternick
+# |-db-user_knownhostmasks: user UNQ | hostmask
+# (hostmask might be username | hostmask where username@hostmask 
+# 
+### random descision maker?
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-import time, urllib2, asyncore, imp
-import sys, os, socket, re, datetime, ConfigParser, threading
+import time, asyncore, imp
+import sys, os, socket, datetime, ConfigParser, threading
 
 socket.setdefaulttimeout(5)
 
@@ -176,6 +180,8 @@ class TestBot(SingleServerIRCBot):
         return nick in self.botadmins
    
     def commandaccess(self, command):
+        if "all" in self.commandaccesslist:
+            command = "all"
         if command in self.commandaccesslist:
             if type(self.commandaccesslist[command]) == int:
                 if time.time() - self.commandcooldownlast[command] < self.commandaccesslist[command]:
@@ -183,7 +189,7 @@ class TestBot(SingleServerIRCBot):
                 else:
                     self.commandcooldownlast[command] = time.time()
                     return True
-            elif self.commandaccesslist[command] == "Disable":
+            elif self.commandaccesslist[command] == "Disabled":
                 return False
         else: #if there's no entry it's assumed to be enabled
             return True

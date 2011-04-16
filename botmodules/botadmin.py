@@ -32,7 +32,7 @@ def enable_command(line, nick, self):
         command = line.split(" ")[1]
         if command in self.commandaccesslist:
             del self.commandaccesslist[command]
-            return command + " enabled"
+            return command + " Enabled"
         else:
             return command + " not disabled"
 enable_command.admincommand = "enable"
@@ -40,8 +40,8 @@ enable_command.admincommand = "enable"
 def disable_command(line, nick, self):
     if len(line.split(" ")) == 2:
         command = line.split(" ")[1]
-        self.commandaccesslist[command] = "Disable"
-        return command + " disabled"
+        self.commandaccesslist[command] = "Disabled"
+        return command + " Disabled"
 disable_command.admincommand = "disable"
 
 def cooldown_command(line, nick, self):

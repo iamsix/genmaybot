@@ -23,5 +23,3 @@ def get_location(nick):
     else:
         return ""
 
-
-    

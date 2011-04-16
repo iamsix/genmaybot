@@ -5,7 +5,7 @@ except: pass
 def get_wolfram(input, nick):
     #query 'input' on wolframalpha and get the plaintext result back
     if user:
-       location = user.get_location(nick)
+       location = urllib.quote(user.get_location(nick))
     socket.setdefaulttimeout(30)
     url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s&location=%s" % (tools.config.wolframAPIkey, urllib.quote(input), location)
     dom = xml.dom.minidom.parse(urllib2.urlopen(url))

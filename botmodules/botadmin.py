@@ -24,7 +24,7 @@ def reload_modules(line, nick, self):
         lineparsers = 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
     if self.admincommands:
         admincommands = 'Loaded admin commands: %s' % self.admincommands.keys()
-    return commands, botalerts, lineparsers, admincommands
+    return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands
 reload_modules.admincommand = "reload"        
 
 def enable_command(line, nick, self):

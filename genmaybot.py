@@ -87,11 +87,9 @@ class TestBot(SingleServerIRCBot):
       try:
         if e.arguments()[5].find("r") != -1 and line != "":
             say = self.admincommands[command](line, nick, self)
-            if type(say) == tuple:
-                for line in say:
+            say = say.split("\n")
+            for line in say:
                     c.privmsg(nick, line)
-            else:   
-                c.privmsg(nick, say)
 
       except Exception as inst:
           print "admin exception: " + line + " : " + str(inst)

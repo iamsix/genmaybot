@@ -1,6 +1,6 @@
 import urllib2, xml.dom.minidom, botmodules.tools as tools
  
-def get_woot(nothing):
+def get_woot(nothing, nick):
     #display the current woot.com sale
       try:
           url = "http://www.woot.com/salerss.aspx"

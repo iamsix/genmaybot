@@ -5,16 +5,20 @@
 #  python genmaybot.py irc.0id.net "#chan" Nickname
 #
 
-#? look in to !seen functionality 
-###? Investigate flight tracker info
-#random descision maker?
-
-#KOMODO TEST COMMIT
+### look in to !seen functionality 
+# |- on_join, on_part, on_kick, on_nick, on_disconnect, on_quit
+# |  -use on_whoreply to confirm the users are who their nick is?
+# |-db-users_table: user UNQ | hostmask | last action | <user_aliases> | <user_knownhostmasks>
+# |-db-user_aliases: user UNQ | alternick
+# |-db-user_knownhostmasks: user UNQ | hostmask
+# (hostmask might be username | hostmask where username@hostmask 
+# 
+### random descision maker?
 
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
-import time, urllib2, asyncore, imp
-import sys, os, socket, re, datetime, ConfigParser, threading
+import time, asyncore, imp
+import sys, os, socket, datetime, ConfigParser, threading
 
 socket.setdefaulttimeout(5)
 
@@ -40,7 +44,9 @@ class TestBot(SingleServerIRCBot):
             print 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts))
         if self.lineparsers:
             print 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
-        
+        if self.admincommands:
+            print 'Loaded admin commands: %s' % self.admincommands.keys()
+
         config = ConfigParser.ConfigParser()
         config.readfp(open('genmaybot.cfg'))
         self.identpassword = config.get("irc","identpassword")
@@ -69,85 +75,28 @@ class TestBot(SingleServerIRCBot):
     def on_privmsg(self, c, e):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
+        command = line.split(" ")[0]
         
-        if line == "die" or \
-           line == "clearbans" or\
-           line == "reload" or\
-           line[0:6] == "enable" or\
-           line[0:7] == "disable" or\
-           line[0:8] == "cooldown" or\
-           line[0:6] == "status":
-                self.admincommand = line
-                c.who(from_nick) 
+        if command in self.admincommands and self.isbotadmin(from_nick):
+            self.admincommand = line
+            c.who(from_nick) 
                 
         self.process_line(c, line, from_nick, from_nick)
     
     def on_whoreply(self, c,e):
       nick = e.arguments()[4]
       line = self.admincommand
+      command = line.split(" ")[0]
       self.admincommand = ""
       try:
-        if e.arguments()[5].find("r") != -1 and line != "" and self.isbotadmin(nick):       
-            if line == "die":
-                print "got die command from " + nick 
-                sys.exit(0)
-            elif line == "clearbans":
-                print nick + "cleared bans"
-                self.spam ={}
-                c.privmsg(nick, "All bans cleared")
-            elif line == "reload":
-                self.loadmodules()
-                if self.bangcommands:
-                    c.privmsg(nick, 'Loaded command modules: %s' % self.bangcommands.keys())
-                else:
-                    c.privmsg(nick, "No command modules loaded!")
-                if self.botalerts:
-                    c.privmsg(nick, 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts)))
-                if self.lineparsers:
-                    c.privmsg(nick, 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers)))
-            elif line[0:6] == "enable":
-                if len(line.split(" ")) == 2:
-                    command = line.split(" ")[1]
-                    if command in self.commandaccesslist:
-                        del self.commandaccesslist[command]
-                        c.privmsg(nick, command + " enabled")
-                    else:
-                        c.privmsg(nick, command + " not disabled")
-            elif line[0:7] == "disable":
-                if len(line.split(" ")) == 2:
-                    command = line.split(" ")[1]
-                    self.commandaccesslist[command] = "Disable"
-                    c.privmsg(nick, command + " disabled")
-            elif line[0:8] == "cooldown":
-                if len(line.split(" ")) == 3:
-                    command = line.split(" ")[1]
-                    cooldown = line.split(" ")[2]
-                    if cooldown.isdigit():
-                        cooldown = int(cooldown)
-                        if cooldown == 0:
-                            if command in self.commandaccesslist:
-                                del self.commandaccesslist[command]
-                            c.privmsg(nick, command + " cooldown disabled")
-                        else:
-                            self.commandaccesslist[command] = cooldown
-                            self.commandcooldownlast[command] = time.time() - cooldown   
-                            c.privmsg(nick, command + " cooldown set to " + str(cooldown) + " seconds (set to 0 to disable)")
-                    else:
-                        c.privmsg(nick, "bad format: 'cooldown !wiki 30' (30 second cooldown on !wiki)")
-                else:
-                    c.privmsg(nick, "not enough args")
-            elif line[0:6] == "status":
-                if len(line.split(" ")) == 2:
-                    command = line.split(" ")[1]
-                    if command in self.commandaccesslist:
-                        c.privmsg(nick, command + " " + str(self.commandaccesslist[command]) + " (Seconds cooldown if it's a number)")
-                    else:
-                        c.privmsg(nick, command + " Enabled")
-                
-        else:
-            print "attempted admin command: " + line + " from " + nick
+        if e.arguments()[5].find("r") != -1 and line != "":
+            say = self.admincommands[command](line, nick, self)
+            say = say.split("\n")
+            for line in say:
+                    c.privmsg(nick, line)
+
       except Exception as inst:
-          print "admin exception: " + line + " : " + inst
+          print "admin exception: " + line + " : " + str(inst)
 
     def process_line(self, c, line, from_nick, linesource):
         if self.doingcommand:
@@ -163,7 +112,7 @@ class TestBot(SingleServerIRCBot):
           #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
             if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): return
-            saytmp.append(self.bangcommands[command](args))
+            saytmp.append(self.bangcommands[command](args, from_nick))
           else:        
             #lineparsers take the whole line and nick for EVERY line
             #ensure the lineparser function is short and simple. Try to not to add too many of them
@@ -184,7 +133,7 @@ class TestBot(SingleServerIRCBot):
                     say.append("bot not in targeted channel")
    
           if say:
-              if linesource == from_nick or self.isbotadmin(from_nick) or (not self.isspam(from_nick) and self.commandaccess(command)):
+              if linesource == from_nick or self.isbotadmin(from_nick) or (self.commandaccess(command) and not self.isspam(from_nick)):
                   for sayline in say:
                       sayline = sayline.replace("join", "join")
                       sayline = sayline.replace("come", "come") 
@@ -204,6 +153,7 @@ class TestBot(SingleServerIRCBot):
                filenames.append(os.path.join('./botmodules', fn))
                
         self.bangcommands = {}
+        self.admincommands = {}
         self.botalerts = []
         self.lineparsers = []
                
@@ -218,6 +168,9 @@ class TestBot(SingleServerIRCBot):
                     if hasattr(func, 'command'):
                         command = str(func.command)
                         self.bangcommands[command] = func
+                    elif hasattr(func, 'admincommand'):
+                        command = str(func.admincommand)
+                        self.admincommands[command] = func                      
                     elif hasattr(func, 'alert'):
                         self.botalerts.append(func)
                     elif hasattr(func, 'lineparser'):
@@ -227,6 +180,8 @@ class TestBot(SingleServerIRCBot):
         return nick in self.botadmins
    
     def commandaccess(self, command):
+        if "all" in self.commandaccesslist:
+            command = "all"
         if command in self.commandaccesslist:
             if type(self.commandaccesslist[command]) == int:
                 if time.time() - self.commandcooldownlast[command] < self.commandaccesslist[command]:
@@ -234,7 +189,7 @@ class TestBot(SingleServerIRCBot):
                 else:
                     self.commandcooldownlast[command] = time.time()
                     return True
-            elif self.commandaccesslist[command] == "Disable":
+            elif self.commandaccesslist[command] == "Disabled":
                 return False
         else: #if there's no entry it's assumed to be enabled
             return True

@@ -1,28 +1,28 @@
 import re, urllib2, hashlib, datetime, botmodules.tools as tools
-import botmodules.wiki as wikiurl, botmodules.imdb as imdburl
 
-try:
-    import MySQLdb
-except ImportError:
-    pass
+try: import MySQLdb
+except ImportError: pass
+try: import botmodules.wiki as wikiurl
+except ImportError: pass
+try: import botmodules.imdb as imdburl
+except ImportError: pass
 
 def url_parser(line, nick):
     url = re.search("(?P<url>https?://[^\s]+)", line)
     if url:
-        return url_posted(url.group(1))
+        return url_posted(url.group(1), nick)
     else:
         return ""
 url_parser.lineparser = True
 
-def url_posted(url):
+def url_posted(url, nick):
     #checks if the URL is a dupe (if mysql is enabled)
     #detects if a wikipedia or imdb url is posted and does the appropriate command for it
 
   try:
 
     repost=""
-    days = ""        
-    conn = None
+    days = ""
     
     if tools.config.sqlmode > 0:
         urlhash = hashlib.sha224(url).hexdigest()
@@ -64,11 +64,9 @@ def url_posted(url):
                   plural = "s"
                 days = " (posted %s hour%s ago)" % (str(hrs), plural)
             
-    
-    
-    title = ""        
-    wiki = wikiurl.get_wiki(url, True)
-    imdb = imdburl.get_imdb(url, True)
+    title = "" 
+    if wikiurl: wiki = wikiurl.get_wiki(url, nick, True)
+    if imdburl: imdb = imdburl.get_imdb(url, nick, True)
     if wiki:
         title = wiki
     elif imdb:
@@ -117,9 +115,7 @@ def get_title(url):
                              ('Range',"bytes=0-" + str(readlength))]
 
         pagetmp = opener.open(url)
-        
 
-            
         page = pagetmp.read(readlength)
         opener.close()
 
@@ -146,7 +142,7 @@ def get_title(url):
         
     return title
 
-def last_link(nothing):
+def last_link(nothing, nick):
     #displays last link posted (requires mysql)
     if tools.config.sqlmode > 0:
       conn = MySQLdb.connect (host = "localhost",
@@ -160,7 +156,8 @@ def last_link(nothing):
         url = result[0]
 
       conn.close()
-      return "Title: " + get_title(url) + " [ " + url + " ]"
+      return "[ " + url + " ] " + get_title(url)
     else:
       return ""
 last_link.command = "!lastlink"
+

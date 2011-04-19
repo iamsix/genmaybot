@@ -1,7 +1,7 @@
 from BeautifulSoup import BeautifulSoup
 import re, urllib2, botmodules.tools as tools
 
-def get_imdb(searchterm, urlposted=False):  
+def get_imdb(searchterm, nick, urlposted=False):  
     #reads title, rating, and movie description of movie titles 
      if urlposted:
          url = searchterm
@@ -72,5 +72,3 @@ def get_imdb(searchterm, urlposted=False):
       
      return title.encode('utf-8', 'ignore')
 get_imdb.command = "!imdb"
- 
- 

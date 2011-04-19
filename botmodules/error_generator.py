@@ -4,8 +4,18 @@ def error_generator(nothing, nick):
     firstword = firstwords[random.randint(0, len(firstwords) - 1)]
     secondword = secondwords[random.randint(0, len(secondwords) - 1)]
     thirdword = secondwords[random.randint(0, len(thirdwords) - 1)]
-    fourthword = fourthwords[random.randint(0, 4)]
-    return "%s %s %s %s" % (firstword, secondword, thirdword, fourthword)
+    rand5 = random.randint(0,4)
+    fourthword = fourthwords[rand5]
+    heading = ""
+    if rand5 == 0:
+        heading = "Error: "
+    if rand5 == 1:
+        heading = "Problem: "
+    if rand5 == 2:
+        heading = "Warning: "
+    if rand5 == 3:
+        heading = "Signal: "
+    return "%s%s %s %s %s" % (heading, firstword, secondword, thirdword, fourthword)
     
 error_generator.command = "!error"
 

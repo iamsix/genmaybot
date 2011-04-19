@@ -1,4 +1,4 @@
-import sys
+import sys, time
 
 def kill_bot(line, nick, self):
     print "got die command from " + nick 

@@ -77,9 +77,7 @@ def command_status(line, nick, self, c):
 command_status.admincommand = "status"
 
 def join_chan(line, nick, self, c):
-    print len(line.split(" "))
     if len(line.split(" ")) == 2:
-        print "cats"
         chan = line.split(" ")[1]
         if chan[0:1] != "#":
             return "not a valid channel name"

@@ -6,11 +6,12 @@
 #
 
 ### look in to !seen functionality 
-# |- on_join, on_part, on_kick, on_nick, on_disconnect, on_quit
-# |  -use on_whoreply to confirm the users are who their nick is?
-# |-db-users_table: user UNQ | hostmask | last action | <user_aliases> | <user_knownhostmasks>
-# |-db-user_aliases: user UNQ | alternick
-# |-db-user_knownhostmasks: user UNQ | hostmask
+# |- on_join, on_part, on_kick, on_nick, on_quit, on_disconnect(?)
+# |---use on_whoreply to confirm the users are who their nick is?
+# |---check who is in the channel when the bot joins?
+# | db: users_table: user UNQ | hostmask | last action | <user_aliases> | <user_knownhostmasks>
+# | db: user_aliases: user UNQ | alternick
+# | db: user_knownhostmasks: user UNQ | hostmask
 # (hostmask might be username | hostmask where username@hostmask 
 # 
 ### random descision maker?
@@ -54,11 +55,17 @@ class TestBot(SingleServerIRCBot):
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
-    
-    def on_kick(self, c, e):
-        if e.arguments()[0][0:6] == c.get_nickname():
-           c.join(self.channel)
 
+    def on_kick(self, c, e):
+        #attempt to rejoin any channel we're kicked from
+        if e.arguments()[0][0:6] == c.get_nickname():
+           c.join(e.target()) 
+
+    def on_disconnect(self, c, e):
+        print "DISCONNECT: " + str(e.arguments())
+        print "Target: " + e.target()
+        print "Source: " + e.source()
+        
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
         c.join(self.channel)       
@@ -90,7 +97,7 @@ class TestBot(SingleServerIRCBot):
       self.admincommand = ""
       try:
         if e.arguments()[5].find("r") != -1 and line != "":
-            say = self.admincommands[command](line, nick, self)
+            say = self.admincommands[command](line, nick, self, c)
             say = say.split("\n")
             for line in say:
                     c.privmsg(nick, line)

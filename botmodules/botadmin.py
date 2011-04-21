@@ -1,7 +1,11 @@
 import sys, time
 
 def kill_bot(line, nick, self, c):
-    print "got die command from " + nick 
+    print "got die command from " + nick
+    message = ""
+    if line[4:]:
+        message = line[4:]
+    c.disconnect(message)
     sys.exit(0)
 kill_bot.admincommand = "die"    
 
@@ -89,12 +93,15 @@ def join_chan(line, nick, self, c):
 join_chan.admincommand = "join"
 
 def part_chan(line, nick, self, c):
-    if len(line.split(" ")) == 2:
+    if len(line.split(" ")) >= 2:
         chan = line.split(" ")[1]
+        message = ""
+        if len(line.split(" ")) > 2:
+            message = " ".join(line.split(" ")[2:])
         if chan[0:1] != "#":
             return "not a valid channel name: Part #chan part message here"
         if chan in self.channels:
-            c.part(chan)
+            c.part(chan, message)
             return "Left " + chan
         else:
             return "Not in " + chan

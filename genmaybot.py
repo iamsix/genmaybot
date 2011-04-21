@@ -49,7 +49,13 @@ class TestBot(SingleServerIRCBot):
             print 'Loaded admin commands: %s' % self.admincommands.keys()
 
         config = ConfigParser.ConfigParser()
-        config.readfp(open('genmaybot.cfg'))
+        try: 
+            cfgfile = open('genmaybot.cfg')
+        except IOError:
+            print "You need to create a .cfg file using the example"
+            sys.exit(1)
+            
+        config.readfp(cfgfile)
         self.identpassword = config.get("irc","identpassword")
         self.botadmins = config.get("irc","botadmins").split(",")
         

@@ -1,0 +1,14 @@
+[irc]
+identpassword=Password
+botadmins=nick1,nick2,etc
+
+[mysql]
+sqlusername=Pythonbot
+sqlpassword=Password
+#mysqlmode 0 = Off, 1=Read Only, 2 = Read/write
+mysqlmode=0
+
+
+[APIkeys]
+wolframAPIkey=#A#A#
+fmlAPIkey=#A#A#

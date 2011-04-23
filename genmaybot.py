@@ -128,7 +128,7 @@ class TestBot(SingleServerIRCBot):
               self.doingcommand = False
               return
             if command=="!help":  ##the help command needs access to the main bot object
-              saytmp.append(self.bangcommands[command](self))              
+              saytmp.append(self.bangcommands[command](args, self))              
             else:
               saytmp.append(self.bangcommands[command](args, from_nick))
           else:        

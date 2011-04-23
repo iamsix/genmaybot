@@ -13,6 +13,7 @@ def set_location(arg, nick):
     c.close()
 
 set_location.command = "!setlocation"
+set_location.helptext = "Usage: !setlocation <location>\nExample: !setlocation hell, mi\nSaves your geographical location in the bot.\nUseful for the location based commands (!sunset, !sunrise, !w).\nOnce your location is saved you can use those commands without an argument."
     
 def get_location(nick):
     conn = sqlite3.connect('userlocations.sqlite')

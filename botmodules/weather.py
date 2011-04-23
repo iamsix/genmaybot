@@ -52,7 +52,8 @@ def get_weather(zip, nick):
    return chanmsg
 
 get_weather.command = "!w"
-   
+get_weather.helptext = "Usage: !w <location>\nExample: !w hell, mi\nShows weather info from google.com.\nUse !setlocation <location> to save your location"
+  
 def get_weather2(zip, nick):
     #wunderground weather of place specified in 'zip'
     if zip == "" and user:
@@ -83,3 +84,4 @@ def get_weather2(zip, nick):
         return chanmsg
 
 get_weather2.command = "!wu"
+get_weather2.helptext = "Usage: !wu <location>\nExample: !wu hell, mi\nShows weather info from wunderground.com.\nUse !setlocation <location> to save your location"

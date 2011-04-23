@@ -18,6 +18,7 @@ def error_generator(nothing, nick):
     return "%s%s %s %s %s" % (heading, firstword, secondword, thirdword, fourthword)
     
 error_generator.command = "!error"
+error_generator.helptext = "Usage: !error\nGenerates a random scary-sounding error message"
 
 firstwords = ["Temporary", "Intermittant", "Partial", "Redundant", "Total", 
                 "Multiplexed", "Inherent", "Duplicated", "Dual-Homed", "Synchronous", 

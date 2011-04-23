@@ -30,3 +30,4 @@ def get_fml(nothing, nick):
     print "!fml " + str(inst)
     return
 get_fml.command = "!fml"
+get_fml.helptext = "Usage: !fml\nShows a random entry from fmylife.com"

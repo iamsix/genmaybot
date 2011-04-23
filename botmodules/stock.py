@@ -48,3 +48,4 @@ def get_stock_quote(stock, nick):
        
        return "[%s] %s    %s %s | Cap: %s | Volume (Avg): %s (%s)" % (stock,name.strip(),price,change,mkt_cap.strip(),volume,avg_volume)
 get_stock_quote.command = "!stock"
+get_stock_quote.helptext = "Usage: !stock <ticker symbol>\nExample: !stock GOOG\nShows a quote for the given ticker symbol"

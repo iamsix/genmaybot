@@ -57,4 +57,5 @@ def get_wiki(searchterm, nick, urlposted=False):
 
   return title
 get_wiki.command = "!wiki"
+get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nShows the first couple of sentences of a wikipedia entry for the given search term"
 

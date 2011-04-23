@@ -57,4 +57,4 @@ def advocate_beer(query, nick):
     
     return response_string
 advocate_beer.command = "!beer"
-advocate_beer.helptext = "Finds a given beer on beeradvocate.com and returns ratings and beer info"
+advocate_beer.helptext = "Usage: !beer <beer name>\nExample: !beer pliny the elder\nFinds a given beer on beeradvocate.com and returns user ratings and beer info"

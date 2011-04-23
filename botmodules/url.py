@@ -160,4 +160,5 @@ def last_link(nothing, nick):
     else:
       return ""
 last_link.command = "!lastlink"
+last_link.helptext = "Usage: !lastlink\nShows the last URL that was posted in the channel"
 

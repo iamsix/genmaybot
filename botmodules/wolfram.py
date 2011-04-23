@@ -27,4 +27,4 @@ def get_wolfram(input, nick):
         except Exception as inst:
             print "!wolfram " + input + " : " + str(inst)
 get_wolfram.command = "!wolfram"
-get_wolfram.helptext = "Performs a query through Wolfram|Alpha and returns the first result"
+get_wolfram.helptext = "Usage: !wolfram <query>\nExample: !wolfram population of New York City\nPerforms a query through Wolfram|Alpha and returns the first result"

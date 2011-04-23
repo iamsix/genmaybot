@@ -9,7 +9,7 @@ def get_urbandictionary(searchterm, nick):
     if searchterm=="wotd":
       return get_urbandictionary_wotd()
     
-    if searchterm== "random":
+    if searchterm== "":
       url = "http://www.urbandictionary.com/random.php"
     
     try:
@@ -57,7 +57,8 @@ def get_urbandictionary(searchterm, nick):
       print "!ud %s went wrong" % searchterm
       return
 
-get_urbandictionary.command = "!ud" 
+get_urbandictionary.command = "!ud"
+get_urbandictionary.helptext = "Usage: !ud <word or phrase>\nExample: !ud hella\nShows urbandictionary definition of a word or phrase.\n!ud alone returns a random entry\n!ud wotd returns the current word of the day"
 
 
 def get_urbandictionary_wotd():

@@ -15,4 +15,4 @@ def get_woot(nothing, nick):
       except:
           pass
 get_woot.command = "!woot"
-get_woot.helptext = "shows today's deal from woot.com"
+get_woot.helptext = "Usage: !woot\nshows today's deal from woot.com"

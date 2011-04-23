@@ -72,4 +72,4 @@ def get_imdb(searchterm, nick, urlposted=False):
       
      return title.encode('utf-8', 'ignore')
 get_imdb.command = "!imdb"
-get_imdb.helptext = "Looks up a given movie title on IMDB"
+get_imdb.helptext = "Usage: !imdb <movie title>\nExample: !imdb the matrix\nLooks up a given movie title on IMDB and shows the movie rating and a synopsis"

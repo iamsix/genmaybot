@@ -9,7 +9,7 @@ def get_quake(nothing, nick):
       except:
         pass
 get_quake.command = "!q"
-
+get_quake.helptext = "Usage: !q\nShows the latest earthquake larger than M2.5 and how long ago it occured"
 
 def quake_alert():
     #returns a new get_quake_data only if it hasn't returned it before - for use in alerts

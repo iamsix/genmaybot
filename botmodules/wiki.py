@@ -7,13 +7,14 @@ def get_wiki(searchterm, nick, urlposted=False):
   if urlposted:
       url = searchterm
   else:
-      url = tools.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
+      if searchterm == "":
+          url = "http://en.wikipedia.org/wiki/Special:Random"
+      else:
+          url = tools.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
   
   title = "" 
   
-  if not url:
-    pass
-  elif url.find("wikipedia.org/wiki/File:") != -1:
+  if url and url.find("wikipedia.org/wiki/File:") != -1:
     
     file_title=get_wiki_file_description(url)
     
@@ -21,7 +22,7 @@ def get_wiki(searchterm, nick, urlposted=False):
     else: return file_title
     
     
-  if url.find("wikipedia.org/wiki/") != -1:
+  if url and url.find("wikipedia.org/wiki/") != -1:
 
     try:
       opener = urllib2.build_opener()

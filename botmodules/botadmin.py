@@ -18,19 +18,8 @@ def clear_bans(line, nick, self, c):
 clear_bans.admincommand = "clearbans"
 
 def reload_modules(line, nick, self, c):
-    self.loadmodules()
-
-    if self.bangcommands:
-        commands = 'Loaded command modules: %s' % self.bangcommands.keys()
-    else:
-        commands = "No command modules loaded!"
-    if self.botalerts:
-        botalerts = 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts))
-    if self.lineparsers:
-        lineparsers = 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
-    if self.admincommands:
-        admincommands = 'Loaded admin commands: %s' % self.admincommands.keys()
-    return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands
+    return self.loadmodules()
+    
 reload_modules.admincommand = "reload"        
 
 def enable_command(line, nick, self, c):

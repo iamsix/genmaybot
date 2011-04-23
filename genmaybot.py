@@ -6,7 +6,7 @@
 #
 
 ### look in to !seen functionality 
-# |- on_join, on_part, on_kick, on_nick, on_quit, on_disconnect(?)
+# |- on_join, on_part, on_kick, on_nick, on_quit
 # |---use on_whoreply to confirm the users are who their nick is?
 # |---check who is in the channel when the bot joins?
 # | db: users_table: user UNQ | hostmask | last action | <user_aliases> | <user_knownhostmasks>
@@ -34,20 +34,7 @@ class TestBot(SingleServerIRCBot):
         self.commandcooldownlast = {}
 
         self.spam ={}
-
-        self.loadmodules()
         
-        if self.bangcommands:
-            print 'Loaded command modules: %s' % self.bangcommands.keys()
-        else:
-            print "No command modules loaded!"
-        if self.botalerts:
-            print 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts))
-        if self.lineparsers:
-            print 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
-        if self.admincommands:
-            print 'Loaded admin commands: %s' % self.admincommands.keys()
-
         config = ConfigParser.ConfigParser()
         try: 
             cfgfile = open('genmaybot.cfg')
@@ -58,6 +45,8 @@ class TestBot(SingleServerIRCBot):
         config.readfp(cfgfile)
         self.identpassword = config.get("irc","identpassword")
         self.botadmins = config.get("irc","botadmins").split(",")
+
+        print self.loadmodules()
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -69,8 +58,6 @@ class TestBot(SingleServerIRCBot):
 
     def on_disconnect(self, c, e):
         print "DISCONNECT: " + str(e.arguments())
-        print "Target: " + e.target()
-        print "Source: " + e.source()
         
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
@@ -198,7 +185,19 @@ class TestBot(SingleServerIRCBot):
                         self.botalerts.append(func)
                     elif hasattr(func, 'lineparser'):
                         self.lineparsers.append(func) 
-                 
+                        
+        if self.bangcommands:
+            commands = 'Loaded command modules: %s' % self.bangcommands.keys()
+        else:
+            commands = "No command modules loaded!"
+        if self.botalerts:
+            botalerts = 'Loaded alerts: %s' % ', '.join((command.__name__ for command in self.botalerts))
+        if self.lineparsers:
+            lineparsers = 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
+        if self.admincommands:
+            admincommands = 'Loaded admin commands: %s' % self.admincommands.keys()
+        return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands   
+    
     def isbotadmin(self, nick):
         return nick in self.botadmins
    

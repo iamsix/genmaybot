@@ -11,6 +11,9 @@ def get_wiki(searchterm, nick, urlposted=False):
   title = ""    
   if not url:
       pass
+  elif url.find("wikipedia/wiki/File:") != -1:
+    return get_wiki_file_description(url)
+    
   elif url.find("wikipedia.org/wiki/") != -1:
 
     try:
@@ -59,3 +62,25 @@ def get_wiki(searchterm, nick, urlposted=False):
 get_wiki.command = "!wiki"
 get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nShows the first couple of sentences of a wikipedia entry for the given search term"
 
+
+def get_wiki_file_description(url):
+  try:
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+    pagetmp = opener.open(url)
+    page = pagetmp.read()
+    opener.close()
+
+    page = BeautifulSoup(page)
+    
+    desc = page.findAll("div",attrs={"class":"description en"})[0].contents[1].string
+    title = title.encode("utf-8", 'ignore')
+    title = tools.decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
+    title = title[0:420]
+    if title.rfind(".")!=-1:
+      title = title[0:title.rfind(".")+1]
+      
+    return desc.decode('utf-8')
+    
+  except:
+      return

@@ -3,18 +3,25 @@ import re, urllib2, botmodules.tools as tools
 
 def get_wiki(searchterm, nick, urlposted=False):
     #read the first paragraph of a wikipedia article
+
   if urlposted:
       url = searchterm
   else:
       url = tools.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
   
-  title = ""    
+  title = "" 
+  
   if not url:
-      pass
-  elif url.find("wikipedia/wiki/File:") != -1:
-    return get_wiki_file_description(url)
+    pass
+  elif url.find("wikipedia.org/wiki/File:") != -1:
     
-  elif url.find("wikipedia.org/wiki/") != -1:
+    file_title=get_wiki_file_description(url)
+    
+    if not file_title: pass
+    else: return file_title
+    
+    
+  if url.find("wikipedia.org/wiki/") != -1:
 
     try:
       opener = urllib2.build_opener()
@@ -73,14 +80,37 @@ def get_wiki_file_description(url):
 
     page = BeautifulSoup(page)
     
-    desc = page.findAll("div",attrs={"class":"description en"})[0].contents[1].string
+    try:
+      desc = page.findAll("div",attrs={"class":"description en"})[0].getText(separator=" ")
+      #print "hit 1st case"
+    except:
+      try:
+        desc = page.find("th",attrs={"id" : "fileinfotpl_desc"}).findNextSibling("td").find("p").getText(separator=" ")
+       #print "hit 2nd case"
+      except:
+        try:
+          desc = page.find("th",attrs={"id" : "fileinfotpl_desc"}).findNextSibling("td").find("div").getText(separator=" ")   
+          #print "hit 3rd case"
+        except:
+          try:
+            desc = page.find("div",attrs={"id":"shared-image-desc"}).next.getText(separator=" ")
+            #print "hit 4th case"
+          except:
+            print "Couldn't find description for file %s" % url
+            return False
+      
+    
     desc = desc.encode("utf-8", 'ignore')
+    desc = desc.replace("English:","")
     desc = tools.decode_htmlentities(desc.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
     desc = desc[0:420]
     if desc.rfind(".")!=-1:
       desc = desc[0:desc.rfind(".")+1]
-      
-    return desc.decode('utf-8')
     
+    #print desc  
+    return desc.strip()
+      
   except:
-      return
+    print "Finding a file description failed miserably. The URL probably didn't even load."  
+    return
+    

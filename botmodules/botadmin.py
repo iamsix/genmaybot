@@ -1,5 +1,7 @@
 import sys, time
 
+#test commit
+
 def kill_bot(line, nick, self, c):
     print "got die command from " + nick
     message = ""

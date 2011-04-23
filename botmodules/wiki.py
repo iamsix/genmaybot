@@ -74,11 +74,11 @@ def get_wiki_file_description(url):
     page = BeautifulSoup(page)
     
     desc = page.findAll("div",attrs={"class":"description en"})[0].contents[1].string
-    title = title.encode("utf-8", 'ignore')
-    title = tools.decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
-    title = title[0:420]
-    if title.rfind(".")!=-1:
-      title = title[0:title.rfind(".")+1]
+    desc = desc.encode("utf-8", 'ignore')
+    desc = tools.decode_htmlentities(desc.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
+    desc = desc[0:420]
+    if desc.rfind(".")!=-1:
+      desc = desc[0:desc.rfind(".")+1]
       
     return desc.decode('utf-8')
     

@@ -124,14 +124,19 @@ class TestBot(SingleServerIRCBot):
           
           #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
-            if linesource in self.channels and hasattr(self.bangcommands[command], 'pivateonly'): return
-            saytmp.append(self.bangcommands[command](args, from_nick))
+            if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
+              self.doingcommand = False
+              return
+            if command=="!help":  ##the help command needs access to the main bot object
+              saytmp.append(self.bangcommands[command](self))              
+            else:
+              saytmp.append(self.bangcommands[command](args, from_nick))
           else:        
             #lineparsers take the whole line and nick for EVERY line
             #ensure the lineparser function is short and simple. Try to not to add too many of them
             #Multiple lineparsers can output data, leading to multiple 'say' lines
             for command in self.lineparsers:
-                if linesource in self.channels and hasattr(command, 'pivateonly'): continue
+                if linesource in self.channels and hasattr(command, 'privateonly'): continue
                 saytmp.append(command(line, from_nick))
         
           for sayline in saytmp:
@@ -150,7 +155,12 @@ class TestBot(SingleServerIRCBot):
                   for sayline in say:
                       sayline = sayline.replace("join", "join")
                       sayline = sayline.replace("come", "come") 
-                      c.privmsg(linesource, sayline[0:600])       
+                      
+                      if command=="!help":
+                          for line in sayline.split("\n"):
+                            c.privmsg(linesource, line)
+                      else:
+                            c.privmsg(linesource, sayline[0:600])       
                       
         except Exception as inst: 
           print line + " : " + str(inst)

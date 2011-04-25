@@ -14,7 +14,7 @@ def google_sunset(self, e):
     e.output = google_sun(e.input, "Sunset", e.nick)
     return e
 google_sunset.command = "!sunset"
-google_sunset.helptext = "Usage: !sunset <location>\nExample: !sunrise las vegas, nv\nShows the time of sunrise at a given location\nUse !setlocation <location> to save your location\nThen, using !sunrise without arguments will always show sunset at your location"
+google_sunset.helptext = "Usage: !sunset <location>\nExample: !sunset las vegas, nv\nShows the time of sunset at a given location\nUse !setlocation <location> to save your location\nThen, using !sunset without arguments will always show sunset at your location"
 
 def google_sun(term, sun, nick):
     if term == "" and user:

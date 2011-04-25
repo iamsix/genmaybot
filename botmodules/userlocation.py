@@ -1,13 +1,14 @@
 import sqlite3
 
-def set_location(arg, nick):
+def set_location(self, e):
+    
     conn = sqlite3.connect('userlocations.sqlite')
     c = conn.cursor()
     result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='userlocations';").fetchone()
     if not result:
         c.execute('''create table userlocations(user text UNIQUE ON CONFLICT REPLACE, location text)''')
         
-    c.execute("""insert into userlocations values (?,?)""", (nick, arg))
+    c.execute("""insert into userlocations values (?,?)""", (e.nick, e.input))
     
     conn.commit()
     c.close()

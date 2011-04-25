@@ -24,7 +24,8 @@ import sys, os, socket, datetime, ConfigParser, threading
 socket.setdefaulttimeout(5)
 
 class TestBot(SingleServerIRCBot):
-  
+    
+
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
@@ -58,11 +59,13 @@ class TestBot(SingleServerIRCBot):
 
     def on_disconnect(self, c, e):
         print "DISCONNECT: " + str(e.arguments())
+        sys.exit(0)
         
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
         c.join(self.channel)       
         self.alerts(c)  
+        self.irccontext = c
             
     def on_invite(self, c, e):
         c.join(e.arguments()[0])
@@ -105,56 +108,48 @@ class TestBot(SingleServerIRCBot):
         command = line.split(" ")[0]
         args = line[len(command)+1:].strip()
         
+        e = None
+        etmp = []
+                
         try:
-          say = []  
-          saytmp = []
-          
           #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
+            e = self.botEvent(linesource, from_nick, args)
             if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
               self.doingcommand = False
               return
-            if command=="!help":  ##the help command needs access to the main bot object
-              saytmp.append(self.bangcommands[command](args, self))              
-            else:
-              saytmp.append(self.bangcommands[command](args, from_nick))
-          else:        
+            etmp.append(self.bangcommands[command](self, e))
+          
+          else:
             #lineparsers take the whole line and nick for EVERY line
+            e = self.botEvent(linesource, from_nick, line)
             #ensure the lineparser function is short and simple. Try to not to add too many of them
             #Multiple lineparsers can output data, leading to multiple 'say' lines
+            templine = ""
             for command in self.lineparsers:
                 if linesource in self.channels and hasattr(command, 'privateonly'): continue
-                saytmp.append(command(line, from_nick))
-        
-          for sayline in saytmp:
-            if sayline:
-               if type(sayline) != tuple:
-                    say.append(sayline)
-               else:
-                 if sayline[1] in self.channels:
-                    linesource = sayline[1]
-                    say.append(sayline[0])
-                 else:
-                    say.append("bot not in targeted channel")
-   
-          if say:
-              if linesource == from_nick or self.isbotadmin(from_nick) or (self.commandaccess(command) and not self.isspam(from_nick)):
-                  for sayline in say:
-                      sayline = sayline.replace("join", "join")
-                      sayline = sayline.replace("come", "come") 
-                      
-                      if command=="!help":
-                          for line in sayline.split("\n"):
-                            c.privmsg(linesource, line)
-                      else:
-                            c.privmsg(linesource, sayline[0:600])       
-                      
+                etmp.append(command(self, e))
+           
+          for e in etmp:      
+             if e and (e.source == e.nick or self.isbotadmin(e.nick) or (self.commandaccess(command) and not self.isspam(e.nick))):
+                self.botSay(e)
+                                            
         except Exception as inst: 
           print line + " : " + str(inst)
           pass
 
         self.doingcommand = False
         return
+    
+    def botSay(self, e):
+      try:
+        if e.output:
+          for line in e.output.split("\n"):
+              line = line.replace("join", "join")
+              line = line.replace("come", "come") 
+              self.irccontext.privmsg(e.source, line)
+      except Exception as inst:
+         print "bot failed trying to say " + str(e) + "\n" + str(inst) 
 
     def loadmodules(self):
         filenames = []
@@ -257,6 +252,41 @@ class TestBot(SingleServerIRCBot):
       
       t=threading.Timer(60,self.alerts, [context])
       t.start()
+      
+    class botEvent:
+        def __init__(self, source, nick, input, output=""):
+            self._source = source
+            self._nick = nick
+            self._input = input
+            self._output = output
+            
+        @property
+        def source(self):
+            return self._source
+        @source.setter
+        def source(self, value):
+            self._source = value
+        
+        @property
+        def nick(self):
+            return self._nick
+        @nick.setter
+        def nick(self, value):
+            self._nick = value
+        
+        @property
+        def input(self):
+            return self._input
+        @input.setter
+        def input(self, value):
+            self._input = value
+        
+        @property
+        def output(self):
+            return self._output
+        @output.setter
+        def output(self, value):
+            self._output = value
   
   
 def main():
@@ -284,4 +314,4 @@ def main():
 if __name__ == "__main__":
     main()
     
-    
+

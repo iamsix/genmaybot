@@ -1,6 +1,6 @@
 import random
 
-def error_generator(nothing, nick):
+def error_generator(self, e):
     firstword = firstwords[random.randint(0, len(firstwords) - 1)]
     secondword = secondwords[random.randint(0, len(secondwords) - 1)]
     thirdword = secondwords[random.randint(0, len(thirdwords) - 1)]
@@ -15,7 +15,8 @@ def error_generator(nothing, nick):
         heading = "Warning: "
     if rand5 == 3:
         heading = "Signal: "
-    return "%s%s %s %s %s" % (heading, firstword, secondword, thirdword, fourthword)
+    e.output = "%s%s %s %s %s" % (heading, firstword, secondword, thirdword, fourthword) 
+    return e
     
 error_generator.command = "!error"
 error_generator.helptext = "Usage: !error\nGenerates a random scary-sounding error message"
@@ -52,3 +53,4 @@ thirdwords = ["Interruption", "Destabilisation", "Destruction",
                 "Lockout"]
 
 fourthwords = ["Error", "Problem", "Warning", "Signal", "Flag"]
+

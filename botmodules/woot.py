@@ -1,6 +1,6 @@
 import urllib2, xml.dom.minidom, botmodules.tools as tools
  
-def get_woot(nothing, nick):
+def get_woot(self, e):
     #display the current woot.com sale
       try:
           url = "http://www.woot.com/salerss.aspx"
@@ -11,7 +11,8 @@ def get_woot(nothing, nick):
       
           price = dom.getElementsByTagName("woot:price")[0].childNodes[0].data
       
-          return product + " [" + price + "]"
+          e.output = product + " [" + price + "]"
+          return e
       except:
           pass
 get_woot.command = "!woot"

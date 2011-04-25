@@ -1,8 +1,9 @@
 from BeautifulSoup import BeautifulSoup
 import re, urllib2, botmodules.tools as tools
 
-def get_imdb(searchterm, nick, urlposted=False):  
+def get_imdb(self, e, urlposted=False):  
     #reads title, rating, and movie description of movie titles 
+     searchterm = e.input
      if urlposted:
          url = searchterm
      else:
@@ -52,8 +53,13 @@ def get_imdb(searchterm, nick, urlposted=False):
          title = movietitle + rating + summary       
          if not urlposted:
              title = title + " [ %s ]" % url
+             
+         e.output = title.encode('utf-8', 'ignore')
+         
+         return e
        except Exception as inst: 
          print "!imdb " + searchterm + ": " + str(inst)
+         return None
          
 #        IMDBAPI CODE
 #        -not in use because it's unreliable
@@ -70,6 +76,6 @@ def get_imdb(searchterm, nick, urlposted=False):
 #           except:
 #              pass
       
-     return title.encode('utf-8', 'ignore')
 get_imdb.command = "!imdb"
 get_imdb.helptext = "Usage: !imdb <movie title>\nExample: !imdb the matrix\nLooks up a given movie title on IMDB and shows the movie rating and a synopsis"
+

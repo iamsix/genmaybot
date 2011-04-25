@@ -7,15 +7,17 @@ except ImportError: pass
 try: import botmodules.imdb as imdburl
 except ImportError: pass
 
-def url_parser(line, nick):
-    url = re.search("(?P<url>https?://[^\s]+)", line)
+def url_parser(self, e):
+    url = re.search("(?P<url>https?://[^\s]+)", e.input)
     if url:
-        return url_posted(url.group(1), nick)
+        e.input = url.group(1)
+        return url_posted(self, e)
     else:
-        return ""
+        return None
 url_parser.lineparser = True
 
-def url_posted(url, nick):
+def url_posted(self, e):
+  url = e.input
     #checks if the URL is a dupe (if mysql is enabled)
     #detects if a wikipedia or imdb url is posted and does the appropriate command for it
 
@@ -65,12 +67,12 @@ def url_posted(url, nick):
                 days = " (posted %s hour%s ago)" % (str(hrs), plural)
             
     title = "" 
-    if wikiurl: wiki = wikiurl.get_wiki(url, nick, True)
-    if imdburl: imdb = imdburl.get_imdb(url, nick, True)
-    if wiki:
-        title = wiki
-    elif imdb:
-        title = imdb
+    if wikiurl: wiki = wikiurl.get_wiki(self, e, True)
+    if imdburl: imdb = imdburl.get_imdb(self, e, True)
+    if wiki and wiki.output:
+        title = wiki.output
+    elif imdb and imdb.output:
+        title = imdb.output
     else:
         if url.find("imgur.com") != -1:
           imgurid =  url[url.rfind('/')+1:url.rfind('/')+6]
@@ -93,8 +95,9 @@ def url_posted(url, nick):
         cursor.execute(query)
     if tools.config.sqlmode > 0:
         conn.close()
-    
-    return titler
+        
+    e.output = titler
+    return e
 
   
   except Exception as inst: 
@@ -142,7 +145,7 @@ def get_title(url):
         
     return title
 
-def last_link(nothing, nick):
+def last_link(self, e):
     #displays last link posted (requires mysql)
     if tools.config.sqlmode > 0:
       conn = MySQLdb.connect (host = "localhost",
@@ -156,9 +159,10 @@ def last_link(nothing, nick):
         url = result[0]
 
       conn.close()
-      return "[ " + url + " ] " + get_title(url)
+      e.output = "[ " + url + " ] " + get_title(url)
+      return e
     else:
-      return ""
+      return None
 last_link.command = "!lastlink"
 last_link.helptext = "Usage: !lastlink\nShows the last URL that was posted in the channel"
 

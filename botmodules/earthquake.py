@@ -1,13 +1,14 @@
 import urllib2, xml.dom.minidom, datetime
 
 
-def get_quake(nothing, nick):
+def get_quake(self, e):
     #returns the latest earthquake on USGS
       try:       
-        qtitle,updated,ago = get_quake_data()        
-        return "Latest Earthquake: %s (%s minutes ago) " % (qtitle, ago)
+        qtitle,updated,ago = get_quake_data()   
+        e.output = "Latest Earthquake: %s (%s minutes ago) " % (qtitle, ago)     
+        return e
       except:
-        pass
+        return None
 get_quake.command = "!q"
 get_quake.helptext = "Usage: !q\nShows the latest earthquake larger than M2.5 and how long ago it occured"
 

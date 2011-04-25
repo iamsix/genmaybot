@@ -3,11 +3,13 @@ import urllib2, botmodules.tools as tools
 
 
 
-def get_urbandictionary(searchterm, nick):
+def get_urbandictionary(self, e):
+    searchterm = e.input
     url = "http://www.urbandictionary.com/define.php?term=%s" % urllib2.quote(searchterm)
     
     if searchterm=="wotd":
-      return get_urbandictionary_wotd()
+      e.output = get_urbandictionary_wotd()
+      return e
     
     if searchterm== "":
       url = "http://www.urbandictionary.com/random.php"
@@ -50,8 +52,9 @@ def get_urbandictionary(searchterm, nick):
       
       first_definition = (first_word + ": " + first_definition.decode('utf-8') + " [ %s ]" % tools.shorten_url(url)).encode('utf-8', 'ignore')
       #print first_definition
+      e.output = first_definition
 
-      return first_definition
+      return e
       
     except:
       print "!ud %s went wrong" % searchterm

@@ -4,7 +4,7 @@ try:
 except:
     locale.setlocale(locale.LC_ALL, 'en_US')
 
-def get_stock_quote(stock, nick):
+def get_stock_quote(self, e):
     # stock quotes from Yahoo Finance
     # http://cliffngan.net/a/13
   # For the f argument in the url here are the values:
@@ -30,6 +30,7 @@ def get_stock_quote(stock, nick):
   #     p5     price_sales_ratio          
   #     p6     price_book_ratio           
   #     s7     short_ratio  
+    stock = e.input
   
     opener = urllib2.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
@@ -46,6 +47,9 @@ def get_stock_quote(stock, nick):
            volume = '{0:n}'.format(int(volume))
            avg_volume = '{0:n}'.format(int(avg_volume))
        
-       return "[%s] %s    %s %s | Cap: %s | Volume (Avg): %s (%s)" % (stock,name.strip(),price,change,mkt_cap.strip(),volume,avg_volume)
+       e.output = "[%s] %s    %s %s | Cap: %s | Volume (Avg): %s (%s)" % (stock,name.strip(),price,change,mkt_cap.strip(),volume,avg_volume)
+       return e
+   
 get_stock_quote.command = "!stock"
 get_stock_quote.helptext = "Usage: !stock <ticker symbol>\nExample: !stock GOOG\nShows a quote for the given ticker symbol"
+

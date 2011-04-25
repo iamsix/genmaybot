@@ -1,4 +1,4 @@
-import sys, time
+import time
 
 #test commit
 
@@ -8,7 +8,6 @@ def kill_bot(line, nick, self, c):
     if line[4:]:
         message = line[4:]
     c.disconnect(message)
-    sys.exit(0)
 kill_bot.admincommand = "die"    
 
 def clear_bans(line, nick, self, c):

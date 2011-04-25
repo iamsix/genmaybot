@@ -1,6 +1,6 @@
 import urllib2, botmodules.tools as tools
 
-def get_fml(nothing, nick):  
+def get_fml(self, e):  
     #queries a random fmylife.com passage
   try:
     fmlxml = urllib2.urlopen("http://api.betacie.com/view/random?key=%s&language=en" % tools.config.fmlAPIkey).read()
@@ -23,11 +23,12 @@ def get_fml(nothing, nick):
     fml = fml.replace('&quot;', '"')
     fml = fml.replace('&amp;quot;', '"')
     fml = fml.replace('&amp;', "&")
-    fml = tools.decode_htmlentities(fml)
+    e.output = tools.decode_htmlentities(fml)
     
-    return fml
+    return e
   except Exception as inst:
     print "!fml " + str(inst)
-    return
+    return None
 get_fml.command = "!fml"
 get_fml.helptext = "Usage: !fml\nShows a random entry from fmylife.com"
+

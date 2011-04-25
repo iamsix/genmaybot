@@ -1,7 +1,8 @@
 import urllib2, socket
 import botmodules.tools as tools
 
-def advocate_beer(query, nick):
+def advocate_beer(self, e):
+    query = e.input
     #get the name, rating and style of a beer from beeradvocate.com
     url = tools.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]*/")
     #url = "http://beeradvocate.com/beer/profile/306/1212/"
@@ -9,7 +10,7 @@ def advocate_beer(query, nick):
     try:
       beerpage = urllib2.urlopen(url).read()#.decode("ISO-8859-1")
     except:
-      return
+      return None
     socket.setdefaulttimeout(10)
     
     titlestart = beerpage.find("<title>") + 7
@@ -54,7 +55,8 @@ def advocate_beer(query, nick):
 
     abv = style_line[style_line.find(find_start_tag)+len(find_start_tag):style_line.find(find_end_tag)+1]
     response_string = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s [ %s ]" % (beertitle, grade, grade_wording, num_reviews, style, abv, tools.shorten_url(url))
-    
-    return response_string
+    e.output = response_string
+    return e
 advocate_beer.command = "!beer"
 advocate_beer.helptext = "Usage: !beer <beer name>\nExample: !beer pliny the elder\nFinds a given beer on beeradvocate.com and returns user ratings and beer info"
+

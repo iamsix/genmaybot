@@ -2,17 +2,20 @@ import urllib2, urllib, re, botmodules.tools as tools
 try: import botmodules.userlocation as user
 except: pass
 
-def google_sunrise(term, nick):
-    #returns the next sunrise time and time from now of the place specified it 'term'
-    return google_sun(term, "Sunrise", nick)
+def google_sunrise(self, e):
+    #returns the next sunrise time and time from now of the place specified
+    e.output = google_sun(e.input, "Sunrise", e.nick)
+    return e
 google_sunrise.command = "!sunrise"
 google_sunrise.helptext = "Usage: !sunrise <location>\nExample: !sunrise las vegas, nv\nShows the time of sunrise at a given location\nUse !setlocation <location> to save your location\nThen, using !sunrise without arguments will always show sunrise at your location"
     
-def google_sunset(term, nick):
-    #returns the next sunset time and time from now of the place specified it 'term'
-    return google_sun(term, "Sunset", nick)
+def google_sunset(self, e):
+    #returns the next sunset time and time from now of the place specified
+    e.output = google_sun(e.input, "Sunset", e.nick)
+    return e
 google_sunset.command = "!sunset"
 google_sunset.helptext = "Usage: !sunset <location>\nExample: !sunrise las vegas, nv\nShows the time of sunrise at a given location\nUse !setlocation <location> to save your location\nThen, using !sunrise without arguments will always show sunset at your location"
+
 def google_sun(term, sun, nick):
     if term == "" and user:
        term = user.get_location(nick)

@@ -1,9 +1,10 @@
 from BeautifulSoup import BeautifulSoup
 import re, urllib2, botmodules.tools as tools
 
-def get_wiki(searchterm, nick, urlposted=False):
+def get_wiki(self, e, urlposted=False):
     #read the first paragraph of a wikipedia article
-
+  searchterm = e.input
+  
   if urlposted:
       url = searchterm
   else:
@@ -18,9 +19,9 @@ def get_wiki(searchterm, nick, urlposted=False):
     
     file_title=get_wiki_file_description(url)
     
-    if not file_title: pass
-    else: return file_title
-    
+    if file_title:
+        e.output = file_title
+        return e 
     
   if url and url.find("wikipedia.org/wiki/") != -1:
 
@@ -66,7 +67,8 @@ def get_wiki(searchterm, nick, urlposted=False):
       print "!wiki " + searchterm + " : " + str(inst)
       title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
 
-  return title
+  e.output = title
+  return e
 get_wiki.command = "!wiki"
 get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nShows the first couple of sentences of a wikipedia entry for the given search term"
 

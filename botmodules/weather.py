@@ -2,10 +2,12 @@ import urllib2, urllib, xml.dom.minidom
 try: import botmodules.userlocation as user
 except: pass
 
-def get_weather(zip, nick):
+def get_weather(self, e):
     #google weather of place specified in 'zip'
+   zip = e.input
+   
    if zip == "" and user:
-       zip = user.get_location(nick)
+       zip = user.get_location(e.nick)
 
    url = "http://www.google.com/ig/api?weather=" + urllib.quote(zip)
    dom = xml.dom.minidom.parse(urllib2.urlopen(url))
@@ -45,19 +47,21 @@ def get_weather(zip, nick):
 
        
        chanmsg = "%s / %s / %s%sF %s%sC / %s / %s / %s %s - %s %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind, high_f, high_c,low_f,low_c)
-       chanmsg = chanmsg.encode('utf-8')
+       e.output = chanmsg.encode('utf-8')
+       return e
    else:
-       chanmsg = get_weather2(zip)
-   
-   return chanmsg
+       return get_weather2(self, e)
+       
+
 
 get_weather.command = "!w"
 get_weather.helptext = "Usage: !w <location>\nExample: !w hell, mi\nShows weather info from google.com.\nUse !setlocation <location> to save your location"
   
-def get_weather2(zip, nick):
+def get_weather2(self, e):
     #wunderground weather of place specified in 'zip'
+    zip = e.input
     if zip == "" and user:
-        zip = user.get_location(nick)
+        zip = user.get_location(e.nick)
        
     url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.quote(zip)
     dom = xml.dom.minidom.parse(urllib2.urlopen(url))
@@ -80,8 +84,11 @@ def get_weather2(zip, nick):
         
         degree_symbol = unichr(176)
         chanmsg = "%s / %s / %s%sF %s%sC / %s / %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind)
-        chanmsg = chanmsg.encode('utf-8')
-        return chanmsg
+        e.output = chanmsg.encode('utf-8')
+        return e
+    else:
+        return None
 
 get_weather2.command = "!wu"
 get_weather2.helptext = "Usage: !wu <location>\nExample: !wu hell, mi\nShows weather info from wunderground.com.\nUse !setlocation <location> to save your location"
+

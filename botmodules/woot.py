@@ -16,5 +16,5 @@ def get_woot(self, e):
       except:
           pass
 get_woot.command = "!woot"
-get_woot.helptext = "Usage: !woot\nshows today's deal from woot.com"
-
+get_woot.helptext = "Usage: !woot\nShows today's deal from woot.com"
+ 

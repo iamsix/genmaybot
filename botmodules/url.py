@@ -2,10 +2,6 @@ import re, urllib2, hashlib, datetime, botmodules.tools as tools
 
 try: import MySQLdb
 except ImportError: pass
-try: import botmodules.wiki as wikiurl
-except ImportError: pass
-try: import botmodules.imdb as imdburl
-except ImportError: pass
 
 def url_parser(self, e):
     url = re.search("(?P<url>https?://[^\s]+)", e.input)
@@ -67,8 +63,11 @@ def url_posted(self, e):
                 days = " (posted %s hour%s ago)" % (str(hrs), plural)
             
     title = "" 
-    if wikiurl: wiki = wikiurl.get_wiki(self, e, True)
-    if imdburl: imdb = imdburl.get_imdb(self, e, True)
+    
+    try: wiki = self.bangcommands["!wiki"](self, e, True)
+    except: pass
+    try: imdb = self.bangcommands["!imdb"](self, e, True)
+    except: pass
     if wiki and wiki.output:
         title = wiki.output
     elif imdb and imdb.output:

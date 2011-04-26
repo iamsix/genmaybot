@@ -8,10 +8,12 @@ def poll(self, event):
     for key,value in poll.votes.items():
         if value == poll.votes[maxkey]:
             winners.append(key)
+    s = "s"
+    if poll.votes[maxkey] == 1: s = ""
     if len(winners) > 1:
-        event.output = "Poll ended: %s are tied with %s vote(s)!" % (", ".join(winners), poll.votes[maxkey])  
+        event.output = "Poll ended: %s are tied with %s vote%s!" % (", ".join(winners), poll.votes[maxkey], s)  
     else: 
-        event.output = "Poll ended: %s is the winner with %s vote(s)!" % (maxkey, poll.votes[maxkey])  
+        event.output = "Poll ended: %s is the winner with %s vote%s!" % (maxkey, poll.votes[maxkey], s)  
     self.botSay(event)
 poll.onnow = False
 poll.users = []

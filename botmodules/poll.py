@@ -19,17 +19,16 @@ poll.votes = {}
 
 def poll_parser(self, event):
     if poll.onnow and event.input.lower() in poll.votes:
-        if event.nick in poll.users:
+        if event.hostmask in poll.users:
             event.output = "You have already voted!"
         else:
-            poll.users.append(event.nick)
+            poll.users.append(event.hostmask)
             poll.votes[event.input.lower()] += 1
             event.output = "Vote: '%s' registered" % event.input
         
         event.source = event.nick
-        #event.notice = True
-        self.irccontext.notice(event.source, event.output)
-        return None
+        event.notice = True
+        return event
     else:
         return None
 poll_parser.lineparser = True
@@ -37,7 +36,7 @@ poll_parser.lineparser = True
 def new_poll(self, event):
     if poll.onnow:
         event.source = event.nick
-        #event.notice = True
+        event.notice = True
         event.output = "There is already a poll currently voting. You can not start a new one until the old one finishes."
         return event
     
@@ -73,6 +72,7 @@ def new_poll(self, event):
                   
     if badsyntax:
         event.source = event.nick
+        event.notice = True
         event.output = "Bad syntax\n" + new_poll.helptext
     else:
         poll.onnow=True

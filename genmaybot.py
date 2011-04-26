@@ -71,9 +71,7 @@ class TestBot(SingleServerIRCBot):
         c.join(e.arguments()[0])
         
     def on_pubmsg(self, c, e):
-        line = e.arguments()[0]
-        from_nick = e.source().split("!")[0]
-        self.process_line(c, line, from_nick, e.target())
+        self.process_line(c, e)
 
     def on_privmsg(self, c, e):
         from_nick = e.source().split("!")[0]
@@ -84,7 +82,7 @@ class TestBot(SingleServerIRCBot):
             self.admincommand = line
             c.who(from_nick) 
                 
-        self.process_line(c, line, from_nick, from_nick)
+        self.process_line(c, e)
     
     def on_whoreply(self, c,e):
       nick = e.arguments()[4]
@@ -101,10 +99,14 @@ class TestBot(SingleServerIRCBot):
       except Exception as inst:
           print "admin exception: " + line + " : " + str(inst)
 
-    def process_line(self, c, line, from_nick, linesource):
+    def process_line(self, c, ircevent):
         if self.doingcommand:
             return
         self.doingcommand = True
+        
+        line = e.arguments()[0]
+        from_nick = e.source().split("!")[0]
+        hostmask = e.source()[e.source().find("@")+1:]
         command = line.split(" ")[0]
         args = line[len(command)+1:].strip()
         
@@ -114,7 +116,7 @@ class TestBot(SingleServerIRCBot):
         try:
           #commands names are defined by the module as function.command = "!commandname"
           if command in self.bangcommands:
-            e = self.botEvent(linesource, from_nick, args)
+            e = self.botEvent(linesource, from_nick, hostmask, args)
             if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
               self.doingcommand = False
               return
@@ -122,7 +124,7 @@ class TestBot(SingleServerIRCBot):
           
           else:
             #lineparsers take the whole line and nick for EVERY line
-            e = self.botEvent(linesource, from_nick, line)
+            e = self.botEvent(linesource, from_nick, hostmask, line)
             #ensure the lineparser function is short and simple. Try to not to add too many of them
             #Multiple lineparsers can output data, leading to multiple 'say' lines
             templine = ""
@@ -134,7 +136,7 @@ class TestBot(SingleServerIRCBot):
           for e in etmp:      
              if e and e.output and self.commandaccess(command):
                 if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
-                    if self.isspam(e.nick): break
+                    if self.isspam(e.hostmask): break
                     firstpass = False
                 self.botSay(e)
                                             
@@ -261,12 +263,13 @@ class TestBot(SingleServerIRCBot):
       t.start()
       
     class botEvent:
-        def __init__(self, source, nick, input, output="", notice = False):
+        def __init__(self, source, nick, hostmask, input, output="", notice = False):
             self._source = source
             self._nick = nick
             self._input = input
             self._output = output
             self._notice = notice
+            self._hostmask = hostmask
             
         @property
         def source(self):
@@ -281,6 +284,13 @@ class TestBot(SingleServerIRCBot):
         @nick.setter
         def nick(self, value):
             self._nick = value
+        
+        @property
+        def hostmask(self):
+            return self._hostmask
+        @nick.setter
+        def hostmask(self, value):
+            self._hostmask = value
         
         @property
         def input(self):

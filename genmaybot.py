@@ -82,7 +82,7 @@ class TestBot(SingleServerIRCBot):
             self.admincommand = line
             c.who(from_nick) 
                 
-        self.process_line(c, e)
+        self.process_line(c, e, True)
     
     def on_whoreply(self, c,e):
       nick = e.arguments()[4]
@@ -99,16 +99,20 @@ class TestBot(SingleServerIRCBot):
       except Exception as inst:
           print "admin exception: " + line + " : " + str(inst)
 
-    def process_line(self, c, ircevent):
+    def process_line(self, c, ircevent, private = False):
         if self.doingcommand:
             return
         self.doingcommand = True
         
-        line = e.arguments()[0]
-        from_nick = e.source().split("!")[0]
-        hostmask = e.source()[e.source().find("@")+1:]
+        line = ircevent.arguments()[0]
+        from_nick = ircevent.source().split("!")[0]
+        hostmask = ircevent.source()[ircevent.source().find("@")+1:]
         command = line.split(" ")[0]
         args = line[len(command)+1:].strip()
+        if private:
+            linesource = from_nick
+        else:
+            linesource = ircevent.target()
         
         e = None
         etmp = []
@@ -288,7 +292,7 @@ class TestBot(SingleServerIRCBot):
         @property
         def hostmask(self):
             return self._hostmask
-        @nick.setter
+        @hostmask.setter
         def hostmask(self, value):
             self._hostmask = value
         

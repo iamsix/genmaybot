@@ -2,7 +2,6 @@ import threading, operator
 
 def poll(self, event):
     poll.onnow = False
-    biggest = 0
     winners = []
     maxkey = max(poll.votes.iteritems(), key=operator.itemgetter(1))[0]
     for key,value in poll.votes.items():
@@ -39,7 +38,7 @@ def new_poll(self, event):
     if poll.onnow:
         event.source = event.nick
         event.notice = True
-        event.output = "There is already a poll currently voting. You can not start a new one until the old one finishes."
+        event.output = "There is already a poll currently voting. You can not start a new one until the current one finishes."
         return event
     
     poll.users = []

@@ -117,27 +117,10 @@ def get_title(url):
                              ('Range',"bytes=0-" + str(readlength))]
 
         pagetmp = opener.open(url)
-
         page = pagetmp.read(readlength)
         opener.close()
-
-        start = page.find("<title>") + 7
-    
-        if start < 7:
-            start = page.find("<TITLE>") + 7
-    
-        if start < 7:
-            return title
-    
-        end = page.find("</title>") 
-    
-        if end == -1:
-            end = page.find("</TITLE>")
-      
-        if end == -1:
-            return title
-    
-        titletmp = page[start:end]
+        
+        titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*\<\/title\>',page).group(0))
         title = "Title: " + titletmp.strip()[0:180]
     except:
         pass

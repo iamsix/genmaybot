@@ -129,10 +129,15 @@ class TestBot(SingleServerIRCBot):
             for command in self.lineparsers:
                 if linesource in self.channels and hasattr(command, 'privateonly'): continue
                 etmp.append(command(self, e))
-           
+          
+          firstpass = True
           for e in etmp:      
-             if e and (e.source == e.nick or self.isbotadmin(e.nick) or (self.commandaccess(command) and not self.isspam(e.nick))):
-                self.botSay(e)
+             if e and e.output and (e.source == e.nick or e.nick in self.botadmins or self.commandaccess(command)):
+                if firstpass and self.isspam(e.nick):
+                    break
+                else: 
+                    firstpass = False
+                    self.botSay(e)
                                             
         except Exception as inst: 
           print line + " : " + str(inst)

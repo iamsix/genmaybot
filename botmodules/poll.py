@@ -2,21 +2,34 @@ import threading, operator
 
 def poll(self, event):
     poll.onnow = False
-    key = max(poll.votes.iteritems(), key=operator.itemgetter(1))[0]
-    event.output = "Poll ended: %s is the winner with %s vote(s)!" % (key, poll.votes[key])  
+    biggest = 0
+    winners = []
+    maxkey = max(poll.votes.iteritems(), key=operator.itemgetter(1))[0]
+    for key,value in poll.votes.items():
+        if value == poll.votes[maxkey]:
+            winners.append(key)
+    if len(winners) > 1:
+        event.output = "Poll ended: %s are tied with %s vote(s)!" % (", ".join(winners), poll.votes[maxkey])  
+    else: 
+        event.output = "Poll ended: %s is the winner with %s vote(s)!" % (key, poll.votes[maxkey])  
     self.botSay(event)
 poll.onnow = False
 poll.users = []
 poll.votes = {}
 
 def poll_parser(self, event):
-    if poll.onnow and event.input.lower() in poll.votes and not event.nick in poll.users :
-        poll.votes[event.input.lower()] += 1
-        poll.users.append(event.nick)
+    if poll.onnow and event.input.lower() in poll.votes:
+        if event.nick in poll.users:
+            event.output = "You have already voted!"
+        else:
+            poll.users.append(event.nick)
+            poll.votes[event.input.lower()] += 1
+            event.output = "Vote: '%s' registered" % event.input
+        
         event.source = event.nick
-        event.notice = True
-        event.output = "Vote: '%s' registered" % event.input
-        return event
+        #event.notice = True
+        self.irccontext.notice(event.source, event.output)
+        return None
     else:
         return None
 poll_parser.lineparser = True
@@ -24,7 +37,7 @@ poll_parser.lineparser = True
 def new_poll(self, event):
     if poll.onnow:
         event.source = event.nick
-        event.notice = True
+        #event.notice = True
         event.output = "There is already a poll currently voting. You can not start a new one until the old one finishes."
         return event
     

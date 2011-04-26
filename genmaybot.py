@@ -151,7 +151,10 @@ class TestBot(SingleServerIRCBot):
           for line in e.output.split("\n"):
               line = line.replace("join", "join")
               line = line.replace("come", "come") 
-              self.irccontext.privmsg(e.source, line)
+              if e.notice:
+                  self.irccontext.notice(e.source, line)
+              else:              
+                  self.irccontext.privmsg(e.source, line)
       except Exception as inst:
          print "bot failed trying to say " + str(e) + "\n" + str(inst) 
 
@@ -258,11 +261,12 @@ class TestBot(SingleServerIRCBot):
       t.start()
       
     class botEvent:
-        def __init__(self, source, nick, input, output=""):
+        def __init__(self, source, nick, input, output="", notice = False):
             self._source = source
             self._nick = nick
             self._input = input
             self._output = output
+            self._notice = notice
             
         @property
         def source(self):
@@ -291,6 +295,13 @@ class TestBot(SingleServerIRCBot):
         @output.setter
         def output(self, value):
             self._output = value
+            
+        @property
+        def notice(self):
+            return self._notice
+        @notice.setter
+        def notice(self, value):
+            self._notice = value
   
   
 def main():

@@ -14,6 +14,7 @@ def poll_parser(self, event):
         poll.votes[event.input.lower()] += 1
         poll.users.append(event.nick)
         event.source = event.nick
+        event.notice = True
         event.output = "Vote: '%s' registered" % event.input
         return event
     else:
@@ -23,6 +24,7 @@ poll_parser.lineparser = True
 def new_poll(self, event):
     if poll.onnow:
         event.source = event.nick
+        event.notice = True
         event.output = "There is already a poll currently voting. You can not start a new one until the old one finishes."
         return event
     
@@ -42,16 +44,16 @@ def new_poll(self, event):
             question = event.input
             
         if question.find("options:") != -1:
-            options = question[question.find("options:") + 8:].split(",")
-            for option in options:
+            options = question[question.find("options:") + 8:].strip()
+            for option in options.split(","):
                 option = option.strip().lower()
                 poll.votes[option] = 0
             question = question[0:question.find("options:")]
         else:
             poll.votes = {"yes!" : 0, "no!" : 0}
+            options = "Yes!, No!"
         
         if question and pollmins:
-            options = ", ".join(poll.votes.keys())
             event.output = "[Poll by %s] %s\nYou have %s minute(s) to vote. Possible poll options: %s" % (event.nick, question, str(pollmins), options)
         else:
             badsyntax = True
@@ -66,5 +68,5 @@ def new_poll(self, event):
         
     return event
 new_poll.command = "!poll"
-new_poll.helptext = "Usage: !poll <minutes> <poll question> [options: <options>]\nExample: !poll 2 Should I go to bed?\nCreates a 2 minute long yes or no poll for the channel\nExample #2: !poll 2 What should I eat? options: pizza!, chicken!, burger!\nCreates a 2 minute poll with custom vote options"
+new_poll.helptext = "Usage: !poll [<minutes>] <poll question> [options: <options>]\nExample: !poll 2 Should I go to bed?\nCreates a 2 minute long yes or no poll for the channel\nExample #2: !poll 2 What should I eat? options: pizza!, chicken!, burger!\nCreates a 2 minute poll with custom vote options"
 

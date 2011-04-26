@@ -132,12 +132,11 @@ class TestBot(SingleServerIRCBot):
           
           firstpass = True
           for e in etmp:      
-             if e and e.output and (e.source == e.nick or e.nick in self.botadmins or self.commandaccess(command)):
-                if firstpass and self.isspam(e.nick):
-                    break
-                else: 
+             if e and e.output and self.commandaccess(command):
+                if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
+                    if self.isspam(e.nick): break
                     firstpass = False
-                    self.botSay(e)
+                self.botSay(e)
                                             
         except Exception as inst: 
           print line + " : " + str(inst)

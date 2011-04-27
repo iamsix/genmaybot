@@ -140,7 +140,7 @@ class TestBot(SingleServerIRCBot):
           for e in etmp:      
              if e and e.output:
                 if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
-                    if self.isspam(e.hostmask): break
+                    if self.isspam(e.hostmask, e.nick): break
                     firstpass = False
                 self.botSay(e)
                                             
@@ -151,18 +151,18 @@ class TestBot(SingleServerIRCBot):
         self.doingcommand = False
         return
     
-    def botSay(self, e):
+    def botSay(self, botevent):
       try:
-        if e.output:
-          for line in e.output.split("\n"):
+        if botevent.output:
+          for line in botevent.output.split("\n"):
               line = line.replace("join", "join")
               line = line.replace("come", "come") 
-              if e.notice:
-                  self.irccontext.notice(e.source, line)
+              if botevent.notice:
+                  self.irccontext.notice(botevent.source, line)
               else:              
-                  self.irccontext.privmsg(e.source, line)
+                  self.irccontext.privmsg(botevent.source, line)
       except Exception as inst:
-         print "bot failed trying to say " + str(e) + "\n" + str(inst) 
+         print "bot failed trying to say " + str(botevent) + "\n" + str(inst) 
 
     def loadmodules(self):
         filenames = []
@@ -224,7 +224,7 @@ class TestBot(SingleServerIRCBot):
         else: #if there's no entry it's assumed to be enabled
             return True
                 
-    def isspam(self, user):
+    def isspam(self, user, nick):
 
       if not (self.spam.has_key(user)):
         self.spam[user] = {}
@@ -244,7 +244,7 @@ class TestBot(SingleServerIRCBot):
 
         if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
           bantime = self.spam[user]['limit'] + 15
-          print "%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), user, bantime)
+          print "%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime)
           return True
         else:
           self.spam[user]['first'] = 0

@@ -119,7 +119,7 @@ class TestBot(SingleServerIRCBot):
                 
         try:
           #commands names are defined by the module as function.command = "!commandname"
-          if command in self.bangcommands:
+          if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
             e = self.botEvent(linesource, from_nick, hostmask, args)
             if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
               self.doingcommand = False
@@ -138,7 +138,7 @@ class TestBot(SingleServerIRCBot):
           
           firstpass = True
           for e in etmp:      
-             if e and e.output and self.commandaccess(command):
+             if e and e.output:
                 if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
                     if self.isspam(e.hostmask): break
                     firstpass = False

@@ -66,7 +66,7 @@ def command_status(line, nick, self, c):
         else:
             return command + " Enabled"
     elif len(line.split(" ")) == 1:
-        return str(self.commandaccesslist.keys())
+        return str(self.commandaccesslist.items())
     
 command_status.admincommand = "status"
 

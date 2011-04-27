@@ -51,7 +51,7 @@ def new_poll(self, event):
         pollmins = event.input.split(" ")[0]
         if pollmins.isdigit(): 
             question = event.input[len(pollmins) + 1:]
-            pollmins = int(pollmins)
+            pollmins = min(int(pollmins), 5)
         else:
             pollmins = 1
             question = event.input

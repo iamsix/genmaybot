@@ -67,8 +67,9 @@ def get_weather_alert_data(alert_url):
     certainty = dom.getElementsByTagName('certainty')[0].childNodes[0].data
     senderName = dom.getElementsByTagName('senderName')[0].childNodes[0].data
     
-   
-    updated = dom.getElementsByTagName('sent')[0].childNodes[0].data
+    ## Use the "effective" value because "sent" changes every time 
+    ## the document is retrieved
+    updated = dom.getElementsByTagName('effective')[0].childNodes[0].data
     updated = dateparser(updated)
     updated = (updated - updated.utcoffset()).replace(tzinfo=None)
     ago = (datetime.datetime.utcnow() - updated).seconds/60

@@ -60,6 +60,8 @@ def get_weather_alert_data(alert_url):
     note = note.replace("\n"," ")
     pattern = re.compile("\s+")
     note = pattern.sub(" ", note)
+    ##turning off the text for now because its too much spam
+    note = ""
     
     event = dom.getElementsByTagName('event')[0].childNodes[0].data
     urgency = dom.getElementsByTagName('urgency')[0].childNodes[0].data

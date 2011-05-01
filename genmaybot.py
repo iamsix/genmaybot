@@ -193,6 +193,8 @@ class TestBot(SingleServerIRCBot):
                         self.botalerts.append(func)
                     elif hasattr(func, 'lineparser'):
                         self.lineparsers.append(func) 
+        
+        commands, botalerts, lineparsers, admincommands = "","","",""
                         
         if self.bangcommands:
             commands = 'Loaded command modules: %s' % self.bangcommands.keys()

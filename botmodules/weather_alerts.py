@@ -96,6 +96,6 @@ def get_weather_alert(self, e):
   e.output = get_weather_alert_data(alert_url)
   return e
   
-get_weather_alert.command = "!wa"
+get_weather_alert.command = "!nws"
 get_weather_alert.helptext = "Usage: !wa\nShows the latest weather alert from http://alerts.weather.gov"
   

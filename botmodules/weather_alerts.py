@@ -17,7 +17,7 @@ def weather_alert():
     print "weather_alert: " + str(inst)
     pass    
 
-weather_alert.alert=True
+#weather_alert.alert=True
 weather_alert.lastcheck=""
 
 def find_latest_weather_alert():

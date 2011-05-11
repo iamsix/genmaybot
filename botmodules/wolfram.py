@@ -6,7 +6,7 @@ def get_wolfram(self, e):
     
     #query 'input' on wolframalpha and get the plaintext result back
     if user:
-       location = urllib.quote(user.get_location(e.nick))
+        location = urllib.quote(user.get_location(e.nick))
     socket.setdefaulttimeout(30)
     url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s&location=%s" % (tools.config.wolframAPIkey, urllib.quote(e.input), location)
     dom = xml.dom.minidom.parse(urllib2.urlopen(url))

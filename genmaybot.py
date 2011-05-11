@@ -17,9 +17,8 @@
 ### random descision maker?
 
 from ircbot import SingleServerIRCBot
-from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 import time, imp
-import sys, os, socket, datetime, ConfigParser, threading
+import sys, os, socket, ConfigParser, threading
 
 socket.setdefaulttimeout(5)
 
@@ -55,7 +54,7 @@ class TestBot(SingleServerIRCBot):
     def on_kick(self, c, e):
         #attempt to rejoin any channel we're kicked from
         if e.arguments()[0][0:6] == c.get_nickname():
-           c.join(e.target()) 
+            c.join(e.target()) 
 
     def on_disconnect(self, c, e):
         print "DISCONNECT: " + str(e.arguments())
@@ -85,19 +84,19 @@ class TestBot(SingleServerIRCBot):
         self.process_line(c, e, True)
     
     def on_whoreply(self, c,e):
-      nick = e.arguments()[4]
-      line = self.admincommand
-      command = line.split(" ")[0]
-      self.admincommand = ""
-      try:
-        if e.arguments()[5].find("r") != -1 and line != "":
-            say = self.admincommands[command](line, nick, self, c)
-            say = say.split("\n")
-            for line in say:
+        nick = e.arguments()[4]
+        line = self.admincommand
+        command = line.split(" ")[0]
+        self.admincommand = ""
+        try:
+            if e.arguments()[5].find("r") != -1 and line != "":
+                say = self.admincommands[command](line, nick, self, c)
+                say = say.split("\n")
+                for line in say:
                     c.privmsg(nick, line)
 
-      except Exception as inst:
-          print "admin exception: " + line + " : " + str(inst)
+        except Exception as inst:
+            print "admin exception: " + line + " : " + str(inst)
 
     def process_line(self, c, ircevent, private = False):
         if self.doingcommand:
@@ -118,57 +117,56 @@ class TestBot(SingleServerIRCBot):
         etmp = []
                 
         try:
-          #commands names are defined by the module as function.command = "!commandname"
-          if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
-            e = self.botEvent(linesource, from_nick, hostmask, args)
-            if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
-              self.doingcommand = False
-              return
-            etmp.append(self.bangcommands[command](self, e))
+            #commands names are defined by the module as function.command = "!commandname"
+            if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
+                e = self.botEvent(linesource, from_nick, hostmask, args)
+                if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
+                    self.doingcommand = False
+                    return
+                etmp.append(self.bangcommands[command](self, e))
           
-          else:
-            #lineparsers take the whole line and nick for EVERY line
-            e = self.botEvent(linesource, from_nick, hostmask, line)
-            #ensure the lineparser function is short and simple. Try to not to add too many of them
-            #Multiple lineparsers can output data, leading to multiple 'say' lines
-            templine = ""
-            for command in self.lineparsers:
-                if linesource in self.channels and hasattr(command, 'privateonly'): continue
-                etmp.append(command(self, e))
+            else:
+                #lineparsers take the whole line and nick for EVERY line
+                e = self.botEvent(linesource, from_nick, hostmask, line)
+                #ensure the lineparser function is short and simple. Try to not to add too many of them
+                #Multiple lineparsers can output data, leading to multiple 'say' lines
+                for command in self.lineparsers:
+                    if linesource in self.channels and hasattr(command, 'privateonly'): continue
+                    etmp.append(command(self, e))
           
-          firstpass = True
-          for e in etmp:      
-             if e and e.output:
-                if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
-                    if self.isspam(e.hostmask, e.nick): break
-                    firstpass = False
-                self.botSay(e)
+            firstpass = True
+            for e in etmp:      
+                if e and e.output:
+                    if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
+                        if self.isspam(e.hostmask, e.nick): break
+                        firstpass = False
+                        self.botSay(e)
                                             
         except Exception as inst: 
-          print line + " : " + str(inst)
-          pass
+            print line + " : " + str(inst)
+            pass
 
         self.doingcommand = False
         return
     
     def botSay(self, botevent):
-      try:
-        if botevent.output:
-          for line in botevent.output.split("\n"):
-              line = line.replace("join", "join")
-              line = line.replace("come", "come") 
-              if botevent.notice:
-                  self.irccontext.notice(botevent.source, line)
-              else:              
-                  self.irccontext.privmsg(botevent.source, line)
-      except Exception as inst:
-         print "bot failed trying to say " + str(botevent) + "\n" + str(inst) 
+        try:
+            if botevent.output:
+                for line in botevent.output.split("\n"):
+                    line = line.replace("join", "join")
+                    line = line.replace("come", "come") 
+                    if botevent.notice:
+                        self.irccontext.notice(botevent.source, line)
+                    else:              
+                        self.irccontext.privmsg(botevent.source, line)
+        except Exception as inst:
+            print "bot failed trying to say " + str(botevent) + "\n" + str(inst) 
 
     def loadmodules(self):
         filenames = []
         for fn in os.listdir('./botmodules'):
             if fn.endswith('.py') and not fn.startswith('_'):
-               filenames.append(os.path.join('./botmodules', fn))
+                filenames.append(os.path.join('./botmodules', fn))
                
         self.bangcommands = {}
         self.admincommands = {}
@@ -228,45 +226,45 @@ class TestBot(SingleServerIRCBot):
                 
     def isspam(self, user, nick):
 
-      if not (self.spam.has_key(user)):
-        self.spam[user] = {}
-        self.spam[user]['count'] = 0
-        self.spam[user]['last'] = 0
-        self.spam[user]['first'] = 0
-        self.spam[user]['limit'] = 15
+        if not (self.spam.has_key(user)):
+            self.spam[user] = {}
+            self.spam[user]['count'] = 0
+            self.spam[user]['last'] = 0
+            self.spam[user]['first'] = 0
+            self.spam[user]['limit'] = 15
       
-      self.spam[user]['count'] +=1
-      self.spam[user]['last'] = time.time()
+        self.spam[user]['count'] +=1
+        self.spam[user]['last'] = time.time()
       
-      if self.spam[user]['count'] == 1:
-        self.spam[user]['first'] = time.time()
+        if self.spam[user]['count'] == 1:
+            self.spam[user]['first'] = time.time()
       
-      if self.spam[user]['count'] > 1:
-        self.spam[user]['limit'] = (self.spam[user]['count'] - 1) * 15
+        if self.spam[user]['count'] > 1:
+            self.spam[user]['limit'] = (self.spam[user]['count'] - 1) * 15
 
-        if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
-          bantime = self.spam[user]['limit'] + 15
-          print "%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime)
-          return True
-        else:
-          self.spam[user]['first'] = 0
-          self.spam[user]['count'] = 0
-          self.spam[user]['limit'] = 15
-          return False
+            if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
+                bantime = self.spam[user]['limit'] + 15
+                print "%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime)
+                return True
+            else:
+                self.spam[user]['first'] = 0
+                self.spam[user]['count'] = 0
+                self.spam[user]['limit'] = 15
+                return False
   
     def alerts(self, context):
-      try: 
-        for command in self.botalerts:
-            say = command()
-            if say:
-              for channel in self.channels:  
-                context.privmsg(channel, say)
-      except Exception as inst: 
-          print "alerts: " + str(inst)
-          pass
+        try: 
+            for command in self.botalerts:
+                say = command()
+                if say:
+                    for channel in self.channels:  
+                        context.privmsg(channel, say)
+        except Exception as inst: 
+            print "alerts: " + str(inst)
+            pass
       
-      t=threading.Timer(60,self.alerts, [context])
-      t.start()
+        t=threading.Timer(60,self.alerts, [context])
+        t.start()
       
     class botEvent:
         def __init__(self, source, nick, hostmask, input, output="", notice = False):

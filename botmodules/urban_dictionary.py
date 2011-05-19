@@ -19,6 +19,7 @@ def get_urbandictionary(self, e):
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
       page = pagetmp.read()
+      url = pagetmp.geturl()
       opener.close()
 
       page = BeautifulSoup(page)

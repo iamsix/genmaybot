@@ -30,6 +30,7 @@ def get_wiki(self, e, urlposted=False):
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
       page = pagetmp.read()
+      url = pagetmp.geturl()
       opener.close()
 
       if url.find('#') != -1:

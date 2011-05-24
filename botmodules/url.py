@@ -81,6 +81,7 @@ def url_posted(self, e):
           title = ""
 
     title = title.replace("\n", " ")
+    title = re.sub('\s+', ' ', title)
     pattern = re.compile('whatsisname', re.IGNORECASE)
     title = pattern.sub('', title)      
     title = tools.decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
@@ -120,7 +121,7 @@ def get_title(url):
         page = pagetmp.read(readlength)
         opener.close()
         
-        titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*\<\/title\>',page).group(0))
+        titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
         title = "Title: " + titletmp.strip()[0:180]
     except:
         pass

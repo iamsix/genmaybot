@@ -140,7 +140,7 @@ class TestBot(SingleServerIRCBot):
                     if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
                         if self.isspam(e.hostmask, e.nick): break
                         firstpass = False
-                        self.botSay(e)
+                    self.botSay(e)
                                             
         except Exception as inst: 
             print line + " : " + str(inst)

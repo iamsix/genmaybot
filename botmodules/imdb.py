@@ -33,8 +33,8 @@ def get_imdb(self, e, urlposted=False):
          if page.find(id="overview-top") != None:
              page = page.find(id="overview-top").extract()
              
-             if page.find(id="star-bar-user-rate") != None:
-                 rating = tools.remove_html_tags(str(page.find(id="star-bar-user-rate").b))
+             if page.find("span", "star-bar-user-rate") != None:
+                 rating = tools.remove_html_tags(str(page.find("span", "star-bar-user-rate").b))
                  rating = " - Rating: " + rating
              
              if len(page.findAll('p')) == 2:

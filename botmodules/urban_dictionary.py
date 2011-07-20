@@ -6,7 +6,6 @@ import urllib2, botmodules.tools as tools
 def get_urbandictionary(self, e):
     searchterm = e.input
     url = "http://www.urbandictionary.com/define.php?term=%s" % urllib2.quote(searchterm)
-    
     if searchterm=="wotd":
       e.output = get_urbandictionary_wotd()
       return e
@@ -36,25 +35,24 @@ def get_urbandictionary(self, e):
         first_word = page.findAll('td',attrs={"class" : "word"})[0].contents[0].string     
       
       first_word = first_word.replace("\n","")
-      first_word = first_word.encode("utf-8", 'ignore')
+      #first_word = first_word.encode("utf-8", 'ignore')
 
       for content in page.findAll('div',attrs={"class" : "definition"})[0].contents:
         if content.string != None:
           first_definition += content.string
-      
-      
-      first_definition = first_definition.encode("utf-8", 'ignore')
-      first_definition = tools.decode_htmlentities(first_definition.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
-      first_word = tools.decode_htmlentities(first_word.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
-      
+      print first_word
+
+      #first_definition = first_definition.encode("utf-8", 'ignore')
+      first_definition = tools.decode_htmlentities(first_definition).encode("utf-8", 'ignore')
+      first_word = tools.decode_htmlentities(first_word).encode("utf-8", 'ignore')
+
       first_definition = first_definition.replace("\n", " ")
       first_definition = first_definition.replace("\r", " ")
       first_definition = first_definition[0:392]
-      
-      first_definition = (first_word + ": " + first_definition.decode('utf-8') + " [ %s ]" % tools.shorten_url(url)).encode('utf-8', 'ignore')
+
+      first_definition = ((first_word + ": " + first_definition).decode("utf-8", 'ignore') + " [ %s ]" % tools.shorten_url(url)).encode('utf-8', 'ignore')
       #print first_definition
       e.output = first_definition
-
       return e
       
     except:

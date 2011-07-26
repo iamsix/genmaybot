@@ -40,7 +40,6 @@ def get_urbandictionary(self, e):
       for content in page.findAll('div',attrs={"class" : "definition"})[0].contents:
         if content.string != None:
           first_definition += content.string
-      print first_word
 
       #first_definition = first_definition.encode("utf-8", 'ignore')
       first_definition = tools.decode_htmlentities(first_definition).encode("utf-8", 'ignore')

@@ -9,6 +9,7 @@ def get_metacritic(self, e):
     page = pagetmp.read()
     opener.close()
         
+    print url
     page = BeautifulSoup(page)
     try:
         titleDiv = page.findAll('div',attrs={"class" : "product_title"})[0]
@@ -41,24 +42,24 @@ def get_metacritic(self, e):
         metaScoreDiv = page.findAll('div',attrs={"class" : "metascore_wrap highlight_metascore"})[0]
         metaScore = metaScoreDiv.findAll('span',attrs={"class" : "score_value"})[0].string
         metaDesc = metaScoreDiv.findAll('span',attrs={"class" : "desc"})[0].string
-        metaNum = metaScoreDiv.findAll('span',attrs={"class" : "count"})[0].a.string
+        metaNum = metaScoreDiv.findAll('span',attrs={"class" : "count"})[0].a.span.string
     except:
         pass
     try:
         userScoreDiv = page.findAll('div',attrs={"class" : "userscore_wrap feature_userscore"})[0]
         userScore = userScoreDiv.findAll('span',attrs={"class" : "score_value"})[0].string
         userDesc = userScoreDiv.findAll('span',attrs={"class" : "desc"})[0].string
-        userNum = userScoreDiv.findAll('span',attrs={"class" : "count"})[0].a.string
+        userNum = userScoreDiv.find('span',attrs={"class" : "count"}).a.string
     except:
         pass
         
     if metaScore:
         metaScore = "Metascore: " + metaScore
-        metaScore += " out of 100 - %s (based on %s)" % (metaDesc.strip(), metaNum.strip())
+        metaScore += " out of 100 - %s (%s Reviews)" % (metaDesc.strip(), metaNum.strip())
         metaScore = "%s | " % metaScore
     if userScore:
         userScore = "User Score: " + userScore
-        userScore += " out of 10 - %s (based on %s)" % (userDesc.strip(), userNum.strip())
+        userScore += " out of 10 - %s (%s)" % (userDesc.strip(), userNum.strip())
     
     if metaScore or userScore:
         e.output = "%s %s| %s%s" % (title, category, metaScore, userScore)

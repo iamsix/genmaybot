@@ -9,7 +9,6 @@ def get_metacritic(self, e):
     page = pagetmp.read()
     opener.close()
         
-    print url
     page = BeautifulSoup(page)
     try:
         titleDiv = page.findAll('div',attrs={"class" : "product_title"})[0]

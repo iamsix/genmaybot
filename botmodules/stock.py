@@ -6,8 +6,6 @@ except:
 
 def get_stock_quote(self, e):
     # stock quotes from Yahoo Finance
-
-
     
       
     opener = urllib2.build_opener()

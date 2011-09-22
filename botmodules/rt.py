@@ -5,7 +5,11 @@ def get_rt(self, e):
     response = urllib2.urlopen(url).read() 
     movie = json.loads(response)
     movie = movie['movies'][0]
-    e.output = "%s (%s) - Critics: %s - Users: %s - %s" % (movie['title'], str(movie['year']), str(movie['ratings']['critics_score']), str(movie['ratings']['audience_score']), movie['critics_consensus'] )
+    concensus = ""
+    if 'critics_consensus' in movie:
+        concensus = " - " + movie['critics_consensus']
+    url = tools.shorten_url(movie['links']['alternate']) 
+    e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'], str(movie['year']), str(movie['ratings']['critics_score']), str(movie['ratings']['audience_score']), concensus, url )
     return e
     
 get_rt.command = "!rt"

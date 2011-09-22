@@ -35,4 +35,4 @@ def google_news (self, e):
     return e
     
 google_news.command = "!news"
-google_news.helptext = "Usage: !news"
+google_news.helptext = "Usage: !news - reports the top story. !news <query> reports news containing the specified words"

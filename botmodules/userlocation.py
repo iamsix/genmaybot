@@ -8,7 +8,7 @@ def set_location(self, e):
     if not result:
         c.execute('''create table userlocations(user text UNIQUE ON CONFLICT REPLACE, location text)''')
         
-    c.execute("""insert into userlocations values (?,?)""", (e.nick, e.input))
+    c.execute("""insert into userlocations values (?,?)""", (e.nick.lower(), e.input))
     
     conn.commit()
     c.close()
@@ -19,7 +19,7 @@ set_location.helptext = "Usage: !setlocation <location>\nExample: !setlocation
 def get_location(nick):
     conn = sqlite3.connect('userlocations.sqlite')
     c = conn.cursor()
-    result = c.execute("SELECT location FROM userlocations WHERE user=?", [nick]).fetchone()
+    result = c.execute("SELECT location FROM userlocations WHERE UPPER(user) = UPPER(?)", [nick]).fetchone()
     if result:
         return result[0]
     else:

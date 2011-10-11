@@ -61,9 +61,10 @@ def get_wiki(self, e, urlposted=False):
       title = title[0:420]
       if title.rfind(".")!=-1:
         title = title[0:title.rfind(".")+1]
-        
+      
       if not urlposted:
-        title = (title.decode('utf-8') + " [ %s ]" % tools.shorten_url(url)).encode('utf-8', 'ignore')
+        url = tools.shorten_url(url)
+        title = (title.decode('utf-8', 'ignore') + " [ %s ]" % url).encode('utf-8', 'ignore')
     except Exception as inst: 
       print "!wiki " + searchterm + " : " + str(inst)
       title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))

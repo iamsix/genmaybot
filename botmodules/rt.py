@@ -7,7 +7,7 @@ def get_rt(self, e):
     movie = movie['movies'][0]
     concensus = ""
     if 'critics_consensus' in movie:
-        concensus = " - " + movie['critics_consensus']
+        concensus = "- " + movie['critics_consensus']
     url = tools.shorten_url(movie['links']['alternate']) 
     e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'], str(movie['year']), str(movie['ratings']['critics_score']), str(movie['ratings']['audience_score']), concensus, url )
     return e

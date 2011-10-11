@@ -9,7 +9,7 @@ def get_cat(self, e):
             catlist.append(cat['data']['url'] + " - " + cat['data']['title'])
     
     #cat = random.randint(0, len(catlist) - 1)
-    e.output = catlist[random.randint(0, len(catlist) - 1)]
+    e.output = catlist[random.randint(0, len(catlist) - 1)] + " :: " + catlist[random.randint(0, len(catlist) - 1)] 
     return e
     
     

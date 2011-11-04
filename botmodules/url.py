@@ -4,7 +4,7 @@ try: import MySQLdb
 except ImportError: pass
 
 def url_parser(self, e):
-    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])", e.input)
+    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.'])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.']*\)|[A-Z0-9+&@#/%=~_|$])", e.input)
     if url:
         url = url.group(0)
         if url[0:3] == "www":

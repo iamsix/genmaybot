@@ -8,7 +8,7 @@ def set_location(self, e):
     if not result:
         c.execute('''create table userlocations(user text UNIQUE ON CONFLICT REPLACE, location text)''')
         
-    c.execute("""insert into userlocations values (?,?)""", (e.nick.lower(), e.input))
+    c.execute("""insert into userlocations values (?,?)""", (e.nick, e.input))
     
     conn.commit()
     c.close()

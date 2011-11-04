@@ -37,7 +37,7 @@ def get_quake_data():
     updated = datetime.datetime.strptime(updated, "%Y-%m-%dT%H:%M:%SZ")
     ago = (datetime.datetime.utcnow() - updated).seconds/60
     elevation = int(latest_quakenode.getElementsByTagName('georss:elev')[0].childNodes[0].data)
-    depth = float(elevation) / 1000
+    depth = float(elevation) / -1000
     depthmi = '{0:.3}'.format(depth / 1.61)
     depthstring = "%s km (%s mi)" % (depth, depthmi)
     request.close()

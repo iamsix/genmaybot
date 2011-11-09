@@ -24,6 +24,9 @@ def get_urbandictionary(self, e):
       page = BeautifulSoup(page)
       first_definition= ""
       
+      if page.find(id='not_defined_yet') != None:
+          return None
+      
       ## depending on the search results the first word may be contained directly under the <td class='word'> tag
       ## or it may be the text contents of a <a href> tag
       ## we first try to get it from inside a <td><a href>[word]</a></td> type structure

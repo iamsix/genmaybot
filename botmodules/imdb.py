@@ -27,6 +27,7 @@ def get_imdb(self, e, urlposted=False):
          opener.close()
          
          movietitle = tools.decode_htmlentities(tools.remove_html_tags(str(page.find('title'))).replace(" - IMDb", ""))
+         movietitle = movietitle.replace("IMDb - ", "")
          movietitle = "Title: " + movietitle
 
          

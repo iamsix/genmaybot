@@ -25,4 +25,4 @@ def gwiki(bot, e):
       return e
     
 gwiki.command = "!gwiki"
-get_imdb.helptext = "!gwiki <query> - attempts to look up what you want to know on wikipedia using google's synopsis context"
+gwiki.helptext = "!gwiki <query> - attempts to look up what you want to know on wikipedia using google's synopsis context"

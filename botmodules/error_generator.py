@@ -67,7 +67,7 @@ mba_generator.command = "!mba"
 mba_generator.helptext = "Usage: !mba\nGenerates random corporate jargon"
 
 def fortune(self, e):
-    return xml.dom.minidom.parse(urllib2.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read())
+    return urllib2.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().replace('\n', ' ').replace('\r', '')
     
 fortune.command = "!fortune"
 fortune.helptext = "Usage: just fucking type !fortune"

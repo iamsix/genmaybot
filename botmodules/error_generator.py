@@ -1,4 +1,5 @@
 import random
+import urllib2, xml.dom.minidom
 
 def error_generator(self, e):
     firstword = firstwords[random.randint(0, len(firstwords) - 1)]
@@ -64,6 +65,12 @@ def mba_generator(self, e):
     
 mba_generator.command = "!mba"
 mba_generator.helptext = "Usage: !mba\nGenerates random corporate jargon"
+
+def fortune(self, e):
+    return urllib2.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read()
+    
+fortune.command = "!fortune"
+fortune.helptext = "Usage: just fucking type !fortune"
 
 
 verbs = ["aggregate", "architect", "benchmark", "brand", "cultivate", "deliver", "deploy", "disintermediate", "drive", 

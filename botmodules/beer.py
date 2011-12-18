@@ -23,7 +23,7 @@ def advocate_beer(self, e):
     start = beerpage.find(score_start_tag) + len(score_start_tag)
     score_line = beerpage[start:start+50]
 
-    find_start_tag = '</span>\n<br><a href="/help/index?topic=ratings"><b>'
+    find_start_tag = '</span>\n<br>'
     find_end_tag = "<br>"
 
     #print score_line

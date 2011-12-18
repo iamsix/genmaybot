@@ -4,7 +4,7 @@ import botmodules.tools as tools
 def advocate_beer(self, e):
     query = e.input
     #get the name, rating and style of a beer from beeradvocate.com
-    url = tools.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]*/[0-9]*")
+    url = tools.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]?/[0-9]*")
     #url = "http://beeradvocate.com/beer/profile/306/1212/"
     socket.setdefaulttimeout(30)
     try:

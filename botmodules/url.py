@@ -4,9 +4,12 @@ try: import MySQLdb
 except ImportError: pass
 
 def url_parser(self, e):
-    url = re.search("(?P<url>https?://[^\s]+)", e.input)
+    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.'])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.']*\)|[A-Z0-9+&@#/%=~_|$])", e.input)
     if url:
-        e.input = url.group(1)
+        url = url.group(0)
+        if url[0:3] == "www":
+           url = "http://" + url
+        e.input = url
         return url_posted(self, e)
     else:
         return None

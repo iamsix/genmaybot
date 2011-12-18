@@ -22,8 +22,11 @@ def get_wolfram(self, e):
     else:
         try:
             query = dom.getElementsByTagName("plaintext")[0].childNodes[0].data
-            result = dom.getElementsByTagName("plaintext")[1].childNodes[0].data
-            output = query.replace("\n", " || ") + ": " + result.replace("\n", " || ")
+            try:
+                result = dom.getElementsByTagName("plaintext")[1].childNodes[0].data
+            except:
+                result = ""
+            output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
             
             e.output = output.encode("utf-8")
             return e

@@ -96,3 +96,8 @@ def part_chan(line, nick, self, c):
         else:
             return "Not in " + chan
 part_chan.admincommand = "part"
+
+def show_channels(line, nck, self, c):
+    return ", ".join(self.channels)
+show_channels.admincommand = "channels"
+

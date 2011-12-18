@@ -87,7 +87,14 @@ def get_weather2(self, e):
         e.output = chanmsg.encode('utf-8')
         return e
     else:
-        return None
+        if user:
+            ziptry = user.get_location(e.input)
+            if ziptry:
+                e.nick = e.input
+                e.input = ""
+                return get_weather(self, e)
+            else:
+                return None
 
 get_weather2.command = "!wu"
 get_weather2.helptext = "Usage: !wu <location>\nExample: !wu hell, mi\nShows weather info from wunderground.com.\nUse !setlocation <location> to save your location"

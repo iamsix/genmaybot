@@ -55,7 +55,7 @@ def advocate_beer(self, e):
 
     abv = style_line[style_line.find(find_start_tag)+len(find_start_tag):style_line.find(find_end_tag)+1]
     response_string = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s [ %s ]" % (beertitle, grade, grade_wording, num_reviews, style, abv, tools.shorten_url(url))
-    e.output = "We're running low on beer please try later." #response_string
+    e.output = response_string
     return e
 advocate_beer.command = "!beer"
 advocate_beer.helptext = "Usage: !beer <beer name>\nExample: !beer pliny the elder\nFinds a given beer on beeradvocate.com and returns user ratings and beer info"

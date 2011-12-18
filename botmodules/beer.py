@@ -31,7 +31,7 @@ def advocate_beer(self, e):
     grade = score_line[0:score_line.find(find_start_tag)]
 
     #print "\n" + grade
-    grade_wording = score_line[score_line.find(find_start_tag)+len(find_start_tag):score_line.rfind(find_end_tag)]
+    grade_wording = "awsome"#score_line[score_line.find(find_start_tag)+len(find_start_tag):score_line.rfind(find_end_tag)]
     #print grade_wording
 
 

@@ -4,7 +4,7 @@ try: import MySQLdb
 except ImportError: pass
 
 def url_parser(self, e):
-    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.'])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.']*\)|[A-Z0-9+&@#/%=~_|$])", e.input)
+    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|([^\x00-\x7F])|[-A-Z0-9+&@#/%=~_|$?!:,.'])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.']*\)|[A-Z0-9+&@#/%=~_|$]|[^\x00-\x7F])", e.input)
     if url:
         url = url.group(0)
         if url[0:3] == "www":
@@ -112,6 +112,11 @@ def get_title(url):
     #extracts the title tag from a page
     title = ""
     try:
+        protocol = url[:url.find("://") + 3]
+        url = url[url.find("://") + 3:]
+        url = unicode(url.decode("utf-8")).encode("idna")
+        url = protocol + url
+        
         opener = urllib2.build_opener()
         readlength = 10240
         if url.find("amazon.") != -1: 
@@ -126,7 +131,8 @@ def get_title(url):
         
         titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
         title = "Title: " + titletmp.strip()[0:180]
-    except:
+    except Exception as err:
+        print "urlerr: " + url + " " + str(err)
         pass
         
     return title

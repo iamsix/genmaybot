@@ -1,4 +1,4 @@
-import re, urllib2, hashlib, datetime, botmodules.tools as tools
+import re, urllib2, urlparse, hashlib, datetime, botmodules.tools as tools
 
 try: import MySQLdb
 except ImportError: pass
@@ -112,10 +112,7 @@ def get_title(url):
     #extracts the title tag from a page
     title = ""
     try:
-        protocol = url[:url.find("://") + 3]
-        url = url[url.find("://") + 3:]
-        url = unicode(url.decode("utf-8")).encode("idna")
-        url = protocol + url
+        url = fixurl(url)
         
         opener = urllib2.build_opener()
         readlength = 10240
@@ -126,6 +123,8 @@ def get_title(url):
                              ('Range',"bytes=0-" + str(readlength))]
 
         pagetmp = opener.open(url)
+        #encoding = pagetmp.headers['content-type'].split('charset=')[-1]
+        #.decode(encoding, 'ignore').encode('utf-8', 'ignore')
         page = pagetmp.read(readlength)
         opener.close()
         
@@ -136,6 +135,37 @@ def get_title(url):
         pass
         
     return title
+
+def fixurl(url):
+    # turn string into unicode
+    if not isinstance(url,unicode):
+        url = url.decode('utf8')
+
+    # parse it
+    parsed = urlparse.urlsplit(url)
+
+    # divide the netloc further
+    hostport = parsed.netloc
+    host,colon2,port = hostport.partition(':')
+
+    # encode each component
+    scheme = parsed.scheme.encode('utf8')
+    host = host.encode('idna')
+
+    colon2 = colon2.encode('utf8')
+    port = port.encode('utf8')
+    path = '/'.join(  # could be encoded slashes!
+        urllib2.quote(urllib2.unquote(pce).encode('utf8'),'')
+        for pce in parsed.path.split('/')
+    )
+    query = urllib2.quote(urllib2.unquote(parsed.query).encode('utf8'),'=&?/')
+    fragment = urllib2.quote(urllib2.unquote(parsed.fragment).encode('utf8'))
+
+    # put it back together
+    netloc = ''.join((host,colon2,port))
+    return urlparse.urlunsplit((scheme,netloc,path,query,fragment))
+
+
 
 def last_link(self, e):
     #displays last link posted (requires mysql)

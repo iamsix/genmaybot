@@ -1,13 +1,16 @@
+# coding=utf-8
+
 import re, urllib2, urlparse, hashlib, datetime, botmodules.tools as tools
 
 try: import MySQLdb
 except ImportError: pass
 
 def url_parser(self, e):
-    url = re.search(r"(?i)\b(?:(?:https?)://|www\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|([^\x00-\x7F])|[-A-Z0-9+&@#/%=~_|$?!:,.'])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.']*\)|[A-Z0-9+&@#/%=~_|$]|[^\x00-\x7F])", e.input)
+    url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
+    #http://daringfireball.net/2010/07/improved_regex_for_matching_urls
     if url:
         url = url.group(0)
-        if url[0:3] == "www":
+        if url[0:4] != "http":
            url = "http://" + url
         e.input = url
         return url_posted(self, e)

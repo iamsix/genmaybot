@@ -17,7 +17,6 @@ def advocate_beer(self, e):
     titlestart = beerpage.find("<title>") + 7
     titleend = beerpage.find(" - ", titlestart)
     beertitle = beerpage[titlestart:titleend]
-    print beertitle
 
     score_start_tag = '<span class="BAscore_big">'
     score_end_tag = 'Reviews</td>'

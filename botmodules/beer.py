@@ -6,9 +6,10 @@ def advocate_beer(self, e):
     #get the name, rating and style of a beer from beeradvocate.com
     url = tools.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]*?/[0-9]+")
     #url = "http://beeradvocate.com/beer/profile/306/1212/"
+    
     socket.setdefaulttimeout(30)
     try:
-      beerpage = urllib2.urlopen(url).read()#.decode("ISO-8859-1")
+      beerpage = urllib2.urlopen(url).read().decode("utf-8")
     except:
       return None
     socket.setdefaulttimeout(10)
@@ -16,6 +17,7 @@ def advocate_beer(self, e):
     titlestart = beerpage.find("<title>") + 7
     titleend = beerpage.find(" - ", titlestart)
     beertitle = beerpage[titlestart:titleend]
+    print beertitle
 
     score_start_tag = '<span class="BAscore_big">'
     score_end_tag = 'Reviews</td>'
@@ -57,7 +59,7 @@ def advocate_beer(self, e):
 
     abv = style_line[style_line.find(find_start_tag)+len(find_start_tag):style_line.find(find_end_tag)+1]
     response_string = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s [ %s ]" % (beertitle, grade, grade_wording, num_reviews, style, abv, tools.shorten_url(url))
-    e.output = response_string
+    e.output = response_string.encode("utf-8")
     return e
 advocate_beer.command = "!beer"
 advocate_beer.helptext = "Usage: !beer <beer name>\nExample: !beer pliny the elder\nFinds a given beer on beeradvocate.com and returns user ratings and beer info"

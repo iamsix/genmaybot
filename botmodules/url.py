@@ -10,7 +10,7 @@ def url_parser(self, e):
     #http://daringfireball.net/2010/07/improved_regex_for_matching_urls
     if url:
         url = url.group(0)
-        if url[0:4] != "http":
+        if url[0:4].lower() != "http":
            url = "http://" + url
         e.input = url
         return url_posted(self, e)
@@ -126,13 +126,13 @@ def get_title(url):
                              ('Range',"bytes=0-" + str(readlength))]
 
         pagetmp = opener.open(url)
-        #encoding = pagetmp.headers['content-type'].split('charset=')[-1]
-        #.decode(encoding, 'ignore').encode('utf-8', 'ignore')
-        page = pagetmp.read(readlength)
-        opener.close()
-        
-        titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
-        title = "Title: " + titletmp.strip()[0:180]
+        if pagetmp.headers['content-type'].find("text") != -1:
+
+            page = pagetmp.read(readlength)
+            opener.close()
+            
+            titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
+            title = "Title: " + titletmp.strip()[0:180]
     except Exception as err:
         print "urlerr: " + url + " " + str(err)
         pass

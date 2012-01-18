@@ -89,7 +89,7 @@ adjectives = ["24/365", "24/7", "B2B", "B2C", "back-end", "best-of-breed", "blee
 "leading-edge", "magnetic", "mission-critical", "next-generation", "one-to-one", "open-source", "out-of-the-box", 
 "plug-and-play", "proactive", "real-time", "revolutionary", "rich", "robust", "scalable", "seamless", "sexy", "sticky", 
 "strategic", "synergistic", "transparent", "turn-key", "ubiquitous", "user-centric", "value-added", "vertical", "viral", 
-"virtual", "visionary", "web-enabled", "wireless", "world-class"]
+"virtual", "visionary", "web-enabled", "wireless", "world-class", "software-as-a-service"]
 
 nouns = ["action-items", "applications", "architectures", "bandwidth", "channels", "communities", "content", "convergence", 
 "deliverables", "e-business", "e-commerce", "e-markets", "e-services", "e-tailers", "experiences", "eyeballs", 

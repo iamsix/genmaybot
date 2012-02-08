@@ -68,7 +68,7 @@ def list_stock(nick):
 	
 	if result:
 		for stock in result:
-			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),stock[2].center(15),stock[3].center(12))
+			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12))
 		return return_line
 	else: 
 		return "You so poor\nnyah nyah nyah\nNYAH"

@@ -54,7 +54,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 def del_stock(nick, stock_rowid):
 	return "Deleted portfolio entry #%s" % (stock_rowid)
 
-def list_stock(nicK):
+def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=%s" % (nick)).fetchall()

@@ -62,7 +62,11 @@ def del_stock(nick, stock_rowid):
 def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
-	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user='%s'" % (nick)).fetchall()
+	try:
+		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user='%s'" % (nick)).fetchall()
+	except:
+		return "You're too poor to own stock."
+		
 	
 	conn.close()
 	

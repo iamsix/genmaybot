@@ -64,11 +64,11 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="ID\tSymbol\t# of Shares\tPrice Paid\n"
+	return_line="ID%s%s%sn" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(12))
 	
 	if result:
 		for stock in result:
-			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1],stock[2],stock[3])
+			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),stock[2].center(15),stock[3].center(12))
 		return return_line
 	else: 
 		return "You so poor\nnyah nyah nyah\nNYAH"

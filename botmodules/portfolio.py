@@ -57,7 +57,7 @@ def del_stock(nick, stock_rowid):
 def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
-	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=%s" % (nick)).fetchall()
+	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user='%s'" % (nick)).fetchall()
 	
 	return_line="ID\tSymbol\t# of Shares\tPrice Paid"
 	

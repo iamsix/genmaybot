@@ -65,7 +65,7 @@ def list_stock(nicK):
 		for stock in result:
 			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1],stock[2],stock[3])
 		return return_line
-	else 
+	else: 
 		return "You so poor\nnyah nyah nyah\nNYAH"
 	
 		

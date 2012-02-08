@@ -5,11 +5,13 @@ def portfolio(self, e):
 	args = e.input.upper().split()
 	nick = e.nick.upper()
 	
+		
 	if len(args) == 4:		# arguments for adding stock
 		command,stock,numshares,pricepaid = args
 		if command != "ADD":
 			return
 		
+		e.source = e.nick
 		e.notice = True
 		e.output = add_stock(nick, stock, numshares, pricepaid)
 		return e
@@ -19,7 +21,8 @@ def portfolio(self, e):
 		command,stock_rowid = args
 		if command != "DEL":
 			return
-		
+			
+		e.source = e.nick		
 		e.notice = True
 		e.output = del_stock(nick, stock_rowid)
 		return e
@@ -28,7 +31,7 @@ def portfolio(self, e):
 		command = args[0]
 		if command != "LIST":
 			return
-		
+		e.source = e.nick
 		e.notice = True
 		e.output = list_stock(nick)
 		

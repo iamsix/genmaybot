@@ -68,7 +68,7 @@ def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	try:
-		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user='?'", (nick)).fetchall()
+		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=?", (nick)).fetchall()
 	except:
 		return "You're too poor to own stock."
 		

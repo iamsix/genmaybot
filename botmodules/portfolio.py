@@ -49,6 +49,8 @@ def add_stock(nick,stock,numshares,pricepaid):
 	
 
 	c.execute("INSERT INTO portfolios VALUES ('%s', '%s', '%s', '%s')" % (nick,stock,numshares,pricepaid))
+	conn.commit()
+	
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
 def del_stock(nick, stock_rowid):

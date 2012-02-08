@@ -5,6 +5,11 @@ def get_cat(self, e):
     return e     
 get_cat.command = "!cats"
 
+def get_dvq(self, e):
+    e.output = "http://i.imgur.com/1lq54.jpg"
+    return e
+get_dvq.command = "!dvq"
+
 def get_rat(self, e):
     url = "http://www.reddit.com/r/rats/.json"
     e.output = get_redditpics(url)

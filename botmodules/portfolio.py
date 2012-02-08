@@ -53,7 +53,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 	if type(stock) is not str or type(numshares) is not int or type(pricepaid) is not float or type(pricepaid) is not int:
 		return "Please use the correct command to add stocks to your portfolio."
 	
-	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", (nick,stock,numshares,pricepaid))
+	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])
 	conn.commit()
 	conn.close()
 	
@@ -68,7 +68,7 @@ def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	try:
-		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=?", (nick)).fetchall()
+		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=?", [nick]).fetchall()
 	except:
 		return "You're too poor to own stock."
 		

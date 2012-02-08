@@ -55,13 +55,19 @@ def del_stock(nick, stock_rowid):
 	return "Deleted portfolio entry #%s" % (stock_rowid)
 
 def list_stock(nicK):
-	#conn = sqlite3.connect('portfolios.sqlite')
-	#c = conn.cursor()
-	#result = c.execute("SELECT stock, numshares, pricepaid FROM portfolios WHERE user=%s" % (nick)).fetchall()
-	#if result:
-				
+	conn = sqlite3.connect('portfolios.sqlite')
+	c = conn.cursor()
+	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user=%s" % (nick)).fetchall()
 	
-	return "You so poor\nnyah nyah nyah\nNYAH"
+	return_line="ID\tSymbol\t# of Shares\tPrice Paid"
+	
+	if result:
+		for stock in result:
+			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1],stock[2],stock[3])
+		return return_line
+	else 
+		return "You so poor\nnyah nyah nyah\nNYAH"
+	
 		
 	
 

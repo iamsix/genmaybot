@@ -57,7 +57,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 def del_stock(nick, stock_rowid):
 	return "Deleted portfolio entry #%s" % (stock_rowid)
 
-def list_stock(nicK)
+def list_stock(nicK):
 	return "You so poor"
 		
 	

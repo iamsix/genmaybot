@@ -50,6 +50,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 
 	c.execute("INSERT INTO portfolios VALUES ('%s', '%s', '%s', '%s')" % (nick,stock,numshares,pricepaid))
 	conn.commit()
+	conn.close()
 	
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
@@ -60,6 +61,8 @@ def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user='%s'" % (nick)).fetchall()
+	
+	conn.close()
 	
 	return_line="ID\tSymbol\t# of Shares\tPrice Paid"
 	

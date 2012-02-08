@@ -12,6 +12,7 @@ def add_stock(self, e):
 	#c.execute("INSERT INTO portfolios 
 
 def portfolio(self, e):
-	return e.input
+	e.output = e
+	return e
 
 portfolio.command = "!portfolio"

@@ -64,7 +64,7 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="ID\tSymbol\t# of Shares\tPrice Paid"
+	return_line="ID\tSymbol\t# of Shares\tPrice Paid\n"
 	
 	if result:
 		for stock in result:

@@ -106,7 +106,7 @@ class TestBot(SingleServerIRCBot):
         line = ircevent.arguments()[0]
         from_nick = ircevent.source().split("!")[0]
         hostmask = ircevent.source()[ircevent.source().find("!")+1:]
-        command = line.split(" ")[0]
+        command = line.split(" ")[0].lower()
         args = line[len(command)+1:].strip()
         if private:
             linesource = from_nick

@@ -5,6 +5,12 @@ def get_cat(self, e):
     return e     
 get_cat.command = "!cats"
 
+def get_rat(self, e):
+    url = "http://www.reddit.com/r/rats/.json"
+    e.output = get_redditpics(url)
+    return e     
+get_rat.command = "!rats"
+
 def get_dog(self, e):
     url = "http://www.reddit.com/r/dogpictures/.json"
     e.output = get_redditpics(url)
@@ -28,6 +34,12 @@ def get_sloth(self, e):
     e.output = get_redditpics(url)
     return e
 get_sloth.command = "!sloths"
+
+def get_sandwich(self, e):
+    url = "http://www.reddit.com/r/eatsandwiches/.json"
+    e.output = get_redditpics(url)
+    return e
+get_sandwich.command = "!sandwiches"
 
 def get_redditpics(url):
     response = urllib2.urlopen(url).read()

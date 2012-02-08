@@ -12,7 +12,7 @@ import sqlite3
 	#c.execute("INSERT INTO portfolios 
 
 def portfolio(self, e):
-	e.output = "what the fuck"
+	e.output = e.input
 	return e
 
 portfolio.command = "!portfolio"

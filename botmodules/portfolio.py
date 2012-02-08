@@ -1,20 +1,9 @@
 import sqlite3
 
-#def add_stock(self, e):
-	
-	#conn = sqlite3.connect('portfolios.sqlite')
-	#c = conn.cursor()
-	#result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
-	#if not result:
-	#	c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
-	
-#	pass	
-	#c.execute("INSERT INTO portfolios 
-
 def portfolio(self, e):
 	
 	args = e.input.upper().split()
-	nick = e.nick
+	nick = e.nick.upper()
 	
 	if len(args) == 4:		# arguments for adding stock
 		command,stock,numshares,pricepaid = args
@@ -52,13 +41,27 @@ def portfolio(self, e):
 	return e
 
 def add_stock(nick,stock,numshares,pricepaid):
+	conn = sqlite3.connect('portfolios.sqlite')
+	c = conn.cursor()
+	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
+	if not result:
+		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
+	
+
+	c.execute("INSERT INTO portfolios VALUES (%s, %s, %s, %s)" % (nick,stock,numshares,pricepaid))
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
 def del_stock(nick, stock_rowid):
 	return "Deleted portfolio entry #%s" % (stock_rowid)
 
 def list_stock(nicK):
-	return "You so poor"
+	#conn = sqlite3.connect('portfolios.sqlite')
+	#c = conn.cursor()
+	#result = c.execute("SELECT stock, numshares, pricepaid FROM portfolios WHERE user=%s" % (nick)).fetchall()
+	#if result:
+				
+	
+	return "You so poor\nnyah nyah nyah\nNYAH"
 		
 	
 

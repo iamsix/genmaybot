@@ -55,6 +55,8 @@ def add_stock(nick,stock,numshares,pricepaid):
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
 def del_stock(nick, stock_rowid):
+	
+
 	return "Deleted portfolio entry #%s" % (stock_rowid)
 
 def list_stock(nick):
@@ -71,7 +73,7 @@ def list_stock(nick):
 			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12))
 		return return_line
 	else: 
-		return "You so poor\nnyah nyah nyah\nNYAH"
+		return "You're too poor to own stock."
 	
 		
 	

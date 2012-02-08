@@ -50,7 +50,10 @@ def add_stock(nick,stock,numshares,pricepaid):
 	if not result:
 		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
 	
-	if type(stock) is not str or type(numshares) is not int or type(pricepaid) is not float or type(pricepaid) is not int:
+	try:
+		numshares = int(numshares)
+		pricepaid = float(pricepaid)
+	except:
 		return "Please use the correct command to add stocks to your portfolio."
 	
 	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])

@@ -79,7 +79,7 @@ def url_posted(self, e):
     elif imdb and imdb.output:
         title = imdb.output
     else:
-        if url.find("imgur.com") != -1:
+        if url.find("imgur.com") != -1 and url.find("/a/") == -1:
           imgurid =  url[url.rfind('/')+1:url.rfind('/')+6]
           url = "http://imgur.com/" + imgurid
         title = get_title(url)

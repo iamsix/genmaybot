@@ -66,8 +66,8 @@ def del_stock(nick, stock_rowid):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
-	c.commit()
-	c.close()
+	conn.commit()
+	conn.close()
 	
 	if result == 0:
 			return "You did something wrong, try again."

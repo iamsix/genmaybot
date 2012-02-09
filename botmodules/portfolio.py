@@ -1,4 +1,4 @@
-import sqlite3, locale, urllib2, csv
+import sqlite3, locale, urllib2
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -106,10 +106,9 @@ def get_stocks(stocks):
 	stocks="BAC+BAC-PJ"
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)
-	opener.close()
-	price = [r for r in csv.reader([quote])][0]	
 	
-	return price
+	
+	return quote
       
 	
 

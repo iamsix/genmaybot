@@ -100,6 +100,9 @@ def list_stock(nick):
 		return "You're too poor to own stock."
 	
 def get_stocks(stocks):
+	opener = urllib2.build_opener()
+	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+	
 	stocks="BAC+BAC-PJ"
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)

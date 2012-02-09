@@ -1,4 +1,8 @@
-import sqlite3
+import sqlite3, locale, urllib2, csv
+try:
+    locale.setlocale(locale.LC_ALL, 'English_United States')
+except:
+    locale.setlocale(locale.LC_ALL, 'en_US')
 
 def portfolio(self, e):
 	
@@ -36,9 +40,9 @@ def portfolio(self, e):
 		e.output = list_stock(nick)
 		
 	elif len(args) == 0:
-		#e.output = get_user_portfolio(user)
-		#return e
-		pass #not done yet
+		e.output = get_stocks(user)
+		return e
+
 		
 	
 	return e
@@ -95,7 +99,15 @@ def list_stock(nick):
 	else: 
 		return "You're too poor to own stock."
 	
-		
+def get_stocks(stocks):
+	stocks="BAC+BAC-PJ"
+	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
+	quote = pagetmp.read(1024)
+	opener.close()
+	price = [r for r in csv.reader([quote])][0]	
+	
+	return price
+      
 	
 
 portfolio.command = "!portfolio"

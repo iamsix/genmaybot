@@ -40,7 +40,7 @@ def portfolio(self, e):
 		e.output = list_stock(nick)
 		
 	elif len(args) == 0:
-		e.output = get_stocks(user)
+		e.output = get_stocks(nick)
 		return e
 
 		

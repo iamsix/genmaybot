@@ -65,7 +65,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 def del_stock(nick, stock_rowid):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
-	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid])
+	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
 	
 	if result == 0:
 			return "You did something wrong, try again."

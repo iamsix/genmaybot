@@ -63,9 +63,15 @@ def add_stock(nick,stock,numshares,pricepaid):
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
 def del_stock(nick, stock_rowid):
+	conn = sqlite3.connect('portfolios.sqlite')
+	c = conn.cursor()
+	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid])
 	
-
-	return "Deleted portfolio entry #%s" % (stock_rowid)
+	if result == 0:
+			return "You did something wrong, try again."
+	if result == 1:
+			return "Deleted portfolio entry #%s" % (stock_rowid)
+	
 
 def list_stock(nick):
 	conn = sqlite3.connect('portfolios.sqlite')

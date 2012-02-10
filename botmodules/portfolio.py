@@ -100,6 +100,7 @@ def list_stock(nick):
 			stocks.append(stock[1])
 		
 		stock_prices = get_stocks_prices(stocks)
+		print stock_prices
 		
 		for stock in result:
 			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12),str(stock_prices[id_counter]).center(13))

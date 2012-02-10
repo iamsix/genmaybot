@@ -53,9 +53,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
 	if not result:
 		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
-	
-	return get_stocks_prices(stock)[0]
-	
+
 	if get_stocks_prices(stock)[0] == "0.00":
 		return "Incorrect ticker symbol. Fix it and try again."
 	
@@ -116,11 +114,16 @@ def list_stock(nick):
 	else: 
 		return "You're too poor to own stock."
 	
-def get_stocks_prices(stocks): ## pass in a list or tuple of stocks and get back their prices in a tuple
+def get_stocks_prices(stocks):## pass in a list or tuple or a single string
+						## of stocks and get back their prices in a tuple
+						
 	opener = urllib2.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+
+	#if you pass in a string we dont want to insert + signs
+	if type(stocks) is not str:
+		stocks = "+".join(stocks)
 	
-	stocks = "+".join(stocks)
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)
 

@@ -130,7 +130,7 @@ def list_stock(nick):
 		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
 		
 		
-		return_line+=" "*80
+		return_line+=" "*80+"\n"
 		return_line+="Starting Value: %s   Current: %s   Gain: %s (%s%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
 		
 		return return_line

@@ -121,7 +121,7 @@ def list_stock(nick):
 			stock_gain=float(stock_prices[id_counter])-stock[3]
 			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
 			
-			stockgainpct = "%s (%s%)" % (stock_gain, stock_perc_gain)
+			#stockgainpct = "%s (%s%)" % (stock_gain, stock_perc_gain)
 						
 			#return_line += "%s%s%s%s%s%s\n\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(13),stockgainpct.center(10))
 			id_counter+=1

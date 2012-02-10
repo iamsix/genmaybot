@@ -37,10 +37,10 @@ def portfolio(self, e):
 			return
 		e.source = e.nick
 		e.notice = True
-		e.output = list_stock(nick)
+		e.output = list_stock(nick,False)
 		
 	elif len(args) == 0:
-		e.output = get_stocks(nick)
+		e.output = list_stock(nick,True)
 		return e
 
 		
@@ -53,12 +53,17 @@ def add_stock(nick,stock,numshares,pricepaid):
 	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
 	if not result:
 		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
+
+	if get_stocks_prices(stock)[0] == "0.00":
+		return "Incorrect ticker symbol. Fix it and try again."
 	
 	try:
 		numshares = int(numshares)
 		pricepaid = float(pricepaid)
 	except:
 		return "Please use the correct command to add stocks to your portfolio."
+	
+		
 	
 	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])
 	conn.commit()
@@ -79,7 +84,18 @@ def del_stock(nick, stock_rowid):
 			return "Deleted portfolio entry #%s" % (stock_rowid)
 	
 
-def list_stock(nick):
+def list_stock(nick,public):
+	stocks = []
+	id_counter=0
+	
+	#initial portfolio valuations
+	init_value=0
+	cur_value=0
+	stock_gain=0
+	stock_perc_gain=0
+	portfolio_gain=0
+	portfolio_perc_gain=0
+	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	try:
@@ -90,25 +106,56 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="ID%s%s%s\n" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(12))
+	return_line="%s%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price".center(15),"Change".center(18))
 	
 	if result:
 		for stock in result:
-			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12))
+			stocks.append(stock[1])
+		
+		stock_prices = get_stocks_prices(stocks)
+
+		
+		for stock in result:
+			init_value+=(stock[2]*stock[3])
+			cur_value+=(stock[2]*float(stock_prices[id_counter]))
+			stock_gain=float(stock_prices[id_counter])-stock[3]
+			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+			
+			stockgainpct = "%0.2f (%0.2f%%)" % (stock_gain, stock_perc_gain)
+						
+			return_line += "%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(15),stockgainpct.center(18))
+			id_counter+=1
+		
+		portfolio_gain = round(cur_value-init_value,2)
+		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
+		
+		
+		return_line+=" "*80+"\n"
+		
+		##only output the value line in a channel, everything else if asked in pm
+		if public:
+			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		else:
+			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		
 		return return_line
 	else: 
 		return "You're too poor to own stock."
 	
-def get_stocks(stocks):
+def get_stocks_prices(stocks):## pass in a list or tuple or a single string
+						## of stocks and get back their prices in a tuple
+						
 	opener = urllib2.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
+
+	#if you pass in a string we dont want to insert + signs
+	if type(stocks) is not str:
+		stocks = "+".join(stocks)
 	
-	stocks="BAC+BAC-PJ"
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)
-	
-	
-	return quote
+
+	return quote.split("\r\n")
       
 	
 

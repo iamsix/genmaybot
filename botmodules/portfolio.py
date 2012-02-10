@@ -54,11 +54,16 @@ def add_stock(nick,stock,numshares,pricepaid):
 	if not result:
 		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
 	
+	if get_stocks_prices(stock)[0] == "0.00":
+		return "Incorrect ticker symbol. Fix it and try again."
+	
 	try:
 		numshares = int(numshares)
 		pricepaid = float(pricepaid)
 	except:
 		return "Please use the correct command to add stocks to your portfolio."
+	
+		
 	
 	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])
 	conn.commit()

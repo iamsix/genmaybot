@@ -100,10 +100,10 @@ def list_stock(nick):
 			stocks.append(stock[1])
 		
 		stock_prices = get_stocks_prices(stocks)
-		print stock_prices
+
 		
 		for stock in result:
-			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12),str(stock_prices[id_counter]).center(13))
+			return_line += "%s%s%s%s%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12),str(stock_prices[id_counter]).center(13))
 			id_counter+=1
 		return return_line
 	else: 
@@ -116,8 +116,7 @@ def get_stocks_prices(stocks): ## pass in a list or tuple of stocks and get back
 	stocks = "+".join(stocks)
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)
-	
-	print quote
+
 	return quote.split("\r\n")
       
 	

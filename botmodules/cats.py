@@ -1,6 +1,6 @@
 import json, urllib2, random
 def get_cat(self, e):
-    url = "http://www.reddit.com/r/catpictures/.json"
+    url = "http://www.reddit.com/r/catpictures+cats/.json"
     e.output = get_redditpics(url)
     return e     
 get_cat.command = "!cats"
@@ -17,7 +17,7 @@ def get_rat(self, e):
 get_rat.command = "!rats"
 
 def get_dog(self, e):
-    url = "http://www.reddit.com/r/dogpictures/.json"
+    url = "http://www.reddit.com/r/dogpictures+dogs/.json"
     e.output = get_redditpics(url)
     return e
 get_dog.command = "!dogs"

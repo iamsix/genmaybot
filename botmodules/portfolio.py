@@ -117,7 +117,7 @@ def get_stocks_prices(stocks): ## pass in a list or tuple of stocks and get back
 	quote = pagetmp.read(1024)
 	
 	
-	return quote.split("\r\n\")
+	return quote.split("\r\n")
       
 	
 

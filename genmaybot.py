@@ -18,7 +18,7 @@
 
 from ircbot import SingleServerIRCBot
 import time, imp
-import sys, os, socket, ConfigParser, threading
+import sys, os, socket, ConfigParser, threading, traceback
 
 socket.setdefaulttimeout(5)
 
@@ -143,6 +143,7 @@ class TestBot(SingleServerIRCBot):
                     self.botSay(e)
                                             
         except Exception as inst: 
+            traceback.print_exc()
             print line + " : " + str(inst)
             pass
 
@@ -160,7 +161,8 @@ class TestBot(SingleServerIRCBot):
                     else:              
                         self.irccontext.privmsg(botevent.source, line)
         except Exception as inst:
-            print "bot failed trying to say " + str(botevent) + "\n" + str(inst) 
+            print "bot failed trying to say " + str(botevent.output) + "\n" + str(inst) 
+            traceback.print_exc()
 
     def loadmodules(self):
         filenames = []

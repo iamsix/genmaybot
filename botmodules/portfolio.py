@@ -37,10 +37,10 @@ def portfolio(self, e):
 			return
 		e.source = e.nick
 		e.notice = True
-		e.output = list_stock(nick)
+		e.output = list_stock(nick,False)
 		
 	elif len(args) == 0:
-		#e.output = get_stocks(nick)
+		e.output = list_stock(nick,True)
 		return e
 
 		
@@ -84,7 +84,7 @@ def del_stock(nick, stock_rowid):
 			return "Deleted portfolio entry #%s" % (stock_rowid)
 	
 
-def list_stock(nick):
+def list_stock(nick,public):
 	stocks = []
 	id_counter=0
 	
@@ -131,7 +131,12 @@ def list_stock(nick):
 		
 		
 		return_line+=" "*80+"\n"
-		return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		
+		##only output the value line in a channel, everything else if asked in pm
+		if public:
+			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		else:
+			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
 		
 		return return_line
 	else: 

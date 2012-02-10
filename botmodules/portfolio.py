@@ -80,6 +80,9 @@ def del_stock(nick, stock_rowid):
 	
 
 def list_stock(nick):
+	stocks = []
+	id_counter=0
+	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	try:
@@ -90,25 +93,31 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="ID%s%s%s\n" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(12))
+	return_line="ID%s%s%s\n" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(12), "Current Price")
 	
 	if result:
 		for stock in result:
-			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12))
+			stocks.append(stock[1])
+		
+		stock_prices = get_stocks_prices(stocks)
+		
+		for stock in result:
+			return_line += "%s\t%s\t%s\t%s\n" % (stock[0],stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(12),str(stock_prices[id_counter]).center(13))
+			id_counter+=1
 		return return_line
 	else: 
 		return "You're too poor to own stock."
 	
-def get_stocks(stocks):
+def get_stocks_prices(stocks): ## pass in a list or tuple of stocks and get back their prices in a tuple
 	opener = urllib2.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
 	
-	stocks="BAC+BAC-PJ+BAC"
+	stocks = "+".join(stocks)
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
 	quote = pagetmp.read(1024)
 	
 	
-	return quote
+	return quote.split("\r\n\")
       
 	
 

@@ -88,6 +88,14 @@ def list_stock(nick):
 	stocks = []
 	id_counter=0
 	
+	#initial portfolio valuations
+	init_value=0
+	cur_value=0
+	stock_gain=0
+	stock_perc_gain=0
+	portfolio_gain=0
+	portfolio_perc_gain=0
+	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
 	try:
@@ -98,7 +106,7 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price")
+	return_line="%s%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price".center(15),"Change".center(10))
 	
 	if result:
 		for stock in result:
@@ -108,8 +116,21 @@ def list_stock(nick):
 
 		
 		for stock in result:
-			return_line += "%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(13))
+			init_value+=(stock[2]*stock[3])
+			cur_value+=(stock[2]*stock_prices[id_counter])
+			stock_gain=stock_prices[id_counter]-stock[3]
+			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+			
+			stockgainpct = "%s (%s%)" % (stock_gain, stock_perc_gain)
+						
+			return_line += "%s%s%s%s%s%s\n\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(13),stockgainpct.center(10))
 			id_counter+=1
+		
+		portfolio_gain = cur_value-init_value
+		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
+		
+		return_line+="Starting Value: %s   Current: %s   Gain: %s (%s%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		
 		return return_line
 	else: 
 		return "You're too poor to own stock."

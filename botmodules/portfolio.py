@@ -129,7 +129,7 @@ def list_stock(nick):
 		portfolio_gain = cur_value-init_value
 		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
 		
-		return_line+="Starting Value: %s   Current: %s   Gain: %s (%s%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		#return_line+="Starting Value: %s   Current: %s   Gain: %s (%s%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
 		
 		return return_line
 	else: 

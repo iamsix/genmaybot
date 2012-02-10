@@ -116,12 +116,12 @@ def list_stock(nick):
 
 		
 		for stock in result:
-			init_value+=round((stock[2]*stock[3]),2)
-			cur_value+=round((stock[2]*float(stock_prices[id_counter])),2)
+			init_value+=(stock[2]*stock[3])
+			cur_value+=(stock[2]*float(stock_prices[id_counter]))
 			stock_gain=float(stock_prices[id_counter])-stock[3]
 			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
 			
-			stockgainpct = "%s (%s%%)" % (stock_gain, stock_perc_gain)
+			stockgainpct = "%0.2f (%0.2f%%)" % (stock_gain, stock_perc_gain)
 						
 			return_line += "%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(15),stockgainpct.center(18))
 			id_counter+=1
@@ -131,7 +131,7 @@ def list_stock(nick):
 		
 		
 		return_line+=" "*80+"\n"
-		return_line+="Starting Value: %s   Current: %s   Gain: %s (%s%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+		return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
 		
 		return return_line
 	else: 

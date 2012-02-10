@@ -40,7 +40,7 @@ def portfolio(self, e):
 		e.output = list_stock(nick)
 		
 	elif len(args) == 0:
-		e.output = get_stocks(nick)
+		#e.output = get_stocks(nick)
 		return e
 
 		
@@ -93,7 +93,7 @@ def list_stock(nick):
 	
 	conn.close()
 	
-	return_line="ID%s%s%s%s\n" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price")
+	return_line="ID  %s%s%s%s\n" % ("Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price")
 	
 	if result:
 		for stock in result:

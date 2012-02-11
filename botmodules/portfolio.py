@@ -63,7 +63,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 		if numshares <= 0 or pricepaid <=0 or numshares != numshares or pricepaid != pricepaid:
 			raise BaseException
 	except:
-		return "Please use the correct command to add stocks to your portfolio."
+		return "The number of shares or the price is incorrect. Fix it and try again."
 	
 		
 	

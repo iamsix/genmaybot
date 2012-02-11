@@ -61,7 +61,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 		numshares = int(numshares)
 		pricepaid = float(pricepaid)
 		if numshares <= 0 or pricepaid <=0 or numshares != numshares or pricepaid != pricepaid:
-      raise BaseException
+			raise BaseException
 	except:
 		return "Please use the correct command to add stocks to your portfolio."
 	

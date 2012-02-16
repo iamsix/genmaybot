@@ -15,7 +15,7 @@
 # (hostmask might be username | hostmask where username@hostmask 
 # 
 ### random descision maker?
-# test comment please ignore 
+# test branch comment please ignore 
 
 
 from ircbot import SingleServerIRCBot

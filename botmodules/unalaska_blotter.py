@@ -10,16 +10,21 @@ def get_unalaska_blotter(self, e):
 	opener.close()
 
 	page = BeautifulSoup(page)
-	blots = page.findAll('div',attrs={'id' : 'blots'})[0]
-	firstBlot = blots.findAll('div',attrs={'class' : 'blot'})[0]
+	try:
+		blots = page.findAll('div',attrs={'id' : 'blots'})[0]
+		firstBlot = blots.findAll('div',attrs={'class' : 'blot'})[0]
 
-	headline = firstBlot.findAll('span',attrs={'class' : 'headline small'})[0].string
-	blotdate = firstBlot.findAll('span',attrs={'class' : 'date'})[0].string
-	details = firstBlot.findAll('span',attrs={'class' : 'details'})[0].string
+		headline = firstBlot.findAll('span',attrs={'class' : 'headline small'})[0].string
+		blotdate = firstBlot.findAll('span',attrs={'class' : 'date'})[0].string
+		details = firstBlot.findAll('span',attrs={'class' : 'details'})[0].string
+	except:
+		print "\nSomething went wrong with processing the blotter page in unalaska_blotter.py\n"
+		pass
 
-	print "%s [%s] %s" % (headline,blotdate,details)
+
 
 	e.output = "%s [%s] %s" % (headline,blotdate,details)
+	return e
 
 get_unalaska_blotter.command="!blot"
-get_unalaska_blotter.helptext = "Usage: !blot\n Retrieve the latest witty police blotter entry from the city of Unalaska, Alaska"
+get_unalaska_blotter.helptext = "Usage: !blot\nRetrieve the latest witty police blotter entry from the city of Unalaska, Alaska"

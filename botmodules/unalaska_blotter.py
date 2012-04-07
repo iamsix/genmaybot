@@ -10,15 +10,15 @@ def get_unalaska_blotter(self, e):
 	opener.close()
 
 	page = BeautifulSoup(page)
-  blots = page.findAll('div',attrs={'id' : 'blots'})[0]
-  firstBlot = blots.findAll('div',attrs={'class' : 'blot'})[0]
+	blots = page.findAll('div',attrs={'id' : 'blots'})[0]
+	firstBlot = blots.findAll('div',attrs={'class' : 'blot'})[0]
 
-  headline = firstBlot.findAll('span',attrs={'class' : 'headline small'})[0].string
-  blotdate = firstBlot.findAll('span',attrs={'class' : 'date'})[0].string
-  details = firstBlot.findAll('span',attrs={'class' : 'details'})[0].string
+	headline = firstBlot.findAll('span',attrs={'class' : 'headline small'})[0].string
+	blotdate = firstBlot.findAll('span',attrs={'class' : 'date'})[0].string
+	details = firstBlot.findAll('span',attrs={'class' : 'details'})[0].string
 
 	print "%s [%s] %s" % (headline,blotdate,details)
-	
+
 	e.output = "%s [%s] %s" % (headline,blotdate,details)
 
 get_unalaska_blotter.command="!blot"

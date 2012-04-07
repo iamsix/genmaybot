@@ -23,7 +23,7 @@ def get_unalaska_blotter(self, e):
 	
 	#Convert date to a bit shorter format
 	blotdate = blotdate.replace(".","")
-	blotdate = time.strftime("%H:%M %a %m/%d/%y",time.strptime(s, "%A %d %B %Y, %I:%M %p"))
+	blotdate = time.strftime("%H:%M %a %m/%d/%y",time.strptime(blotdate, "%A %d %B %Y, %I:%M %p"))
 	
 	e.output = "%s [%s] %s" % (headline,blotdate,details)
 	return e

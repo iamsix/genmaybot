@@ -97,7 +97,7 @@ def part_chan(line, nick, self, c):
             return "Not in " + chan
 part_chan.admincommand = "part"
 
-def say_cmd(line, nick, self, c)
+def say_cmd(line, nick, self, c):
 	if len(line.split(" ")) > 2:
 		chan = line.split(" ")[1]
 		words = " ".join(line.split(" ")[2:])

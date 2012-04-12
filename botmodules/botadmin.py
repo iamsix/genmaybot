@@ -105,6 +105,7 @@ def say_cmd(line, nick, self, c)
 		return "Said %s to %s" % (words, chan)
 	else: 
 		return "Correct syntax: say [#channel/nickname] I hate you!"
+say_cmd.admincommand="say"
 
 def show_channels(line, nck, self, c):
     return ", ".join(self.channels)

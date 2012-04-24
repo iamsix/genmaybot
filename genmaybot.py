@@ -68,8 +68,8 @@ class TestBot(SingleServerIRCBot):
         self.alerts(c)  
         self.irccontext = c
             
-    def on_invite(self, c, e):
-        c.join(e.arguments()[0])
+    #def on_invite(self, c, e):
+        #c.join(e.arguments()[0])
         
     def on_pubmsg(self, c, e):
         self.process_line(c, e)

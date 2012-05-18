@@ -70,7 +70,7 @@ def bbnet(self, e):
     rand = random.randint(2, 10)
     for n in range(0, rand):
         e.output = "%s%s" % (e.output, "l")
-        e.output = "%s%s" % (e.output, "o" if random.randint(0,5) == 0 else "oo")
+        e.output = "%s%s" % (e.output, "oo" if random.randint(0,5) == 0 else "o")
     
     return e
 

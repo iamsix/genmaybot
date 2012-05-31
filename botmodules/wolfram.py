@@ -32,6 +32,10 @@ def get_wolfram(self, e):
             return e
         except Exception as inst:
             print "!wolfram " + e.input + " : " + str(inst)
+            result = "poop!"
+            e.output = result.encode("utf-8")
+            return e
+            
 get_wolfram.command = "!wolfram"
 get_wolfram.helptext = "Usage: !wolfram <query>\nExample: !wolfram population of New York City\nPerforms a query through Wolfram|Alpha and returns the first result"
 

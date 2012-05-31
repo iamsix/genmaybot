@@ -28,7 +28,7 @@ class TestBot(SingleServerIRCBot):
     
 
     def __init__(self, channel, nickname, server, port=6667):
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
+        SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname, 30)
         self.channel = channel
         self.doingcommand = False
 
@@ -60,8 +60,7 @@ class TestBot(SingleServerIRCBot):
 
     def on_disconnect(self, c, e):
         print "DISCONNECT: " + str(e.arguments())
-        sys.exit(0)
-        
+
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
         c.join(self.channel)       

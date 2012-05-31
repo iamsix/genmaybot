@@ -25,7 +25,7 @@ def get_wolfram(self, e):
             try:
                 result = dom.getElementsByTagName("plaintext")[1].childNodes[0].data
             except:
-                result = ""
+                result = "poop!"
             output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
             
             e.output = output.encode("utf-8")

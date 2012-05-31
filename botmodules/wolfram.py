@@ -19,6 +19,9 @@ def get_wolfram(self, e):
             return get_wolfram(self, e)
         except Exception as inst:
             print "!wolframrelated " + e.input + " : " + str(inst)
+            result = "poop!"
+            e.output = result.encode("utf-8")
+            return e
     else:
         try:
             query = dom.getElementsByTagName("plaintext")[0].childNodes[0].data

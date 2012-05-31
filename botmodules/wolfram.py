@@ -1,4 +1,4 @@
-import urllib, urllib2, xml.dom.minidom, socket, botmodules.tools as tools
+import urllib, urllib2, xml.dom.minidom, socket, botmodules.tools as tools, botmodules.error_generator as error_generator
 try: import botmodules.userlocation as user
 except: pass
 
@@ -19,7 +19,7 @@ def get_wolfram(self, e):
             return get_wolfram(self, e)
         except Exception as inst:
             print "!wolframrelated " + e.input + " : " + str(inst)
-            result = "poop!"
+            result = error_generator.error_generator(self,e).output
             e.output = result.encode("utf-8")
             return e
     else:
@@ -28,14 +28,14 @@ def get_wolfram(self, e):
             try:
                 result = dom.getElementsByTagName("plaintext")[1].childNodes[0].data
             except:
-                result = "poop!"
-            output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
+                result = error_generator.error_generator(self,e).output
             
+            output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
             e.output = output.encode("utf-8")
             return e
         except Exception as inst:
             print "!wolfram " + e.input + " : " + str(inst)
-            result = "poop!"
+            result = error_generator.error_generator(self,e).output
             e.output = result.encode("utf-8")
             return e
             

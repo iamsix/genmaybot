@@ -67,7 +67,7 @@ mba_generator.command = "!mba"
 mba_generator.helptext = "Usage: !mba\nGenerates random corporate jargon"
 
 def bbnet(self, e):
-    if (e.nick.startswith('bbnet')):
+    if (e.nick.lower().startswith('bbnet')):
         e.output = "^"
     else:
         rand = random.randint(1, 10)

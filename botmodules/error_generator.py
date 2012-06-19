@@ -70,8 +70,8 @@ def bbnet(self, e):
     if (e.nick.lower().startswith('bbnet')):
         e.output = "<%s> !bbnet\n^\n" % e.nick
 
-    rand = random.randint(1, 10)
-    for n in range(1, rand):
+    rand = random.randint(2, 10)
+    for n in range(0, rand):
         e.output = "%s%s" % (e.output, "l")
         e.output = "%s%s" % (e.output, "oo" if random.randint(0,5) == 0 else "o")
     

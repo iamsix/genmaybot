@@ -47,7 +47,9 @@ def get_sandwich(self, e):
 get_sandwich.command = "!sandwiches"
 
 def get_redditpics(url):
-    response = urllib2.urlopen(url).read()
+    opener = urllib2.build_opener()
+    opener.addheaders = [('User-agent', 'genmaybot IRC bot')]
+    response = opener.open(url).read()
     cats = json.loads(response)
     catlist = []
     for cat in cats['data']['children']:

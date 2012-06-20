@@ -26,6 +26,21 @@ def get_wiki(self, e, urlposted=False):
   if url and url.find("wikipedia.org/wiki/") != -1:
 
     try:
+      title = read_wiki_page(url)
+      if not urlposted:
+        url = tools.shorten_url(url)
+        title = (title.decode('utf-8', 'ignore') + " [ %s ]" % url).encode('utf-8', 'ignore')
+    except Exception as inst: 
+      print "!wiki " + searchterm + " : " + str(inst)
+      title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
+
+  e.output = title
+  return e
+get_wiki.command = "!wiki"
+get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nShows the first couple of sentences of a wikipedia entry for the given search term"
+
+
+def read_wiki_page(url):
       opener = urllib2.build_opener()
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
@@ -41,8 +56,9 @@ def get_wiki(self, e, urlposted=False):
       tables = page.findAll('table')
       for table in tables:
         table.extract()
-        
+    
       page = page.findAll('p')
+
       if str(page[0])[0:9] == '<p><span ':
           page = unicode(page[1].extract())
       else:
@@ -61,19 +77,8 @@ def get_wiki(self, e, urlposted=False):
       title = title[0:420]
       if title.rfind(".")!=-1:
         title = title[0:title.rfind(".")+1]
-      
-      if not urlposted:
-        url = tools.shorten_url(url)
-        title = (title.decode('utf-8', 'ignore') + " [ %s ]" % url).encode('utf-8', 'ignore')
-    except Exception as inst: 
-      print "!wiki " + searchterm + " : " + str(inst)
-      title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
-
-  e.output = title
-  return e
-get_wiki.command = "!wiki"
-get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nShows the first couple of sentences of a wikipedia entry for the given search term"
-
+        
+      return title
 
 def get_wiki_file_description(url):
   try:

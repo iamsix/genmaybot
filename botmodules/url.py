@@ -1,8 +1,12 @@
 # coding=utf-8
 
 import re, urllib2, urlparse, hashlib, datetime, botmodules.tools as tools
+import traceback
 
 try: import MySQLdb
+except ImportError: pass
+
+try: import botmodules.wiki
 except ImportError: pass
 
 def url_parser(self, e):
@@ -82,7 +86,7 @@ def url_posted(self, e):
         if url.find("imgur.com") != -1 and url.find("/a/") == -1:
           imgurid =  url[url.rfind('/')+1:url.rfind('/')+6]
           url = "http://imgur.com/" + imgurid
-        title = get_title(url)
+        title = get_title(self, url)
         if title.find("imgur: the simple") != -1:
           title = ""
 
@@ -111,7 +115,7 @@ def url_posted(self, e):
     pass
   return
 
-def get_title(url):
+def get_title(self, url):
     #extracts the title tag from a page
     title = ""
     try:
@@ -127,13 +131,15 @@ def get_title(url):
 
         pagetmp = opener.open(url)
         if pagetmp.headers['content-type'].find("text") != -1:
-
             page = pagetmp.read(readlength)
             opener.close()
-            
-            titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
-            title = "Title: " + titletmp.strip()[0:180]
+            if page.find('meta name="generator" content="MediaWiki') != -1:
+                title = botmodules.wiki.read_wiki_page(url)
+            else:
+                titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
+                title = "Title: " + titletmp.strip()[0:180]
     except Exception as err:
+        print traceback.print_exc()
         print "urlerr: " + url + " " + str(err)
         pass
         
@@ -184,7 +190,7 @@ def last_link(self, e):
         url = result[0]
 
       conn.close()
-      e.output = "[ " + url + " ] " + get_title(url)
+      e.output = "[ " + url + " ] " + get_title(self, url)
       return e
     else:
       return None

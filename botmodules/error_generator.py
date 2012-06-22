@@ -80,7 +80,7 @@ def bbnet(self, e):
 bbnet.command = "!bbnet"
 
 def fortune(self, e):
-    e.output = urllib.request.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().replace('\n', ' ').replace('\r', '').strip()
+    e.output = urllib.request.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().decode('utf-8').replace('\n', ' ').replace('\r', '').strip()
     return e
     
 fortune.command = "!fortune"

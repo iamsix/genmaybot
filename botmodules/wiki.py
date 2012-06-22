@@ -29,7 +29,7 @@ def get_wiki(self, e, urlposted=False):
       title = read_wiki_page(url)
       if not urlposted:
         url = tools.shorten_url(url)
-        title = (title.decode('utf-8', 'ignore') + " [ %s ]" % url).encode('utf-8', 'ignore')
+        title = (title + " [ %s ]" % url)
     except Exception as inst: 
       print("!wiki " + searchterm + " : " + str(inst))
       title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
@@ -65,14 +65,13 @@ def read_wiki_page(url):
           page = str(page[0].extract())
 
       title = tools.remove_html_tags(re.search('(?s)\<p\>(.*?)\<\/p\>',page).group(1))
-      title = title.encode("utf-8", 'ignore')
       title = title.replace("<","");
       rembracket = re.compile(r'\[.*?\]')
       title = rembracket.sub('',title)
       #title = re.sub("\&.*?\;", " ", title)
       title = title.replace("\n", " ")
       
-      title = tools.decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
+      title = tools.decode_htmlentities(title)
 
       title = title[0:420]
       if title.rfind(".")!=-1:
@@ -110,9 +109,8 @@ def get_wiki_file_description(url):
             return False
       
     
-    desc = desc.encode("utf-8", 'ignore')
     desc = desc.replace("English:","")
-    desc = tools.decode_htmlentities(desc.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
+    desc = tools.decode_htmlentities(desc)
     desc = desc[0:420]
     if desc.rfind(".")!=-1:
       desc = desc[0:desc.rfind(".")+1]

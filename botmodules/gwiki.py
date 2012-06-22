@@ -5,7 +5,7 @@ def gwiki(bot, e):
       request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
       response = urllib.request.urlopen(request)
 
-      results_json = json.load(response)
+      results_json = json.loads(response.read().decode('utf-8'))
       results = results_json['responseData']['results']
       regexstring = "wikipedia.org/wiki/"
       result = results[0]
@@ -15,13 +15,13 @@ def gwiki(bot, e):
          url = tools.shorten_url(url.replace('%25','%'))
          #content = result['content'].encode('utf-8')
          
-         content = tools.decode_htmlentities(tools.remove_html_tags(result['content'].encode('utf-8', 'ignore')))
+         content = tools.decode_htmlentities(tools.remove_html_tags(result['content']))
          content = re.sub('\s+', ' ', content)
          content = content.replace("...", "")
          #print content
          #content = content.decode('unicode-escape')
          #e.output = content
-         e.output = "%s [ %s ]" % (content, url.encode('utf-8', 'ignore'))
+         e.output = "%s [ %s ]" % (content, url)
       return e
     
 gwiki.command = "!gwiki"

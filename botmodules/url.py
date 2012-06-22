@@ -94,7 +94,7 @@ def url_posted(self, e):
     title = re.sub('\s+', ' ', title)
     pattern = re.compile('whatsisname', re.IGNORECASE)
     title = pattern.sub('', title)      
-    title = tools.decode_htmlentities(title.decode("utf-8", 'ignore')).encode("utf-8", 'ignore')
+    title = tools.decode_htmlentities(title)
 
     titler = "%s%s%s" % (repost, title, days)
     
@@ -131,7 +131,7 @@ def get_title(self, url):
 
         pagetmp = opener.open(url)
         if pagetmp.headers['content-type'].find("text") != -1:
-            page = pagetmp.read(readlength)
+            page = pagetmp.read(readlength).decode('utf-8')
             opener.close()
             if page.find('meta name="generator" content="MediaWiki') != -1:
                 title = botmodules.wiki.read_wiki_page(url)
@@ -157,18 +157,14 @@ def fixurl(url):
     hostport = parsed.netloc
     host,colon2,port = hostport.partition(':')
 
-    # encode each component
-    scheme = parsed.scheme.encode('utf8')
-    host = host.encode('idna')
+    scheme = parsed.scheme
 
-    colon2 = colon2.encode('utf8')
-    port = port.encode('utf8')
     path = '/'.join(  # could be encoded slashes!
-        urllib.parse.quote(urllib.parse.unquote(pce).encode('utf8'),'')
+        urllib.parse.quote(urllib.parse.unquote(pce),'')
         for pce in parsed.path.split('/')
     )
-    query = urllib.parse.quote(urllib.parse.unquote(parsed.query).encode('utf8'),'=&?/')
-    fragment = urllib.parse.quote(urllib.parse.unquote(parsed.fragment).encode('utf8'))
+    query = urllib.parse.quote(urllib.parse.unquote(parsed.query),'=&?/')
+    fragment = urllib.parse.quote(urllib.parse.unquote(parsed.fragment))
 
     # put it back together
     netloc = ''.join((host,colon2,port))

@@ -31,7 +31,10 @@ class TestBot(SingleServerIRCBot):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname, 30)
         self.channel = channel
         self.doingcommand = False
-
+        self.botnick = nickname
+        
+        
+          
         self.commandaccesslist = {}    
         self.commandcooldownlast = {}
 
@@ -52,6 +55,7 @@ class TestBot(SingleServerIRCBot):
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
+        self.botnick = c.get_nickname() + "_"
 
     def on_kick(self, c, e):
         #attempt to rejoin any channel we're kicked from
@@ -116,11 +120,14 @@ class TestBot(SingleServerIRCBot):
         
         e = None
         etmp = []
+
                 
         try:
             #commands names are defined by the module as function.command = "!commandname"
             if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
                 e = self.botEvent(linesource, from_nick, hostmask, args)
+                e.botnick = self.botnick #store the bot's nick in the event in case we need it.
+
                 if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
                     self.doingcommand = False
                     return
@@ -129,6 +136,7 @@ class TestBot(SingleServerIRCBot):
             else:
                 #lineparsers take the whole line and nick for EVERY line
                 e = self.botEvent(linesource, from_nick, hostmask, line)
+                e.botnick = self.botnick #store the bot's nick in the event in case we need it.
                 #ensure the lineparser function is short and simple. Try to not to add too many of them
                 #Multiple lineparsers can output data, leading to multiple 'say' lines
                 for command in self.lineparsers:

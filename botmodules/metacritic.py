@@ -25,7 +25,6 @@ def get_metacritic(self, e):
     elif titleUrl.find("tv/") > 0:
         category = "TV"
     elif titleUrl.find("music/") > 0:
-        print("got here!")
         category = "Music"
         # band name is here, append it to title
         title += " " + titleDiv.findAll('span',attrs={"class" : "band_name"})[0].string

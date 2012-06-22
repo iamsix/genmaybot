@@ -1,4 +1,4 @@
-import json, urllib2, random
+import json, urllib.request, urllib.error, urllib.parse, random
 def get_cat(self, e):
     url = "http://www.reddit.com/r/catpictures+cats/.json"
     e.output = get_redditpics(url)
@@ -47,10 +47,10 @@ def get_sandwich(self, e):
 get_sandwich.command = "!sandwiches"
 
 def get_redditpics(url):
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent', 'genmaybot IRC bot')]
     response = opener.open(url).read()
-    cats = json.loads(response)
+    cats = json.loads(response.decode('utf-8'))
     catlist = []
     for cat in cats['data']['children']:
         if 'jpg' in cat['data']['url'] or 'imgur.com' in cat['data']['url']:

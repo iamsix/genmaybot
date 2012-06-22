@@ -1,5 +1,5 @@
-from BeautifulSoup import BeautifulSoup
-import re, urllib2, botmodules.tools as tools
+from bs4 import BeautifulSoup
+import re, urllib.request, urllib.error, urllib.parse, botmodules.tools as tools
 
 def get_wiki(self, e, urlposted=False):
     #read the first paragraph of a wikipedia article
@@ -31,7 +31,7 @@ def get_wiki(self, e, urlposted=False):
         url = tools.shorten_url(url)
         title = (title.decode('utf-8', 'ignore') + " [ %s ]" % url).encode('utf-8', 'ignore')
     except Exception as inst: 
-      print "!wiki " + searchterm + " : " + str(inst)
+      print("!wiki " + searchterm + " : " + str(inst))
       title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
 
   e.output = title
@@ -41,7 +41,7 @@ get_wiki.helptext = "Usage: !wiki <search term>\nExample: !wiki carl sagan\nSh
 
 
 def read_wiki_page(url):
-      opener = urllib2.build_opener()
+      opener = urllib.request.build_opener()
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
       page = pagetmp.read()
@@ -60,9 +60,9 @@ def read_wiki_page(url):
       page = page.findAll('p')
 
       if str(page[0])[0:9] == '<p><span ':
-          page = unicode(page[1].extract())
+          page = str(page[1].extract())
       else:
-          page = unicode(page[0].extract())
+          page = str(page[0].extract())
 
       title = tools.remove_html_tags(re.search('(?s)\<p\>(.*?)\<\/p\>',page).group(1))
       title = title.encode("utf-8", 'ignore')
@@ -82,7 +82,7 @@ def read_wiki_page(url):
 
 def get_wiki_file_description(url):
   try:
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
     pagetmp = opener.open(url)
     page = pagetmp.read()
@@ -106,7 +106,7 @@ def get_wiki_file_description(url):
             desc = page.find("div",attrs={"id":"shared-image-desc"}).next.getText(separator=" ")
             #print "hit 4th case"
           except:
-            print "Couldn't find description for file %s" % url
+            print("Couldn't find description for file %s" % url)
             return False
       
     
@@ -121,6 +121,6 @@ def get_wiki_file_description(url):
     return desc.strip()
       
   except:
-    print "Finding a file description failed miserably. The URL probably didn't even load."  
+    print("Finding a file description failed miserably. The URL probably didn't even load.")  
     return
 

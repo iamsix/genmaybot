@@ -1,4 +1,4 @@
-import urllib, urllib2, xml.dom.minidom, socket, botmodules.tools as tools, botmodules.error_generator as error_generator
+import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, socket, botmodules.tools as tools, botmodules.error_generator as error_generator, traceback
 try: import botmodules.userlocation as user
 except: pass
 
@@ -6,10 +6,10 @@ def get_wolfram(self, e):
     
     #query 'input' on wolframalpha and get the plaintext result back
     if user:
-        location = urllib.quote(user.get_location(e.nick))
+        location = urllib.parse.quote(user.get_location(e.nick))
     socket.setdefaulttimeout(30)
-    url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s&location=%s" % (tools.config.wolframAPIkey, urllib.quote(e.input), location)
-    dom = xml.dom.minidom.parse(urllib2.urlopen(url))
+    url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s&location=%s" % (tools.config.wolframAPIkey, urllib.parse.quote(e.input), location)
+    dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
     socket.setdefaulttimeout(10)
 
     if (dom.getElementsByTagName("queryresult")[0].getAttribute("success") == "false"):
@@ -18,9 +18,10 @@ def get_wolfram(self, e):
             e.input = related
             return get_wolfram(self, e)
         except Exception as inst:
-            print "!wolframrelated " + e.input + " : " + str(inst)
+            traceback.print_exc()
+            print("!wolframrelated " + e.input + " : " + str(inst))
             result = error_generator.error_generator(self,e).output
-            e.output = result.encode("utf-8")
+            e.output = result
             return e
     else:
         try:
@@ -31,12 +32,13 @@ def get_wolfram(self, e):
                 result = error_generator.error_generator(self,e).output
             
             output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
-            e.output = output.encode("utf-8")
+            e.output = output
             return e
         except Exception as inst:
-            print "!wolfram " + e.input + " : " + str(inst)
+            traceback.print_exc()
+            print("!wolfram " + e.input + " : " + str(inst))
             result = error_generator.error_generator(self,e).output
-            e.output = result.encode("utf-8")
+            e.output = result
             return e
             
 get_wolfram.command = "!wolfram"

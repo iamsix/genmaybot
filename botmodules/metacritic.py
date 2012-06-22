@@ -1,9 +1,9 @@
-from BeautifulSoup import BeautifulSoup
-import urllib2, botmodules.tools as tools, re
+from bs4 import BeautifulSoup
+import urllib.request, urllib.error, urllib.parse, botmodules.tools as tools, re
 
 def get_metacritic(self, e):
     url = tools.google_url("site:metacritic.com " + e.input, "www.metacritic.com/")
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
     pagetmp = opener.open(url)
     page = pagetmp.read()
@@ -14,7 +14,7 @@ def get_metacritic(self, e):
         titleDiv = page.findAll('div',attrs={"class" : "product_title"})[0]
     except:
         return
-    title = titleDiv.a.string.encode("utf-8", 'ignore')    
+    title = titleDiv.a.string 
     titleUrl = titleDiv.a['href']
     
     if titleUrl.find("game/") > 0:
@@ -25,7 +25,7 @@ def get_metacritic(self, e):
     elif titleUrl.find("tv/") > 0:
         category = "TV"
     elif titleUrl.find("music/") > 0:
-        print "got here!"
+        print("got here!")
         category = "Music"
         # band name is here, append it to title
         title += " " + titleDiv.findAll('span',attrs={"class" : "band_name"})[0].string

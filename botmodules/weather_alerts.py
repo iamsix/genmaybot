@@ -1,4 +1,4 @@
-import urllib2, xml.dom.minidom, datetime, botmodules.tools as tools, re
+import urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime, botmodules.tools as tools, re
 from dateutil.parser import parse as dateparser
 
 
@@ -14,7 +14,7 @@ def weather_alert():
       return get_weather_alert_data(alert_url)
       
   except Exception as inst:
-    print "weather_alert: " + str(inst)
+    print("weather_alert: " + str(inst))
     pass    
 
 #weather_alert.alert=True
@@ -22,7 +22,7 @@ weather_alert.lastcheck=""
 
 def find_latest_weather_alert():
   try:
-    request = urllib2.urlopen("http://alerts.weather.gov/cap/us.php?x=1")
+    request = urllib.request.urlopen("http://alerts.weather.gov/cap/us.php?x=1")
     dom = xml.dom.minidom.parse(request)
     latest_update = datetime.datetime(1970,1,1) ## for comparing against the latest weather entry
 
@@ -47,13 +47,13 @@ def find_latest_weather_alert():
         
     return latest_update, latest_entry, alert_url
   except Exception as inst:
-    print "find_latest_weather_alert: " + str(inst)
+    print("find_latest_weather_alert: " + str(inst))
     pass    
 
 
 def get_weather_alert_data(alert_url):
   try:
-    request = urllib2.urlopen(alert_url)
+    request = urllib.request.urlopen(alert_url)
     dom = xml.dom.minidom.parse(request)
     msgType = dom.getElementsByTagName('msgType')[0].childNodes[0].data
     note = dom.getElementsByTagName('description')[0].childNodes[0].data
@@ -89,7 +89,7 @@ def get_weather_alert_data(alert_url):
     return alert_text
     
   except Exception as inst:
-    print "get_weather_alert_data: " + str(inst)
+    print("get_weather_alert_data: " + str(inst))
     pass    
 
   

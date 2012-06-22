@@ -1,9 +1,9 @@
-import urllib2, botmodules.tools as tools
+import urllib.request, urllib.error, urllib.parse, botmodules.tools as tools
 
 def get_fml(self, e):  
     #queries a random fmylife.com passage
   try:
-    fmlxml = urllib2.urlopen("http://api.betacie.com/view/random?key=%s&language=en" % tools.config.fmlAPIkey).read()
+    fmlxml = urllib.request.urlopen("http://api.betacie.com/view/random?key=%s&language=en" % tools.config.fmlAPIkey).read()
     start = fmlxml.find("<text>") + 6
     end = fmlxml.find("</text>")
     
@@ -27,7 +27,7 @@ def get_fml(self, e):
     
     return e
   except Exception as inst:
-    print "!fml " + str(inst)
+    print("!fml " + str(inst))
     return None
 get_fml.command = "!fml"
 get_fml.helptext = "Usage: !fml\nShows a random entry from fmylife.com"

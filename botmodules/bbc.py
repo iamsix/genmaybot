@@ -1,4 +1,4 @@
-import urllib2, xml.dom.minidom, datetime
+import urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime
 
 
 def get_bbc(self, e):
@@ -22,14 +22,14 @@ def bbc_alert():
             bbc_alert.lastcheck = updated     
             return "%s" % (description)
       except Exception as inst: 
-          print "bbclert: " + str(inst)
+          print("bbclert: " + str(inst))
           pass
 bbc_alert.lastcheck = ""
 bbc_alert.alert = True
 
 
 def get_bbc_data():
-    request = urllib2.urlopen("https://twitter.com/statuses/user_timeline/5402612.rss")
+    request = urllib.request.urlopen("https://twitter.com/statuses/user_timeline/5402612.rss")
     dom = xml.dom.minidom.parse(request)
     latest_update = dom.getElementsByTagName('item')[0]
     updated = latest_update.getElementsByTagName('pubDate')[0].childNodes[0].data

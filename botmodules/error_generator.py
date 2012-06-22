@@ -1,5 +1,5 @@
 import random
-import urllib2, xml.dom.minidom
+import urllib.request, urllib.error, urllib.parse, xml.dom.minidom
 
 def error_generator(self, e):
     firstword = firstwords[random.randint(0, len(firstwords) - 1)]
@@ -80,7 +80,7 @@ def bbnet(self, e):
 bbnet.command = "!bbnet"
 
 def fortune(self, e):
-    e.output = urllib2.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().replace('\n', ' ').replace('\r', '').strip()
+    e.output = urllib.request.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().replace('\n', ' ').replace('\r', '').strip()
     return e
     
 fortune.command = "!fortune"

@@ -1,17 +1,17 @@
-import locale, urllib2, csv, json
-try:
-    locale.setlocale(locale.LC_ALL, 'English_United States')
-except:
-    locale.setlocale(locale.LC_ALL, 'en_US')
+import urllib.request, urllib.error, urllib.parse, csv, json# ,locale
+#try:
+#    locale.setlocale(locale.LC_ALL, 'English_United States')
+#except:
+#    locale.setlocale(locale.LC_ALL, 'en_US')
 
 def get_stock_quote(self, e):
     # stock quotes from Yahoo Finance
     
       
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
     #first runs a search to get a ticker symbol:
-    pagetmp = opener.open("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=%s&callback=YAHOO.Finance.SymbolSuggest.ssCallback" % urllib2.quote(e.input)).read()
+    pagetmp = opener.open("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=%s&callback=YAHOO.Finance.SymbolSuggest.ssCallback" % urllib.parse.quote(e.input)).read()
     pagetmp = pagetmp.replace('YAHOO.Finance.SymbolSuggest.ssCallback({"ResultSet":', "").replace("})", "")
     pagetmp = json.loads(pagetmp)
     #we assume the first result is correct:

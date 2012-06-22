@@ -1,4 +1,4 @@
-import urllib2, urllib, xml.dom.minidom
+import urllib.request, urllib.error, urllib.parse, urllib, xml.dom.minidom
 try: import botmodules.userlocation as user
 except: pass
 
@@ -9,11 +9,11 @@ def get_weather(self, e):
    if zip == "" and user:
        zip = user.get_location(e.nick)
 
-   url = "http://www.google.com/ig/api?weather=" + urllib.quote(zip)
-   dom = xml.dom.minidom.parse(urllib2.urlopen(url))
+   url = "http://www.google.com/ig/api?weather=" + urllib.parse.quote(zip)
+   dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
    
    if not dom.getElementsByTagName('problem_cause'):
-       degree_symbol = unichr(176)
+       degree_symbol = chr(176)
        city = dom.getElementsByTagName('city')[0].getAttribute('data')
        temp_f = dom.getElementsByTagName('current_conditions')[0].getElementsByTagName('temp_f')[0].getAttribute('data')
        temp_c = dom.getElementsByTagName('current_conditions')[0].getElementsByTagName('temp_c')[0].getAttribute('data')
@@ -47,7 +47,7 @@ def get_weather(self, e):
 
        
        chanmsg = "%s / %s / %s%sF %s%sC / %s / %s / %s %s - %s %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind, high_f, high_c,low_f,low_c)
-       e.output = chanmsg.encode('utf-8')
+       e.output = chanmsg
        return e
    else:
        return get_weather2(self, e)
@@ -63,8 +63,8 @@ def get_weather2(self, e):
     if zip == "" and user:
         zip = user.get_location(e.nick)
        
-    url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.quote(zip)
-    dom = xml.dom.minidom.parse(urllib2.urlopen(url))
+    url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.parse.quote(zip)
+    dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
     city = dom.getElementsByTagName('display_location')[0].getElementsByTagName('full')[0].childNodes[0].data
     if city != ", ":
         temp_f = dom.getElementsByTagName('temp_f')[0].childNodes[0].data
@@ -82,9 +82,9 @@ def get_weather2(self, e):
         except:
             humidity = ""
         
-        degree_symbol = unichr(176)
+        degree_symbol = chr(176)
         chanmsg = "%s / %s / %s%sF %s%sC / %s / %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind)
-        e.output = chanmsg.encode('utf-8')
+        e.output = chanmsg
         return e
     else:
         if user:

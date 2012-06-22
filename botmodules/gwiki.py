@@ -1,9 +1,9 @@
-import json, urllib2, re, botmodules.tools as tools
+import json, urllib.request, urllib.error, urllib.parse, re, botmodules.tools as tools
 
 def gwiki(bot, e):
-      url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=site:wikipedia.org+' + urllib2.quote(e.input))
-      request = urllib2.Request(url, None, {'Referer': 'http://irc.00id.net'})
-      response = urllib2.urlopen(request)
+      url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=site:wikipedia.org+' + urllib.parse.quote(e.input))
+      request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+      response = urllib.request.urlopen(request)
 
       results_json = json.load(response)
       results = results_json['responseData']['results']

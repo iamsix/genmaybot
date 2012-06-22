@@ -1,9 +1,9 @@
-import urllib2, time
-from BeautifulSoup import BeautifulSoup
+import urllib.request, urllib.error, urllib.parse, time
+from bs4 import BeautifulSoup
 
 def get_unalaska_blotter(self, e):
 	url = "http://kucb.org/community/blotter/"
-	opener = urllib2.build_opener()
+	opener = urllib.request.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
 	pagetmp = opener.open(url)
 	page = pagetmp.read()
@@ -18,7 +18,7 @@ def get_unalaska_blotter(self, e):
 		blotdate = firstBlot.findAll('span',attrs={'class' : 'date'})[0].string
 		details = firstBlot.findAll('span',attrs={'class' : 'details'})[0].string
 	except:
-		print "\nSomething went wrong with processing the blotter page in unalaska_blotter.py\n"
+		print("\nSomething went wrong with processing the blotter page in unalaska_blotter.py\n")
 		pass
 	
 	#Convert date to a bit shorter format

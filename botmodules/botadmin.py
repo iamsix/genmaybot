@@ -1,9 +1,9 @@
-import time
+import time, sys
 
 #test commit
 
 def kill_bot(line, nick, self, c):
-    print "got die command from " + nick
+    print("got die command from " + nick)
     message = ""
     if line[4:]:
         message = line[4:]
@@ -12,7 +12,7 @@ def kill_bot(line, nick, self, c):
 kill_bot.admincommand = "die"    
 
 def clear_bans(line, nick, self, c):
-    print nick + " cleared bans"
+    print(nick + " cleared bans")
     self.spam ={}
     return "All bans cleared"
 clear_bans.admincommand = "clearbans"
@@ -67,7 +67,7 @@ def command_status(line, nick, self, c):
         else:
             return command + " Enabled"
     elif len(line.split(" ")) == 1:
-        return str(self.commandaccesslist.items())
+        return str(list(self.commandaccesslist.items()))
     
 command_status.admincommand = "status"
 

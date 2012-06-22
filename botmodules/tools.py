@@ -1,5 +1,5 @@
-import re, urllib2, urllib, json, ConfigParser
-from htmlentitydefs import name2codepoint as n2cp
+import re, urllib.request, urllib.error, urllib.parse, urllib, json, configparser, traceback
+from html.entities import name2codepoint as n2cp
 
 def decode_htmlentities(string):
     #decodes things like &amp
@@ -12,14 +12,14 @@ def substitute_entity(match):
     
     if match.group(1) == "#":
         if match.group(2) == '':
-            return unichr(int(ent))
+            return chr(int(ent))
         elif match.group(2) == 'x':
-            return unichr(int('0x'+ent, 16))
+            return chr(int('0x'+ent, 16))
     else:
         cp = n2cp.get(ent)
 
         if cp:
-            return unichr(cp)
+            return chr(cp)
         else:
             return match.group()
   except:
@@ -31,24 +31,20 @@ def remove_html_tags(data):
       return p.sub('', data)
   
 def google_url(searchterm, regexstring):
-    #uses google to get a URL matching the regex string
-    try:
-      url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=' + urllib.quote(searchterm))
-      request = urllib2.Request(url, None, {'Referer': 'http://irc.00id.net'})
-      response = urllib2.urlopen(request)
+    url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=' + urllib.parse.quote(searchterm))
+    request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+    response = urllib.request.urlopen(request)
 
-      results_json = json.load(response)
-      results = results_json['responseData']['results']
-    
-      for result in results:
-          m = re.search(regexstring,result['url'])   
-          if (m):
-             url = result['url']
-             url = url.replace('%25','%')
-             return url
-      return
-    except:
-      return
+    results_json = json.loads(response.read().decode('utf-8'))
+    results = results_json['responseData']['results']
+  
+    for result in results:
+        m = re.search(regexstring,result['url'])   
+        if (m):
+           url = result['url']
+           url = url.replace('%25','%')
+           return url
+    return
   
 def shorten_url(url):
     #goo.gl url shortening service, not used directly but used by some commands
@@ -56,18 +52,19 @@ def shorten_url(url):
     values =  json.dumps({'longUrl' : url})
     headers = {'Content-Type' : 'application/json'}
     requestUrl = "https://www.googleapis.com/urlshortener/v1/url"
-    req = urllib2.Request (requestUrl, values, headers)
-    response = urllib2.urlopen (req)
-    results = json.load(response)
+    req = urllib.request.Request (requestUrl, values, headers)
+    response = urllib.request.urlopen (req)
+    results = json.loads(response.read().decode('utf-8'))
     shorturl = results['id']
     return shorturl
   except:
+    traceback.print_exc()
     return ""
 
 def config():
     #placeholder used to hold configs used by various modules
     pass
-cfg = ConfigParser.ConfigParser()
+cfg = configparser.ConfigParser()
 cfg.readfp(open('genmaybot.cfg'))
 config.fmlAPIkey = cfg.get("APIkeys","fmlAPIkey")
 config.wolframAPIkey = cfg.get("APIkeys","wolframAPIkey")

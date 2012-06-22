@@ -1,4 +1,4 @@
-import urllib2, xml.dom.minidom, datetime
+import urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime
 
 
 def get_quake(self, e):
@@ -22,14 +22,14 @@ def quake_alert():
             quake_alert.lastquakecheck = updated     
             return "Latest Earthquake: %s: Depth - %s (%s minutes ago) " % (qtitle, elevation, ago)
       except Exception as inst: 
-          print "quakealert: " + str(inst)
+          print("quakealert: " + str(inst))
           pass
 quake_alert.lastquakecheck = ""
 quake_alert.alert = True
 
 
 def get_quake_data():
-    request = urllib2.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
+    request = urllib.request.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
     dom = xml.dom.minidom.parse(request)
     latest_quakenode = dom.getElementsByTagName('entry')[0]
     updated = latest_quakenode.getElementsByTagName('updated')[0].childNodes[0].data

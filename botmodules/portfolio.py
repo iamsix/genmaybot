@@ -1,4 +1,4 @@
-import sqlite3, locale, urllib2
+import sqlite3, locale, urllib.request, urllib.error, urllib.parse
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -147,7 +147,7 @@ def list_stock(nick,public):
 def get_stocks_prices(stocks):## pass in a list or tuple or a single string
 						## of stocks and get back their prices in a tuple
 						
-	opener = urllib2.build_opener()
+	opener = urllib.request.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
 
 	#if you pass in a string we dont want to insert + signs
@@ -155,11 +155,11 @@ def get_stocks_prices(stocks):## pass in a list or tuple or a single string
 		stocks = "+".join(stocks)
 	
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
-	quote = pagetmp.read(1024)
+	quote = pagetmp.read(1024).decode("utf-8")
 
 	return quote.split("\r\n")
       
 	
 
 portfolio.command = "!portfolio"
-portfolio.helptext = "!portfolio help text"
+portfolio.helptext = "!portfolio ADD <symbol> <# of shares> <price> - to add stocks to your portfolio \n!portfolio LIST - will list all your stocks and gains\n!portfolio - show only the gains and values\n!portfolio DEL <id> - use the ID number given in !portfolio list"

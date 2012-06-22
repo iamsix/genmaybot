@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import re, urllib2, urlparse, hashlib, datetime, botmodules.tools as tools
+import re, urllib.request, urllib.error, urllib.parse, urllib.parse, hashlib, datetime, botmodules.tools as tools
 import traceback
 
 try: import MySQLdb
@@ -111,7 +111,7 @@ def url_posted(self, e):
 
   
   except Exception as inst: 
-    print url + ": " + str(inst)
+    print(url + ": " + str(inst))
     pass
   return
 
@@ -121,7 +121,7 @@ def get_title(self, url):
     try:
         url = fixurl(url)
         
-        opener = urllib2.build_opener()
+        opener = urllib.request.build_opener()
         readlength = 10240
         if url.find("amazon.") != -1: 
             readlength = 100096 #because amazon is coded like shit
@@ -139,19 +139,19 @@ def get_title(self, url):
                 titletmp = tools.remove_html_tags(re.search('(?is)\<title\>.*?<\/title\>',page).group(0))
                 title = "Title: " + titletmp.strip()[0:180]
     except Exception as err:
-        print traceback.print_exc()
-        print "urlerr: " + url + " " + str(err)
+        print(traceback.print_exc())
+        print("urlerr: " + url + " " + str(err))
         pass
         
     return title
 
 def fixurl(url):
     # turn string into unicode
-    if not isinstance(url,unicode):
+    if not isinstance(url,str):
         url = url.decode('utf8')
 
     # parse it
-    parsed = urlparse.urlsplit(url)
+    parsed = urllib.parse.urlsplit(url)
 
     # divide the netloc further
     hostport = parsed.netloc
@@ -164,15 +164,15 @@ def fixurl(url):
     colon2 = colon2.encode('utf8')
     port = port.encode('utf8')
     path = '/'.join(  # could be encoded slashes!
-        urllib2.quote(urllib2.unquote(pce).encode('utf8'),'')
+        urllib.parse.quote(urllib.parse.unquote(pce).encode('utf8'),'')
         for pce in parsed.path.split('/')
     )
-    query = urllib2.quote(urllib2.unquote(parsed.query).encode('utf8'),'=&?/')
-    fragment = urllib2.quote(urllib2.unquote(parsed.fragment).encode('utf8'))
+    query = urllib.parse.quote(urllib.parse.unquote(parsed.query).encode('utf8'),'=&?/')
+    fragment = urllib.parse.quote(urllib.parse.unquote(parsed.fragment).encode('utf8'))
 
     # put it back together
     netloc = ''.join((host,colon2,port))
-    return urlparse.urlunsplit((scheme,netloc,path,query,fragment))
+    return urllib.parse.urlunsplit((scheme,netloc,path,query,fragment))
 
 
 

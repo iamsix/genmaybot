@@ -1,11 +1,11 @@
-from BeautifulSoup import BeautifulSoup
-import urllib2, botmodules.tools as tools
+from bs4 import BeautifulSoup
+import urllib.request, urllib.error, urllib.parse, botmodules.tools as tools
 
 
 
 def get_urbandictionary(self, e):
     searchterm = e.input
-    url = "http://www.urbandictionary.com/define.php?term=%s" % urllib2.quote(searchterm)
+    url = "http://www.urbandictionary.com/define.php?term=%s" % urllib.parse.quote(searchterm)
     if searchterm=="wotd":
       e.output = get_urbandictionary_wotd()
       return e
@@ -14,7 +14,7 @@ def get_urbandictionary(self, e):
       url = "http://www.urbandictionary.com/random.php"
     
     try:
-      opener = urllib2.build_opener()
+      opener = urllib.request.build_opener()
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
       page = pagetmp.read()
@@ -58,7 +58,7 @@ def get_urbandictionary(self, e):
       return e
       
     except:
-      print "!ud %s went wrong" % searchterm
+      print("!ud %s went wrong" % searchterm)
       return
 
 get_urbandictionary.command = "!ud"
@@ -69,7 +69,7 @@ def get_urbandictionary_wotd():
 
   url = "http://www.urbandictionary.com"
   try:
-    opener = urllib2.build_opener()
+    opener = urllib.request.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
     pagetmp = opener.open(url)
     page = pagetmp.read()
@@ -95,5 +95,5 @@ def get_urbandictionary_wotd():
 
     return wotd
   except:
-    print "!ud wotd went wrong"
+    print("!ud wotd went wrong")
     return

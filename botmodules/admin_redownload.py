@@ -1,4 +1,4 @@
-import tempfile, os, zipfile, urllib, shutil, sys
+import tempfile, os, zipfile, urllib.request, urllib.parse, urllib.error, shutil, sys
 
 def redownload_modules(x,y,self,z):
   
@@ -19,7 +19,7 @@ def redownload_modules(x,y,self,z):
     return "Please modify redownload.py to contain the correct module path"
   
   try:
-    urllib.urlretrieve(url, tmpfile)
+    urllib.request.urlretrieve(url, tmpfile)
   except:
     return "There was an error downloading the source code."
  

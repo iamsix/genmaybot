@@ -20,7 +20,7 @@
 
 from ircbot import SingleServerIRCBot
 import time, imp
-import sys, os, socket, ConfigParser, threading, traceback
+import sys, os, socket, configparser, threading, traceback
 
 socket.setdefaulttimeout(5)
 
@@ -37,18 +37,18 @@ class TestBot(SingleServerIRCBot):
 
         self.spam ={}
         
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         try: 
             cfgfile = open('genmaybot.cfg')
         except IOError:
-            print "You need to create a .cfg file using the example"
+            print("You need to create a .cfg file using the example")
             sys.exit(1)
             
         config.readfp(cfgfile)
         self.identpassword = config.get("irc","identpassword")
         self.botadmins = config.get("irc","botadmins").split(",")
 
-        print self.loadmodules()
+        print(self.loadmodules())
         
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -59,7 +59,7 @@ class TestBot(SingleServerIRCBot):
             c.join(e.target()) 
 
     def on_disconnect(self, c, e):
-        print "DISCONNECT: " + str(e.arguments())
+        print("DISCONNECT: " + str(e.arguments()))
 
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.identpassword)
@@ -97,7 +97,7 @@ class TestBot(SingleServerIRCBot):
                     c.privmsg(nick, line)
 
         except Exception as inst:
-            print "admin exception: " + line + " : " + str(inst)
+            print("admin exception: " + line + " : " + str(inst))
 
     def process_line(self, c, ircevent, private = False):
         if self.doingcommand:
@@ -145,7 +145,7 @@ class TestBot(SingleServerIRCBot):
                                             
         except Exception as inst: 
             traceback.print_exc()
-            print line + " : " + str(inst)
+            print(line + " : " + str(inst))
             pass
 
         self.doingcommand = False
@@ -162,7 +162,7 @@ class TestBot(SingleServerIRCBot):
                     else:              
                         self.irccontext.privmsg(botevent.source, line)
         except Exception as inst:
-            print "bot failed trying to say " + str(botevent.output) + "\n" + str(inst) 
+            print("bot failed trying to say " + str(botevent.output) + "\n" + str(inst)) 
             traceback.print_exc()
 
     def loadmodules(self):
@@ -181,9 +181,9 @@ class TestBot(SingleServerIRCBot):
             try:
                 module = imp.load_source(name, filename)
             except Exception as inst: 
-                print "Error loading module " + name + " : " + str(inst)
+                print("Error loading module " + name + " : " + str(inst))
             else:
-                for name, func in vars(module).iteritems():
+                for name, func in vars(module).items():
                     if hasattr(func, 'command'):
                         command = str(func.command)
                         self.bangcommands[command] = func
@@ -198,7 +198,7 @@ class TestBot(SingleServerIRCBot):
         commands, botalerts, lineparsers, admincommands = "","","",""
                         
         if self.bangcommands:
-            commands = 'Loaded command modules: %s' % self.bangcommands.keys()
+            commands = 'Loaded command modules: %s' % list(self.bangcommands.keys())
         else:
             commands = "No command modules loaded!"
         if self.botalerts:
@@ -206,7 +206,7 @@ class TestBot(SingleServerIRCBot):
         if self.lineparsers:
             lineparsers = 'Loaded line parsers: %s' % ', '.join((command.__name__ for command in self.lineparsers))
         if self.admincommands:
-            admincommands = 'Loaded admin commands: %s' % self.admincommands.keys()
+            admincommands = 'Loaded admin commands: %s' % list(self.admincommands.keys())
         return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands   
     
     def isbotadmin(self, nick):
@@ -229,7 +229,7 @@ class TestBot(SingleServerIRCBot):
                 
     def isspam(self, user, nick):
 
-        if not (self.spam.has_key(user)):
+        if not (user in self.spam):
             self.spam[user] = {}
             self.spam[user]['count'] = 0
             self.spam[user]['last'] = 0
@@ -247,7 +247,7 @@ class TestBot(SingleServerIRCBot):
 
             if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
                 bantime = self.spam[user]['limit'] + 15
-                print "%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime)
+                print("%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime))
                 return True
             else:
                 self.spam[user]['first'] = 0
@@ -263,7 +263,7 @@ class TestBot(SingleServerIRCBot):
                     for channel in self.channels:  
                         context.privmsg(channel, say)
         except Exception as inst: 
-            print "alerts: " + str(inst)
+            print("alerts: " + str(inst))
             pass
       
         t=threading.Timer(60,self.alerts, [context])
@@ -324,7 +324,7 @@ class TestBot(SingleServerIRCBot):
 def main():
     #print sys.argv
     if len(sys.argv) != 4:
-        print "Usage: testbot <server[:port]> <channel> <nickname>"
+        print("Usage: testbot <server[:port]> <channel> <nickname>")
         sys.exit(1)
 
     s = sys.argv[1].split(":", 1)
@@ -333,7 +333,7 @@ def main():
         try:
             port = int(s[1])
         except ValueError:
-            print "Error: Erroneous port."
+            print("Error: Erroneous port.")
             sys.exit(1)
     else:
         port = 6667

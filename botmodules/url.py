@@ -67,9 +67,13 @@ def url_posted(self, e):
     title = ""
 
     try: wiki = self.bangcommands["!wiki"](self, e, True)
-    except: pass
+    except: 
+      print(traceback.print_exc())
+      pass
     try: imdb = self.bangcommands["!imdb"](self, e, True)
-    except: pass
+    except: 
+      print(traceback.print_exc())
+      pass
     if wiki and wiki.output:
         title = wiki.output
     elif imdb and imdb.output:

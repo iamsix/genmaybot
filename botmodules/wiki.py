@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
-import re, urllib.request, urllib.error, urllib.parse, botmodules.tools as tools
+import re, urllib.request, urllib.error, urllib.parse, botmodules.tools as tools, traceback
+from botmodules.url import fixurl
 
 def get_wiki(self, e, urlposted=False):
     #read the first paragraph of a wikipedia article
@@ -7,11 +8,14 @@ def get_wiki(self, e, urlposted=False):
   
   if urlposted:
       url = searchterm
+      url = fixurl(url)
+      #print(url)
   else:
       if searchterm == "":
           url = "http://en.wikipedia.org/wiki/Special:Random"
       else:
           url = tools.google_url("site:wikipedia.org " + searchterm,"wikipedia.org/wiki")
+          url = fixurl(url)
   
   title = "" 
   
@@ -26,11 +30,13 @@ def get_wiki(self, e, urlposted=False):
   if url and url.find("wikipedia.org/wiki/") != -1:
 
     try:
+      #print(url)
       title = read_wiki_page(url)
       if not urlposted:
         url = tools.shorten_url(url)
         title = (title + " [ %s ]" % url)
     except Exception as inst: 
+      print(traceback.print_exc())
       print("!wiki " + searchterm + " : " + str(inst))
       title = tools.remove_html_tags(re.search('\<p\>(.*?\.) ',str(page)).group(1))
 
@@ -44,7 +50,7 @@ def read_wiki_page(url):
       opener = urllib.request.build_opener()
       opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
       pagetmp = opener.open(url)
-      page = pagetmp.read()
+      page = pagetmp.read().decode('utf-8','ignore')
       url = pagetmp.geturl()
       opener.close()
 

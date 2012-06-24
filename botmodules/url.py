@@ -1,7 +1,7 @@
 # coding=utf-8
 
 import re, urllib.request, urllib.error, urllib.parse, urllib.parse, hashlib, datetime, botmodules.tools as tools
-import traceback
+import traceback, encodings.idna
 
 try: import MySQLdb
 except ImportError: pass
@@ -121,6 +121,7 @@ def get_title(self, url):
     try:
         url = fixurl(url)
         
+        
         opener = urllib.request.build_opener()
         readlength = 10240
         if url.find("amazon.") != -1: 
@@ -128,6 +129,7 @@ def get_title(self, url):
             
         opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)"),    
                              ('Range',"bytes=0-" + str(readlength))]
+
 
         pagetmp = opener.open(url)
         if pagetmp.headers['content-type'].find("text") != -1:
@@ -156,6 +158,15 @@ def fixurl(url):
     # divide the netloc further
     hostport = parsed.netloc
     host,colon2,port = hostport.partition(':')
+
+    hostnames = host.split(".")
+    tmplist = []
+    
+    for tmp in hostnames:
+        tmp = encodings.idna.ToASCII(tmp).decode()
+        tmplist.append(tmp)
+	
+    host = ".".join(tmplist)
 
     scheme = parsed.scheme
 

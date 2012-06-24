@@ -30,7 +30,7 @@ def google_news (self, e):
     description = description.replace("\n","")
 
     description = tools.remove_html_tags(description)
-    description = tools.decode_htmlentities(description)
+#    description = tools.decode_htmlentities(description)
     description = description[0:len(description) - 9]
     description = description.strip()
     if description.rfind(".")!=-1:

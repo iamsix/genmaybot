@@ -94,7 +94,7 @@ class _CleverbotSession(ChatterBotSession):
         data_to_digest = data[9:29]
         data_digest = hashlib.md5(data_to_digest.encode()).hexdigest()
         data = data + '&icognocheck=' + data_digest
-        url_response = urllib.request.urlopen(self.bot.url, data)
+        url_response = urllib.request.urlopen(self.bot.url, data.encode())
         response = url_response.read().decode('utf-8')
         response_values = response.split('\r')
         #self.vars['??'] = response_values[0] if len(response_values) > 0 else ''

@@ -71,7 +71,7 @@ def read_wiki_page(url):
       #title = re.sub("\&.*?\;", " ", title)
       title = title.replace("\n", " ")
       
-      title = tools.decode_htmlentities(title)
+#      title = tools.decode_htmlentities(title)
 
       title = title[0:420]
       if title.rfind(".")!=-1:

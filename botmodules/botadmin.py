@@ -8,8 +8,15 @@ def kill_bot(line, nick, self, c):
     if line[4:]:
         message = line[4:]
     c.disconnect(message)
+    self.t.cancel()
     sys.exit(0)
 kill_bot.admincommand = "die"    
+
+def nick(line, nick, self, c):
+    print(line)
+    print(line[5:])
+    c.nick(line[5:])
+nick.admincommand = "nick"
 
 def clear_bans(line, nick, self, c):
     print(nick + " cleared bans")

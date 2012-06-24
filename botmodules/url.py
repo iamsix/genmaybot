@@ -1,10 +1,10 @@
 # coding=utf-8
 
-import re, urllib.request, urllib.error, urllib.parse, urllib.parse, hashlib, datetime, botmodules.tools as tools
+import re, urllib.request, urllib.error, urllib.parse, hashlib, datetime, botmodules.tools as tools
 import traceback, encodings.idna
 
-try: import MySQLdb
-except ImportError: pass
+import sqlite3
+#except ImportError: pass
 
 try: import botmodules.wiki
 except ImportError: pass
@@ -15,7 +15,7 @@ def url_parser(self, e):
     if url:
         url = url.group(0)
         if url[0:4].lower() != "http":
-           url = "http://" + url
+            url = "http://" + url
         e.input = url
         return url_posted(self, e)
     else:
@@ -23,35 +23,27 @@ def url_parser(self, e):
 url_parser.lineparser = True
 
 def url_posted(self, e):
-  url = e.input
+    url = e.input
     #checks if the URL is a dupe (if mysql is enabled)
     #detects if a wikipedia or imdb url is posted and does the appropriate command for it
 
-  try:
-
     repost=""
     days = ""
-    
-    if tools.config.sqlmode > 0:
-        urlhash = hashlib.sha224(url).hexdigest()
 
-        conn = MySQLdb.connect (host = "localhost",
-                                  user = tools.config.sqlusername,
-                                  passwd = tools.config.sqlpassword,
-                                  db = "irc_links")   
+    if tools.config.sqlmode > 0:
+        urlhash = hashlib.sha224(url.encode()).hexdigest()
+        conn = sqlite3.connect ("links.sqlite")
         cursor = conn.cursor()
         query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
         result = cursor.execute(query)
-        
-        if result !=0:
-            result = cursor.fetchone()
-            
+        result = cursor.fetchone()
+        if result:
             repost="LOL REPOST %s " % (result[0] + 1)
-        
-            orig = result[1]
-            now = datetime.datetime.now()
+
+            orig = datetime.datetime.strptime(result[1], "%Y-%m-%d %H:%M:%S")
+            now = datetime.datetime.utcnow()
             delta = now - orig
-                     
+
             plural = ""
             if delta.days > 0:
               if delta.days > 1:
@@ -60,7 +52,7 @@ def url_posted(self, e):
             else:
               hrs = int(round(delta.seconds/3600.0,0))
               if hrs == 0:
-                mins = delta.seconds/60
+                mins = round(delta.seconds/60)
                 if mins > 1:
                   plural = "s"
                 days = " (posted %s minute%s ago)" % (str(mins), plural)
@@ -71,9 +63,9 @@ def url_posted(self, e):
                 if hrs > 1:
                   plural = "s"
                 days = " (posted %s hour%s ago)" % (str(hrs), plural)
-            
-    title = "" 
-    
+
+    title = ""
+
     try: wiki = self.bangcommands["!wiki"](self, e, True)
     except: pass
     try: imdb = self.bangcommands["!imdb"](self, e, True)
@@ -93,41 +85,34 @@ def url_posted(self, e):
     title = title.replace("\n", " ")
     title = re.sub('\s+', ' ', title)
     pattern = re.compile('whatsisname', re.IGNORECASE)
-    title = pattern.sub('', title)      
+    title = pattern.sub('', title)
     title = tools.decode_htmlentities(title)
 
     titler = "%s%s%s" % (repost, title, days)
-    
+
     if tools.config.sqlmode == 2:
-        title = MySQLdb.escape_string(title)
-        url = MySQLdb.escape_string(url)
-        query = "INSERT INTO links (url, title, hash) VALUES ('%s','%s','%s') ON DUPLICATE KEY UPDATE reposted=reposted+1,title='%s'" % (url, title, urlhash, title)       
-        cursor.execute(query)
+        cursor.execute("""UPDATE OR IGNORE links SET reposted=reposted+1 WHERE hash = ?""", [urlhash])
+        cursor.execute("""INSERT OR IGNORE INTO links(url, hash) VALUES (?,?)""", (url, urlhash))
+        conn.commit()
+
     if tools.config.sqlmode > 0:
         conn.close()
-        
+
     e.output = titler
     return e
-
-  
-  except Exception as inst: 
-    print(url + ": " + str(inst))
-    pass
-  return
 
 def get_title(self, url):
     #extracts the title tag from a page
     title = ""
     try:
         url = fixurl(url)
-        
-        
+
         opener = urllib.request.build_opener()
         readlength = 10240
-        if url.find("amazon.") != -1: 
+        if url.find("amazon.") != -1:
             readlength = 100096 #because amazon is coded like shit
-            
-        opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)"),    
+
+        opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)"),
                              ('Range',"bytes=0-" + str(readlength))]
 
 
@@ -144,7 +129,7 @@ def get_title(self, url):
         print(traceback.print_exc())
         print("urlerr: " + url + " " + str(err))
         pass
-        
+
     return title
 
 def fixurl(url):
@@ -161,7 +146,7 @@ def fixurl(url):
 
     hostnames = host.split(".")
     tmplist = []
-    
+
     for tmp in hostnames:
         tmp = encodings.idna.ToASCII(tmp).decode()
         tmplist.append(tmp)
@@ -186,13 +171,9 @@ def fixurl(url):
 def last_link(self, e):
     #displays last link posted (requires mysql)
     if tools.config.sqlmode > 0:
-      conn = MySQLdb.connect (host = "localhost",
-                                user = tools.config.sqlusername,
-                                passwd = tools.config.sqlpassword,
-                                db = "irc_links")
-                                
+      conn = sqlite3.connect ("links.sqlite")
       cursor = conn.cursor()
-      if (cursor.execute("SELECT url FROM links ORDER BY id DESC LIMIT 1")):
+      if (cursor.execute("SELECT url FROM links ORDER BY rowid DESC LIMIT 1")):
         result = cursor.fetchone()
         url = result[0]
 

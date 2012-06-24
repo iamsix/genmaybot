@@ -52,7 +52,7 @@ def shorten_url(url):
     values =  json.dumps({'longUrl' : url})
     headers = {'Content-Type' : 'application/json'}
     requestUrl = "https://www.googleapis.com/urlshortener/v1/url"
-    req = urllib.request.Request (requestUrl, values, headers)
+    req = urllib.request.Request (requestUrl, values.encode(), headers)
     response = urllib.request.urlopen (req)
     results = json.loads(response.read().decode('utf-8'))
     shorturl = results['id']

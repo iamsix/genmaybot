@@ -29,7 +29,7 @@ bbc_alert.alert = True
 
 
 def get_bbc_data():
-    request = urllib.request.urlopen("https://twitter.com/statuses/user_timeline/5402612.rss")
+    request = urllib.request.urlopen("https://api.twitter.com/1/statuses/user_timeline.rss?screen_name=BreakingNews&count=1")
     dom = xml.dom.minidom.parse(request)
     latest_update = dom.getElementsByTagName('item')[0]
     updated = latest_update.getElementsByTagName('pubDate')[0].childNodes[0].data
@@ -37,7 +37,7 @@ def get_bbc_data():
     #print description
     updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S +0000")
     #print updated
-    ago = (datetime.datetime.utcnow() - updated).seconds/60
+    ago = round((datetime.datetime.utcnow() - updated).seconds/60)
     request.close()
     return description, updated, ago
 

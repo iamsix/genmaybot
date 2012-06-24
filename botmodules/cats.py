@@ -2,7 +2,7 @@ import json, urllib.request, urllib.error, urllib.parse, random
 def get_cat(self, e):
     url = "http://www.reddit.com/r/catpictures+cats/.json"
     e.output = get_redditpics(url)
-    return e     
+    return e
 get_cat.command = "!cats"
 
 def get_dvq(self, e):
@@ -13,7 +13,7 @@ get_dvq.command = "!dvq"
 def get_rat(self, e):
     url = "http://www.reddit.com/r/rats/.json"
     e.output = get_redditpics(url)
-    return e     
+    return e
 get_rat.command = "!rats"
 
 def get_dog(self, e):
@@ -45,6 +45,14 @@ def get_sandwich(self, e):
     e.output = get_redditpics(url)
     return e
 get_sandwich.command = "!sandwiches"
+
+def get_rpics(self, e):
+    if not e.input:
+        e.input = "pics"
+    url = "http://www.reddit.com/r/%s/.json" % e.input
+    e.output = get_redditpics(url)
+    return e
+get_rpics.command = "!rpics"
 
 def get_redditpics(url):
     opener = urllib.request.build_opener()

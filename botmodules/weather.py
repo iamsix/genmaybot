@@ -10,7 +10,13 @@ def get_weather(self, e):
        zip = user.get_location(e.nick)
 
    url = "http://www.google.com/ig/api?weather=" + urllib.parse.quote(zip)
-   dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
+   
+   try:
+    pageString = urllib.request.urlopen(url).read().decode('utf-8')
+   except UnicodeDecodeError:
+    pageString = urllib.request.urlopen(url).read().decode('latin-1').encode('utf-8').decode('utf-8')
+   
+   dom = xml.dom.minidom.parseString(pageString)
    
    if not dom.getElementsByTagName('problem_cause'):
        degree_symbol = chr(176)

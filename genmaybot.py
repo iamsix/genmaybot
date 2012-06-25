@@ -24,8 +24,8 @@ import sys, os, socket, configparser, threading, traceback
 
 socket.setdefaulttimeout(5)
 
-class TestBot(SingleServerIRCBot):
 
+class TestBot(SingleServerIRCBot):
 
     def __init__(self, channel, nickname, server, port=6667):
         SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname, 30)
@@ -33,13 +33,15 @@ class TestBot(SingleServerIRCBot):
         self.doingcommand = False
         self.botnick = nickname
 
-
-
         self.commandaccesslist = {}
         self.commandcooldownlast = {}
 
-        self.spam ={}
+        self.spam = {}
 
+        self.load_config()
+        print(self.loadmodules())
+
+    def load_config(self):
         config = configparser.ConfigParser()
         try:
             cfgfile = open('genmaybot.cfg')
@@ -48,14 +50,13 @@ class TestBot(SingleServerIRCBot):
             sys.exit(1)
 
         config.readfp(cfgfile)
-        self.identpassword = config.get("irc","identpassword")
-        self.botadmins = config.get("irc","botadmins").split(",")
-
-        print(self.loadmodules())
+        self.botconfig = config
+#        self.identpassword = config.get("irc", "identpassword")
+#        self.botadmins = config.get("irc", "botadmins").split(",")
+#        self.botconfig['irc']['botadmins']
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
-        self.botnick = c.get_nickname() + "_"
 
     def on_kick(self, c, e):
         #attempt to rejoin any channel we're kicked from
@@ -66,13 +67,10 @@ class TestBot(SingleServerIRCBot):
         print("DISCONNECT: " + str(e.arguments()))
 
     def on_welcome(self, c, e):
-        c.privmsg("NickServ", "identify " + self.identpassword)
+        c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
         c.join(self.channel)
         self.alerts(c)
         self.irccontext = c
-
-    #def on_invite(self, c, e):
-        #c.join(e.arguments()[0])
 
     def on_pubmsg(self, c, e):
         self.process_line(c, e)
@@ -88,7 +86,7 @@ class TestBot(SingleServerIRCBot):
 
         self.process_line(c, e, True)
 
-    def on_whoreply(self, c,e):
+    def on_whoreply(self, c, e):
         nick = e.arguments()[4]
         line = self.admincommand
         command = line.split(" ")[0]
@@ -124,7 +122,7 @@ class TestBot(SingleServerIRCBot):
 
         try:
             #commands names are defined by the module as function.command = "!commandname"
-            if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
+            if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botconfig['irc']['botadmins']):
                 e = self.botEvent(linesource, from_nick, hostmask, args)
                 e.botnick = self.botnick #store the bot's nick in the event in case we need it.
 
@@ -146,7 +144,7 @@ class TestBot(SingleServerIRCBot):
             firstpass = True
             for e in etmp:
                 if e and e.output:
-                    if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
+                    if firstpass and not e.source == e.nick and not e.nick in self.botconfig['irc']['botadmins']:
                         if self.isspam(e.hostmask, e.nick): break
                         firstpass = False
                     self.botSay(e)
@@ -174,6 +172,8 @@ class TestBot(SingleServerIRCBot):
             traceback.print_exc()
 
     def loadmodules(self):
+        self.tools = vars(imp.load_source("tools", "./botmodules/tools.py"))
+
         filenames = []
         for fn in os.listdir('./botmodules'):
             if fn.endswith('.py') and not fn.startswith('_'):
@@ -203,7 +203,7 @@ class TestBot(SingleServerIRCBot):
                     elif hasattr(func, 'lineparser'):
                         self.lineparsers.append(func)
 
-        commands, botalerts, lineparsers, admincommands = "","","",""
+        commands, botalerts, lineparsers, admincommands = "", "", "", ""
 
         if self.bangcommands:
             commands = 'Loaded command modules: %s' % list(self.bangcommands.keys())
@@ -218,7 +218,7 @@ class TestBot(SingleServerIRCBot):
         return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands
 
     def isbotadmin(self, nick):
-        return nick in self.botadmins
+        return nick in self.botconfig['irc']['botadmins']
 
     def commandaccess(self, command):
         if "all" in self.commandaccesslist:
@@ -244,7 +244,7 @@ class TestBot(SingleServerIRCBot):
             self.spam[user]['first'] = 0
             self.spam[user]['limit'] = 15
 
-        self.spam[user]['count'] +=1
+        self.spam[user]['count'] += 1
         self.spam[user]['last'] = time.time()
 
         if self.spam[user]['count'] == 1:
@@ -274,9 +274,8 @@ class TestBot(SingleServerIRCBot):
             print("alerts: " + str(inst))
             pass
 
-        self.t=threading.Timer(60,self.alerts, [context])
+        self.t = threading.Timer(60, self.alerts, [context])
         self.t.start()
-
 
     class botEvent:
         def __init__(self, source, nick, hostmask, inpt, output="", notice=False):

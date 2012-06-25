@@ -67,11 +67,11 @@ def url_posted(self, e):
     title = ""
 
     try: wiki = self.bangcommands["!wiki"](self, e, True)
-    except: 
+    except:
       print(traceback.print_exc())
       pass
     try: imdb = self.bangcommands["!imdb"](self, e, True)
-    except: 
+    except:
       print(traceback.print_exc())
       pass
     if wiki and wiki.output:
@@ -160,11 +160,11 @@ def fixurl(url):
     scheme = parsed.scheme
 
     path = '/'.join(  # could be encoded slashes!
-        urllib.parse.quote(urllib.parse.unquote(pce),'')
+        urllib.parse.quote(urllib.parse.unquote_to_bytes(pce),'')
         for pce in parsed.path.split('/')
     )
-    query = urllib.parse.quote(urllib.parse.unquote(parsed.query),'=&?/')
-    fragment = urllib.parse.quote(urllib.parse.unquote(parsed.fragment))
+    query = urllib.parse.quote(urllib.parse.unquote_to_bytes(parsed.query),'=&?/')
+    fragment = urllib.parse.quote(urllib.parse.unquote_to_bytes(parsed.fragment))
 
     # put it back together
     netloc = ''.join((host,colon2,port))

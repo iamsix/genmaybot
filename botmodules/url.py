@@ -35,6 +35,11 @@ def url_posted(self, e):
     urlhash = hashlib.sha224(url.encode()).hexdigest()
     conn = sqlite3.connect("links.sqlite")
     cursor = conn.cursor()
+    result = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='links';").fetchone()
+    if not result:
+        cursor.execute('''CREATE TABLE 'links' ("url" tinytext, "hash" char(56) NOT NULL UNIQUE, "reposted" smallint(5) default '0', "timestamp" timestamp NOT NULL default CURRENT_TIMESTAMP);''')
+        cursor.execute('''CREATE INDEX "links_hash" ON 'links' ("hash");''')
+
     query = "SELECT reposted, timestamp FROM links WHERE hash='%s'" % urlhash
     result = cursor.execute(query)
     result = cursor.fetchone()

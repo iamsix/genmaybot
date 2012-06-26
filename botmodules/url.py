@@ -82,20 +82,12 @@ def url_posted(self, e):
         title = imdb.output
     except:
         pass
-
     if url.find("imgur.com") != -1 and url.find("/a/") == -1:
         imgurid = url[url.rfind('/') + 1: url.rfind('/') + 6]
         url = "http://imgur.com/" + imgurid
 
     if not title:
         title = get_title(self, url)
-
-    if title == "!MediaWiki":
-        try:
-            wiki = self.bangcommands["!wiki"](self, e, True, True)
-            title = wiki.output
-        except:
-            pass
 
     if title:
         if title.find("imgur: the simple") != -1:
@@ -120,10 +112,16 @@ def get_title(self, url):
     if url.find("amazon.") != -1:
         length = 100096  # because amazon is coded like shit
     page = self.tools["load_html_from_URL"](url, length)
-    title = "Title: " + page.html.head.title.string
+    title = ""
 
-    if page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}) != None:
-        return "!MediaWiki"
+    if page and page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}) != None:
+        try:
+            wiki = self.bangcommands["!wiki"](self, e, True, True)
+            title = wiki.output
+        except:
+            pass
+    elif page:
+        title = "Title: " + page.html.head.title.string
 
     return title
 

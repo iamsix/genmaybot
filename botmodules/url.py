@@ -1,13 +1,7 @@
 # coding=utf-8
 
 import re, hashlib, datetime
-#import traceback, encodings.idna, urllib.request, urllib.error, urllib.parse,
-
 import sqlite3
-#except ImportError: pass
-
-#try: import botmodules.wiki
-#except ImportError: pass
 
 
 def url_parser(self, e):

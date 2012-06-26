@@ -7,7 +7,7 @@ def get_imdb(self, e, urlposted=False):
     if urlposted:
         url = searchterm
     else:
-        url = self.tools['google_url']("site:imdb.com/title " + searchterm, "imdb.com/title/tt\\d{7}/")
+        url = self.tools['google_url']("site:imdb.com inurl:com/title " + searchterm, "imdb.com/title/tt\\d{7}/")
 
     if not url:
         pass

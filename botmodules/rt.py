@@ -2,7 +2,7 @@ import json, urllib.request, urllib.error, urllib.parse, re
 
 
 def get_rt(self, e):
-    url = self.tools['google_url']("site:imdb.com/title " + e.input, "imdb.com/title/tt\\d{7}/")
+    url = self.tools['google_url']("site:imdb.com inurl:com/title " + e.input, "imdb.com/title/tt\\d{7}/")
     imdbid = re.search("tt\\d{7}", url).group(0)[2:]
 
     url = "http://api.rottentomatoes.com/api/public/v1.0/movie_alias.json?id=%s&type=imdb&apikey=%s" % (imdbid, self.botconfig["APIkeys"]["rtAPIkey"])

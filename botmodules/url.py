@@ -87,7 +87,7 @@ def url_posted(self, e):
         url = "http://imgur.com/" + imgurid
 
     if not title:
-        title = get_title(self, url)
+        title = get_title(self, e, url)
 
     if title:
         if title.find("imgur: the simple") != -1:
@@ -107,7 +107,7 @@ def url_posted(self, e):
     return e
 
 
-def get_title(self, url):
+def get_title(self, e, url):
     length = 10240
     if url.find("amazon.") != -1:
         length = 100096  # because amazon is coded like shit
@@ -135,7 +135,7 @@ def last_link(self, e):
         url = result[0]
 
     conn.close()
-    e.output = "[ " + url + " ] " + get_title(self, url)
+    e.output = "[ " + url + " ] " + get_title(self, e, url)
     return e
 
 last_link.command = "!lastlink"

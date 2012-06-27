@@ -289,22 +289,42 @@ class TestBot(SingleServerIRCBot):
 
 def main():
     #print sys.argv
-    if len(sys.argv) != 4:
-        print("Usage: testbot <server[:port]> <channel> <nickname>")
-        sys.exit(1)
 
-    s = sys.argv[1].split(":", 1)
-    server = s[0]
-    if len(s) == 2:
+    if len(sys.argv) != 4:
+
+        config = configparser.ConfigParser()
         try:
-            port = int(s[1])
-        except ValueError:
-            print("Error: Erroneous port.")
+            cfgfile = open('genmaybot.cfg')
+        except IOError:
+            print("You need to create a .cfg file using the example")
             sys.exit(1)
+
+        config.readfp(cfgfile)
+        if config['irc']['nick'] and config['irc']['server'] and config['irc']['channels']:
+            nickname = config['irc']['nick']
+            server, port = config['irc']['server'].split(":", 1)
+            try:
+                port = int(port)
+            except:
+                port = 6667
+            channel = config['irc']['channels']
+        else:
+            print("Usage: bot.py <server[:port]> <channel> <nickname> \nAlternatively configure the server in the .cfg")
+            sys.exit(1)
+
     else:
-        port = 6667
-    channel = sys.argv[2]
-    nickname = sys.argv[3]
+        s = sys.argv[1].split(":", 1)
+        server = s[0]
+        if len(s) == 2:
+            try:
+                port = int(s[1])
+            except ValueError:
+                print("Error: Erroneous port.")
+                sys.exit(1)
+        else:
+            port = 6667
+        channel = sys.argv[2]
+        nickname = sys.argv[3]
 
     bot = TestBot(channel, nickname, server, port)
     bot.start()

@@ -36,7 +36,7 @@ def get_quake_data():
     ago = round((datetime.datetime.utcnow() - updated).seconds / 60)
     elevation = int(latest_quakenode.getElementsByTagName('georss:elev')[0].childNodes[0].data)
     depth = float(elevation) / -1000
-    depthmi = '{0:.3f}'.format(depth / 1.61)
+    depthmi = '{0:.2f}'.format(depth / 1.61)
     depthstring = "%s km (%s mi)" % (depth, depthmi)
     request.close()
     return qtitle, updated, ago, depthstring

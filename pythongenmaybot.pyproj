@@ -62,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="botmodules\" />
-    <Folder Include="support\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="genmaybot.cfg" />

@@ -5,11 +5,12 @@ import threading
 
 
 def wotd_trigger(self, e):
+    #reset the wotd if it hasn't beeen found in over 24 hours
     if (time.time() - wotd_trigger.wotd_found_timestamp) > (3600 * 24):
         wotd_trigger.wotd = "a"
         wotd_trigger.wotd_setter = ""
         wotd_trigger.wotd_finder = ""
-    if re.search(wotd_trigger.wotd, e.input, re.I) and re.search(" ", e.input, re.I) and e.source != e.nick and e.nick != "Whatsisname":
+    if re.search(wotd_trigger.wotd, e.input, re.I) and re.search(" ", e.input) and e.source != e.nick and e.nick != "Whatsisname":
         do_wotd(self, e)
     else:
         return

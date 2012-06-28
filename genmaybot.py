@@ -51,9 +51,7 @@ class TestBot(SingleServerIRCBot):
 
         config.readfp(cfgfile)
         self.botconfig = config
-#        self.identpassword = config.get("irc", "identpassword")
-#        self.botadmins = config.get("irc", "botadmins").split(",")
-#        self.botconfig['irc']['botadmins']
+        self.botadmins = config["irc"]["botadmins"].split(",")
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -122,7 +120,7 @@ class TestBot(SingleServerIRCBot):
 
         try:
             #commands names are defined by the module as function.command = "!commandname"
-            if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botconfig['irc']['botadmins']):
+            if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
                 e = self.botEvent(linesource, from_nick, hostmask, args)
                 e.botnick = self.botnick #store the bot's nick in the event in case we need it.
 
@@ -144,7 +142,7 @@ class TestBot(SingleServerIRCBot):
             firstpass = True
             for e in etmp:
                 if e and e.output:
-                    if firstpass and not e.source == e.nick and not e.nick in self.botconfig['irc']['botadmins']:
+                    if firstpass and not e.source == e.nick and not e.nick in self.botadmins:
                         if self.isspam(e.hostmask, e.nick): break
                         firstpass = False
                     self.botSay(e)
@@ -218,7 +216,7 @@ class TestBot(SingleServerIRCBot):
         return commands + "\n" + botalerts + "\n" + lineparsers + "\n" + admincommands
 
     def isbotadmin(self, nick):
-        return nick in self.botconfig['irc']['botadmins']
+        return nick in self.botadmins
 
     def commandaccess(self, command):
         if "all" in self.commandaccesslist:

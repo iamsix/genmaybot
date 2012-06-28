@@ -136,7 +136,8 @@ class TestBot(SingleServerIRCBot):
                 #ensure the lineparser function is short and simple. Try to not to add too many of them
                 #Multiple lineparsers can output data, leading to multiple 'say' lines
                 for command in self.lineparsers:
-                    if linesource in self.channels and hasattr(command, 'privateonly'): continue
+                    if linesource in self.channels and hasattr(command, 'privateonly'):
+                        continue
                     etmp.append(command(self, e))
 
             firstpass = True
@@ -189,6 +190,10 @@ class TestBot(SingleServerIRCBot):
             except Exception as inst:
                 print("Error loading module " + name + " : " + str(inst))
             else:
+                try:
+                    vars(module)['__init__'](self)
+                except:
+                    pass
                 for name, func in vars(module).items():
                     if hasattr(func, 'command'):
                         command = str(func.command)

@@ -8,8 +8,8 @@ import sqlite3
 
 def wotd_trigger(self, e):
     #if there's no timestamp, this is the first time this method has run since the bot started
-    if not wotd_trigger.wotd_found_timestamp:
-        init_wotd(self)
+#    if not wotd_trigger.wotd_found_timestamp:
+#        init_wotd(self)
 
     #reset the wotd if it hasn't beeen found in over 24 hours
     if (time.time() - wotd_trigger.wotd_found_timestamp) > (3600 * 24):
@@ -28,7 +28,7 @@ wotd_trigger.wotd_finder = ""
 wotd_trigger.found = 0
 
 
-def init_wotd(self):
+def __init__(self):
     conn = sqlite3.connect("wotd.sqlite")
     c = conn.cursor()
     result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='wotd_settings';").fetchone()

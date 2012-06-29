@@ -7,15 +7,12 @@ import sqlite3
 
 
 def wotd_trigger(self, e):
-    #if there's no timestamp, this is the first time this method has run since the bot started
-#    if not wotd_trigger.wotd_found_timestamp:
-#        init_wotd(self)
-
     #reset the wotd if it hasn't beeen found in over 24 hours
     if (time.time() - wotd_trigger.wotd_found_timestamp) > (3600 * 24):
         wotd_trigger.wotd = common_words[random.randint(0, len(common_words) - 1)]
         wotd_trigger.wotd_setter = ""
         wotd_trigger.wotd_finder = ""
+        wotd_trigger.wotd_found_timestamp = time.time()
     if re.search(wotd_trigger.wotd, e.input, re.I) and re.search(" ", e.input) and e.source != e.nick and e.nick != "Whatsisname":
         do_wotd(self, e)
     else:

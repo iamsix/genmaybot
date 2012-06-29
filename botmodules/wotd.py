@@ -46,7 +46,7 @@ def __init__(self):
     #Check if there are any active bans when we loaded - if so try to unban them in case the bot was killed while they were banned
     for ban in c.execute("SELECT * FROM wotd_bans;"):
         if time.time() - ban[3] < 60:
-            unbantime = time.time() - ban[3]
+            unbantime = int(60 - (time.time() - ban[3]))
             threading.Timer(unbantime, unban_user, [self, ban[0], ban[1], ban[2]]).start()
         else:
             unban_user(self, ban[0], ban[1], ban[2])

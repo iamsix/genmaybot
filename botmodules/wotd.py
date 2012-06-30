@@ -19,7 +19,7 @@ def wotd_trigger(self, e):
         return
 wotd_trigger.lineparser = True
 wotd_trigger.wotd = "cat"
-wotd_trigger.wotd_found_timestamp = None
+wotd_trigger.wotd_found_timestamp = 0
 wotd_trigger.wotd_setter = ""
 wotd_trigger.wotd_finder = ""
 wotd_trigger.found = 0

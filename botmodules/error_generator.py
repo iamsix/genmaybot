@@ -82,11 +82,6 @@ def bbnet(self, e):
 
 bbnet.command = "!bbnet"
 
-def football(self, e):
-    e.output = "days until opening day"
-    return e
-football.command = "!football"
-
 
 def fortune(self, e):
     e.output = urllib.request.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().decode('utf-8').replace('\n', ' ').replace('\r', '').strip()

@@ -1,6 +1,6 @@
 import random
 import urllib.request, urllib.error, urllib.parse
-
+from datetime import datetime, timedelta
 
 def error_generator(self, e):
     firstword = firstwords[random.randint(0, len(firstwords) - 1)]
@@ -81,6 +81,11 @@ def bbnet(self, e):
     return e
 
 bbnet.command = "!bbnet"
+
+def football(self, e):
+    e.output = "%s days until opening day" %  datetime.now() - datetime(year=2012,month=9,day=5,hour=17,minute=15)
+    return e
+football.command = "!football"
 
 
 def fortune(self, e):

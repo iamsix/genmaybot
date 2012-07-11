@@ -60,7 +60,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 	try:
 		numshares = float(numshares)
 		pricepaid = float(pricepaid)
-		if numshares <= 0 or pricepaid <=0 or numshares != numshares or pricepaid != pricepaid:
+		if numshares <= 0 or pricepaid < 0 or numshares != numshares or pricepaid != pricepaid:
 			raise BaseException
 	except:
 		return "The number of shares or the price is incorrect. Fix it and try again."

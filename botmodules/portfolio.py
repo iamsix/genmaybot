@@ -48,11 +48,11 @@ def portfolio(self, e):
 	return e
 
 def add_stock(nick,stock,numshares,pricepaid):
-	conn = sqlite3.connect('portfolios.sqlite')
+	conn = sqlite3.connect('portfolios2.sqlite')
 	c = conn.cursor()
-	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
+	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios2';").fetchone()
 	if not result:
-		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
+		c.execute('''create table portfolios2(user text, stock text, numshares real, pricepaid real)''')
 
 	if get_stocks_prices(stock)[0] == "0.00":
 		return "Incorrect ticker symbol. Fix it and try again."
@@ -67,16 +67,16 @@ def add_stock(nick,stock,numshares,pricepaid):
 	
 		
 	
-	c.execute("INSERT INTO portfolios VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])
+	c.execute("INSERT INTO portfolios2 VALUES (?,?,?,?)", [nick,stock,numshares,pricepaid])
 	conn.commit()
 	conn.close()
 	
 	return "Added %s shares of %s at $%s." % (numshares, stock, pricepaid)
 
 def del_stock(nick, stock_rowid):
-	conn = sqlite3.connect('portfolios.sqlite')
+	conn = sqlite3.connect('portfolios2.sqlite')
 	c = conn.cursor()
-	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
+	result = c.execute("DELETE FROM portfolios2 WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
 	conn.commit()
 	conn.close()
 	
@@ -98,10 +98,10 @@ def list_stock(nick,public):
 	portfolio_gain=0
 	portfolio_perc_gain=0
 	
-	conn = sqlite3.connect('portfolios.sqlite')
+	conn = sqlite3.connect('portfolios2.sqlite')
 	c = conn.cursor()
 	try:
-		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios WHERE user = ?", [nick]).fetchall()
+		result = c.execute("SELECT rowid, stock, numshares, pricepaid FROM portfolios2 WHERE user = ?", [nick]).fetchall()
 	except:
 		return "You're too poor to own stock."
 		

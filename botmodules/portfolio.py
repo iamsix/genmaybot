@@ -121,7 +121,10 @@ def list_stock(nick,public):
 			init_value+=(stock[2]*stock[3])
 			cur_value+=(stock[2]*float(stock_prices[id_counter]))
 			stock_gain=float(stock_prices[id_counter])-stock[3]
-			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+			if (stock[3] > 0):
+				stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+			else:
+				stock_perc_gain= float('nan')
 			
 			stockgainpct = "%0.2f (%0.2f%%)" % (stock_gain, stock_perc_gain)
 						

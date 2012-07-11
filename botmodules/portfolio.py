@@ -58,7 +58,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 		return "Incorrect ticker symbol. Fix it and try again."
 	
 	try:
-		numshares = int(numshares)
+		numshares = float(numshares)
 		pricepaid = float(pricepaid)
 		if numshares <= 0 or pricepaid <=0 or numshares != numshares or pricepaid != pricepaid:
 			raise BaseException

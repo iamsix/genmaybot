@@ -1,5 +1,5 @@
 import sqlite3
-import urllib2
+import urllib.request
 import json
 import datetime
 import time
@@ -114,12 +114,12 @@ def strava(self, e):
 	strava_id = strava_get_athlete(e.nick)
 	if e.input:
 		# Process a last ride request for a specific strava id.
-		response = urllib2.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % e.input)
+		response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % e.input)
 		rides_response = json.loads(response.read().decode('utf-8'))
 		e.output = strava_extract_latest_ride(rides_response, e)
 	elif strava_id:
 		# Process the last ride for the current strava id.
-		response = urllib2.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % strava_id)
+		response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % strava_id)
 		rides_response = json.loads(response.read().decode('utf-8'))
 		e.output = strava_extract_latest_ride(rides_response, e)
 	else:
@@ -159,7 +159,7 @@ def strava_extract_latest_ride(response, e):
 
 
 def strava_get_extended_ride_info(ride_id):
-	response = urllib2.urlopen("http://app.strava.com/api/v1/rides/%s" % ride_id)
+	response = urllib.request.urlopen("http://app.strava.com/api/v1/rides/%s" % ride_id)
 	ride_details = json.loads(response.read().decode('utf-8'))
 	if ride_details['ride']:
 		return ride_details['ride']

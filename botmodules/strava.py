@@ -115,18 +115,15 @@ def strava(self, e):
 	if e.input:
 		# Process a last ride request for a specific strava id.
 		response = urllib2.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % e.input)
-		rides_response = json.loads(response.read())
-		chanmsg = strava_extract_latest_ride(rides_response, e)
-		e.output = chanmsg
+		rides_response = json.loads(response.read().decode('utf-8'))
+		e.output = strava_extract_latest_ride(rides_response, e)
 	elif strava_id:
 		# Process the last ride for the current strava id.
 		response = urllib2.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % strava_id)
-		rides_response = json.loads(response.read())
-		chanmsg = strava_extract_latest_ride(rides_response, e)
-		e.output = chanmsg
+		rides_response = json.loads(response.read().decode('utf-8'))
+		e.output = strava_extract_latest_ride(rides_response, e)
 	else:
-		chanmsg = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % e.nick
-		e.output = chanmsg.encode('utf-8')
+		e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % e.nick
 	return e
 
 strava.command = "!strava"
@@ -163,7 +160,7 @@ def strava_extract_latest_ride(response, e):
 
 def strava_get_extended_ride_info(ride_id):
 	response = urllib2.urlopen("http://app.strava.com/api/v1/rides/%s" % ride_id)
-	ride_details = json.loads(response.read())
+	ride_details = json.loads(response.read().decode('utf-8'))
 	if ride_details['ride']:
 		return ride_details['ride']
 	else:
@@ -191,8 +188,7 @@ def strava_convert_meters_to_feet(meters):
 
 
 def strava_version(self, e):
-	chanmsg = "Current Strava Bot Module Version: %s" % (strava_get_version('software'))
-	e.output = chanmsg.encode('utf-8')
+	e.output = "Current Strava Bot Module Version: %s" % (strava_get_version('software'))
 	return e
 
 

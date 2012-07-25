@@ -34,3 +34,5 @@ _ReSharper*/
 
 #ninja-ide
 *.nja
+
+.DS_Store

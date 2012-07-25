@@ -167,6 +167,15 @@ def strava_get_extended_ride_info(ride_id):
 		return False
 
 
+def strava_get_ride_efforts(ride_id):
+	response = urllib.request.urlopen("http://www.strava.com/api/v1/rides/%s/efforts" % ride_id)
+	ride_efforts = json.loads(response.read().decode('utf-8'))
+	if ride_efforts['efforts']:
+		return ride_efforts['efforts']
+	else:
+		return False
+
+
 def strava_convert_meters_per_second_to_miles_per_hour(mps):
 	mph = 2.23694 * float(mps)
 	return round(mph, 1)

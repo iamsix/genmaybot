@@ -52,6 +52,11 @@ class TestBot(SingleServerIRCBot):
         config.readfp(cfgfile)
         self.botconfig = config
         self.botadmins = config["irc"]["botadmins"].split(",")
+        self.error_log = simpleLogger(config['misc']['error_log'])
+        self.event_log = simpleLogger(config['misc']['event_log'])
+
+        sys.stdout = self.event_log
+        sys.stderr = self.error_log
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -331,6 +336,23 @@ def main():
 
     bot = TestBot(channel, nickname, server, port)
     bot.start()
+
+#this bullshit is necessary because sys.stdout doesn't write the file continuously
+class simpleLogger():
+    
+    def __init__(self,logfile):
+        self.logfile = logfile
+        open(logfile,"w").write("") ##clear out any previous contents
+    
+    def write(self,logtext):
+        logfile = open(self.logfile,"a")
+        logfile.write(logtext)
+        logfile.close()
+        return 0
+    
+    def flush(self):
+        return 0
+        
 
 if __name__ == "__main__":
     main()

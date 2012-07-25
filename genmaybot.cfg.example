@@ -10,3 +10,9 @@ botadmins=nick1,nick2,etc
 wolframAPIkey=kA1A1
 fmlAPIkey=cA1A1
 rtAPIkey=fA1a1
+
+[misc]
+#log files for saving stdout and stderr
+error_log=error_log
+event_log=event_log
+

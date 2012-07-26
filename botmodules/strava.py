@@ -136,23 +136,6 @@ strava.helptext = """
 						"""
 
 
-def strava_total_miles(self, e):
-	strava_check_system()
-	strava_id = strava_get_athlete(e.nick)
-	if not strava_id and not e.input:
-		e.output = "Sorry %s, you didn't specify a strava ID for this command and you don't have a strava ID setup." % e.nick
-	else:
-		today = date.today()
-		start_date = date(today.year, today.month, 1)
-		start_date = today
-		total_miles = strava_get_ride_distance_since_date(e.input if e.input else strava_id, start_date)
-		e.output = total_miles + " miles since " + start_date
-	return e
-
-strava_total_miles.command = "!strava-total"
-strava_total_miles.helptext = ""
-
-
 def strava_extract_latest_ride(response, e):
 	""" Grab the latest ride from a list of rides and gather some statistics about it """
 	if 'rides' in response:

@@ -135,8 +135,24 @@ strava.helptext = """
 						"""
 
 
+def strava_total_miles(self, e):
+	strava_check_system()
+	strava_id = strava_get_athlete(e.nick)
+	if not strava_id and not e.input:
+		e.output = "Sorry %s, you didn't specify a strava ID for this command and you don't have a strava ID setup." % e.nick
+	else:
+		start_date = '2012-06-01'
+		total_miles = strava_get_ride_distance_since_date(e.input if e.input else strava_id, start_date)
+		e.output = total_miles + " miles since " + start_date
+	return e
+
+strava.command = "!strava-total"
+strava.helptext = ""
+
+
 def strava_extract_latest_ride(response, e):
-	if response['rides']:
+	""" Grab the latest ride from a list of rides and gather some statistics about it """
+	if 'rides' in response:
 		recent_ride = response['rides'][0]
 		recent_ride = strava_get_extended_ride_info(recent_ride['id'])
 		if recent_ride:
@@ -150,7 +166,11 @@ def strava_extract_latest_ride(response, e):
 			time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
 			# Output string
 			return_string = "%s rode %s near %s on %s (http://app.strava.com/rides/%s)\n" % (recent_ride['athlete']['name'], recent_ride['name'], recent_ride['location'], time_start, recent_ride['id'])
-			return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed | %s watts average power" % (miles, moving_time, mph, max_mph, int(feet_climbed), int(recent_ride['averageWatts']))
+			return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed" % (miles, moving_time, mph, max_mph, int(feet_climbed))
+			# Figure out if we need to add average watts to the string.
+			# Users who don't have a weight won't have average watts.
+			if 'averageWatts' in recent_ride:
+				return_string += " | %s watts average power" % (int(recent_ride['averageWatts']))
 			return return_string
 		else:
 			return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details." % e.nick
@@ -159,21 +179,38 @@ def strava_extract_latest_ride(response, e):
 
 
 def strava_get_extended_ride_info(ride_id):
+	""" Get all the details about a ride. """
 	response = urllib.request.urlopen("http://app.strava.com/api/v1/rides/%s" % ride_id)
 	ride_details = json.loads(response.read().decode('utf-8'))
-	if ride_details['ride']:
+	if 'ride' in ride_details:
 		return ride_details['ride']
 	else:
 		return False
 
 
 def strava_get_ride_efforts(ride_id):
+	""" Get all the efforts (segments and their respective performance) from a ride. """
 	response = urllib.request.urlopen("http://www.strava.com/api/v1/rides/%s/efforts" % ride_id)
 	ride_efforts = json.loads(response.read().decode('utf-8'))
-	if ride_efforts['efforts']:
+	if 'efforts' in ride_efforts:
 		return ride_efforts['efforts']
 	else:
 		return False
+
+
+def strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count=0):
+	""" Recursively aggregate all of the ride mileage since the begin_date by using strava's pagination """
+	ride_distance_sum = 0
+	response = urllib.request.urlopen("http://app.strava.com/api/v1/rides?date=%s&athleteId=%s&offset=%s" % (begin_date, athlete_id, offset_count))
+	rides_details = json.load(response.read().decode('utf-8'))
+	if 'rides' in rides_details:
+		for ride in rides_details['rides'].items():
+			ride_details = strava_get_extended_ride_info(ride['id'])
+			if 'distance' in ride_details:
+				ride_distance_sum = ride_distance_sum + strava_convert_meters_to_miles(ride_details['distance'])
+		ride_distance_sum = ride_distance_sum + strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count + 50)
+	else:
+		return ride_distance_sum
 
 
 def strava_convert_meters_per_second_to_miles_per_hour(mps):
@@ -194,11 +231,3 @@ def strava_convert_meters_to_miles(meters):
 def strava_convert_meters_to_feet(meters):
 	feet = 3.28084 * float(meters)
 	return round(feet, 1)
-
-
-def strava_version(self, e):
-	e.output = "Current Strava Bot Module Version: %s" % (strava_get_version('software'))
-	return e
-
-
-strava_version.command = "!strava-version"

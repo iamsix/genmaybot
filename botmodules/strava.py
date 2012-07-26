@@ -3,6 +3,7 @@ import urllib.request
 import json
 import datetime
 import time
+from datetime import date
 
 
 def strava_software_version():
@@ -141,13 +142,15 @@ def strava_total_miles(self, e):
 	if not strava_id and not e.input:
 		e.output = "Sorry %s, you didn't specify a strava ID for this command and you don't have a strava ID setup." % e.nick
 	else:
-		start_date = '2012-07-01'
+		today = date.today()
+		start_date = date(today.year, today.month, 1)
+		start_date = today
 		total_miles = strava_get_ride_distance_since_date(e.input if e.input else strava_id, start_date)
 		e.output = total_miles + " miles since " + start_date
 	return e
 
-# strava_total_miles.command = "!strava-total"
-# strava_total_miles.helptext = ""
+strava_total_miles.command = "!strava-total"
+strava_total_miles.helptext = ""
 
 
 def strava_extract_latest_ride(response, e):

@@ -1,9 +1,9 @@
+import re
 import sqlite3
 import urllib.request
 import json
 import datetime
 import time
-from datetime import date
 
 
 def strava_software_version():
@@ -217,3 +217,15 @@ def strava_convert_meters_to_miles(meters):
 def strava_convert_meters_to_feet(meters):
 	feet = 3.28084 * float(meters)
 	return round(feet, 1)
+
+
+def strava_line_parser(self, e):
+	url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>])*\))+(?:\(([^\s()<>])*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
+	if url:
+		# Do something with the url, check if its strava?
+		print url
+	else:
+		return None
+
+
+strava_line_parser.lineparser = True

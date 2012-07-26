@@ -202,7 +202,7 @@ def strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count=0):
 	""" Recursively aggregate all of the ride mileage since the begin_date by using strava's pagination """
 	ride_distance_sum = 0
 	response = urllib.request.urlopen("http://app.strava.com/api/v1/rides?date=%s&athleteId=%s&offset=%s" % (begin_date, athlete_id, offset_count))
-	rides_details = json.load(response.read().decode('utf-8'))
+	rides_details = json.loads(response.read().decode('utf-8'))
 	if 'rides' in rides_details:
 		for ride in rides_details['rides'].items():
 			ride_details = strava_get_extended_ride_info(ride['id'])

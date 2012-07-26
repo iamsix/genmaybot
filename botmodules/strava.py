@@ -146,8 +146,8 @@ def strava_total_miles(self, e):
 		e.output = total_miles + " miles since " + start_date
 	return e
 
-strava.command = "!strava-total"
-strava.helptext = ""
+strava_total_miles.command = "!strava-total"
+strava_total_miles.helptext = ""
 
 
 def strava_extract_latest_ride(response, e):

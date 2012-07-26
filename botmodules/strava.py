@@ -203,8 +203,8 @@ def strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count=0):
 	ride_distance_sum = 0
 	response = urllib.request.urlopen("http://app.strava.com/api/v1/rides?date=%s&athleteId=%s&offset=%s" % (begin_date, athlete_id, offset_count))
 	rides_details = json.loads(response.read().decode('utf-8'))
-	if rides_details['rides']:
-		for ride in rides_details['rides'].items():
+	if 'rides' in rides_details:
+		for ride in rides_details['rides']:
 			ride_details = strava_get_extended_ride_info(ride['id'])
 			if 'distance' in ride_details:
 				ride_distance_sum = ride_distance_sum + strava_convert_meters_to_miles(ride_details['distance'])

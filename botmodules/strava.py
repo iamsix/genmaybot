@@ -100,6 +100,25 @@ def strava_get_athlete(nick):
 		return False
 
 
+def strava_line_parser(self, e):
+	url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>])*\))+(?:\(([^\s()<>])*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
+	if url:
+		url = url.group(0)
+		url_parts = urlparse(url)
+		if url_parts[1] == 'www.strava.com' or url_parts[1] == 'app.strava.com':
+			ride = re.match(r"^/rides/(\d+)", url_parts[2])
+			if ride and ride.group(1):
+				recent_ride = strava_get_extended_ride_info(ride.group(1))
+				if recent_ride:
+					e.output = strava_ride_to_string(recent_ride)
+				else:
+					e.output = "Sorry %s, an error has occured attempting to retrieve ride details for %s." % (e.nick, url)
+				return e
+	else:
+		return
+strava_line_parser.lineparser = True
+
+
 def strava_set_athlete(self, e):
 	""" Set an athlete's user ID. """
 	strava_insert_athlete(e)
@@ -224,22 +243,3 @@ def strava_convert_meters_to_miles(meters):
 def strava_convert_meters_to_feet(meters):
 	feet = 3.28084 * float(meters)
 	return round(feet, 1)
-
-
-def strava_line_parser(self, e):
-	url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>])*\))+(?:\(([^\s()<>])*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
-	if url:
-		url = url.group(0)
-		url_parts = urlparse(url)
-		if url_parts[1] == 'www.strava.com' or url_parts[1] == 'app.strava.com':
-			ride = re.match(r"^/rides/(\d+)", url_parts[2])
-			if ride and ride.group(1):
-				recent_ride = strava_get_extended_ride_info(ride.group(1))
-				if recent_ride:
-					e.output = strava_ride_to_string(recent_ride)
-				else:
-					e.output = "Sorry %s, an error has occured attempting to retrieve ride details for %s." % (e.nick, url)
-				return e
-	else:
-		return None
-strava_line_parser.lineparser = True

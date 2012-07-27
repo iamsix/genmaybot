@@ -136,11 +136,11 @@ class TestBot(SingleServerIRCBot):
 
             else:
                 #lineparsers take the whole line and nick for EVERY line
-                e = self.botEvent(linesource, from_nick, hostmask, line)
-                e.botnick = self.botnick #store the bot's nick in the event in case we need it.
                 #ensure the lineparser function is short and simple. Try to not to add too many of them
                 #Multiple lineparsers can output data, leading to multiple 'say' lines
                 for command in self.lineparsers:
+                    e = self.botEvent(linesource, from_nick, hostmask, line)
+                    e.botnick = self.botnick #store the bot's nick in the event in case we need it.
                     if linesource in self.channels and hasattr(command, 'privateonly'):
                         continue
                     etmp.append(command(self, e))
@@ -339,20 +339,20 @@ def main():
 
 #this bullshit is necessary because sys.stdout doesn't write the file continuously
 class simpleLogger():
-    
+
     def __init__(self,logfile):
         self.logfile = logfile
         open(logfile,"w").write("") ##clear out any previous contents
-    
+
     def write(self,logtext):
         logfile = open(self.logfile,"a")
         logfile.write(logtext)
         logfile.close()
         return 0
-    
+
     def flush(self):
         return 0
-        
+
 
 if __name__ == "__main__":
     main()

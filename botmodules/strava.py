@@ -4,6 +4,11 @@ import urllib.request
 import json
 import datetime
 import time
+from urllib.parse import urlparse
+
+
+def __init__(self):
+	strava_check_system()  # Check the system for tables and/or upgrades
 
 
 def strava_software_version():
@@ -97,7 +102,6 @@ def strava_get_athlete(nick):
 
 def strava_set_athlete(self, e):
 	""" Set an athlete's user ID. """
-	strava_check_system()  # Check the system for tables and/or upgrades
 	strava_insert_athlete(e)
 
 
@@ -111,7 +115,6 @@ strava_set_athlete.helptext = """
 
 
 def strava(self, e):
-	strava_check_system()  # Check the system for tables and/or upgrades
 	strava_id = strava_get_athlete(e.nick)
 	if e.input:
 		# Process a last ride request for a specific strava id.
@@ -142,26 +145,30 @@ def strava_extract_latest_ride(response, e):
 		recent_ride = response['rides'][0]
 		recent_ride = strava_get_extended_ride_info(recent_ride['id'])
 		if recent_ride:
-			# Convert a lot of stuff we need to display the message
-			mph = strava_convert_meters_per_second_to_miles_per_hour(recent_ride['averageSpeed'])
-			miles = strava_convert_meters_to_miles(recent_ride['distance'])
-			moving_time = str(datetime.timedelta(seconds=recent_ride['movingTime']))
-			max_mph = strava_convert_meters_per_hour_to_miles_per_hour(recent_ride['maximumSpeed'])
-			feet_climbed = strava_convert_meters_to_feet(recent_ride['elevationGain'])
-			ride_datetime = time.strptime(recent_ride['startDateLocal'], "%Y-%m-%dT%H:%M:%SZ")
-			time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
-			# Output string
-			return_string = "%s rode %s near %s on %s (http://app.strava.com/rides/%s)\n" % (recent_ride['athlete']['name'], recent_ride['name'], recent_ride['location'], time_start, recent_ride['id'])
-			return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed" % (miles, moving_time, mph, max_mph, int(feet_climbed))
-			# Figure out if we need to add average watts to the string.
-			# Users who don't have a weight won't have average watts.
-			if 'averageWatts' in recent_ride:
-				return_string += " | %s watts average power" % (int(recent_ride['averageWatts']))
-			return return_string
+			return strava_ride_to_string(recent_ride)
 		else:
 			return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details." % e.nick
 	else:
 		return "Sorry %s, no rides have been recorded yet." % e.nick
+
+
+def strava_ride_to_string(recent_ride):
+	# Convert a lot of stuff we need to display the message
+	mph = strava_convert_meters_per_second_to_miles_per_hour(recent_ride['averageSpeed'])
+	miles = strava_convert_meters_to_miles(recent_ride['distance'])
+	moving_time = str(datetime.timedelta(seconds=recent_ride['movingTime']))
+	max_mph = strava_convert_meters_per_hour_to_miles_per_hour(recent_ride['maximumSpeed'])
+	feet_climbed = strava_convert_meters_to_feet(recent_ride['elevationGain'])
+	ride_datetime = time.strptime(recent_ride['startDateLocal'], "%Y-%m-%dT%H:%M:%SZ")
+	time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
+	# Output string
+	return_string = "%s rode %s near %s on %s (http://app.strava.com/rides/%s)\n" % (recent_ride['athlete']['name'], recent_ride['name'], recent_ride['location'], time_start, recent_ride['id'])
+	return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed" % (miles, moving_time, mph, max_mph, int(feet_climbed))
+	# Figure out if we need to add average watts to the string.
+	# Users who don't have a weight won't have average watts.
+	if 'averageWatts' in recent_ride:
+		return_string += " | %s watts average power" % (int(recent_ride['averageWatts']))
+	return return_string
 
 
 def strava_get_extended_ride_info(ride_id):
@@ -222,10 +229,16 @@ def strava_convert_meters_to_feet(meters):
 def strava_line_parser(self, e):
 	url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>])*\))+(?:\(([^\s()<>])*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
 	if url:
-		# Do something with the url, check if its strava?
-		print url
+		url = url.group(0)
+		url_parts = urlparse(url)
+		if url_parts[1] == 'www.strava.com' or url_parts[1] == 'app.strava.com':
+			ride = re.match(r"^/rides/(\d+)", url_parts[2])
+			if ride and ride.group(1):
+				recent_ride = strava_get_extended_ride_info(ride.group(1))
+				if recent_ride:
+					e.output = strava_ride_to_string(recent_ride)
+				else:
+					return "Sorry %s, an error has occured attempting to retrieve ride details for %s." % (e.nick, url)
 	else:
-		return None
-
-
+		return
 strava_line_parser.lineparser = True

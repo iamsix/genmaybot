@@ -82,7 +82,7 @@ def url_posted(self, e):
 
     # Ignore strava ride links because Dan said so, fuck modularity, embace tight coupling. 
     if url.find("app.strava.com/rides") != -1 or url.find("www.strava.com/rides") != -1:
-        return e
+        return None
 
     if not title:
         title = get_title(self, e, url)

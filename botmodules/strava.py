@@ -241,5 +241,5 @@ def strava_line_parser(self, e):
 					e.output = "Sorry %s, an error has occured attempting to retrieve ride details for %s." % (e.nick, url)
 				return e
 	else:
-		return
+		return e
 strava_line_parser.lineparser = True

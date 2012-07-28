@@ -116,7 +116,7 @@ def strava_line_parser(self, e):
                 return e
     else:
         return
-strava_line_parser.lineparser = False
+strava_line_parser.lineparser = True
 
 
 def strava_set_athlete(self, e):

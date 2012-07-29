@@ -293,7 +293,7 @@ def strava_get_ride_achievements(self, ride_id):
         response = urllib.request.urlopen("http://app.strava.com/rides/%s" % (ride_id))
         page_text = response.read().decode('utf-8')
         soup = BeautifulSoup(page_text)
-        table = soup.find('table', attrs={'class': 'top-achievements'})
+        table = soup.find('table', attrs={'class': 'unstyled top-achievements'})
         tbody = table.find('tbody')
         if tbody:
             self.event_log.write("Found the table:tbody")

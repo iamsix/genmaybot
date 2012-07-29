@@ -291,7 +291,9 @@ def strava_get_ride_efforts(ride_id):
 def strava_get_ride_achievements(ride_id):
     try:
         response = urllib.request.urlopen("http://app.strava.com/rides/%s" % (ride_id))
-        pool = BeautifulSoup(response.read().decode('utf-8'))
+        page_text = response.read().decode('utf-8')
+        print page_text
+        pool = BeautifulSoup(page_text)
         achievements = pool.findAll('div', attrs={'class': 'achievement'})
     except urllib.error.URLError:
         return False

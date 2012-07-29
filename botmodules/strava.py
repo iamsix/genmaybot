@@ -5,6 +5,7 @@ import json
 import datetime
 import time
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 
 def __init__(self):
@@ -218,6 +219,17 @@ strava.helptext = """
                         """
 
 
+def strava_achievements(self, e):
+    """ Get Achievements for a ride. """
+    strava_get_ride_achievements(e.input)
+
+
+strava_achievements.command = "!strava-achievements"
+strava_achievements.helptext = """
+                        Usage: !strava-achievements [ride id]
+                        Gets the achievements for a Ride ID"""
+
+
 def strava_extract_latest_ride(response, e):
     """ Grab the latest ride from a list of rides and gather some statistics about it """
     if 'rides' in response:
@@ -272,6 +284,16 @@ def strava_get_ride_efforts(ride_id):
             return ride_efforts['efforts']
         else:
             return False
+    except urllib.error.URLError:
+        return False
+
+
+def strava_get_ride_achievements(ride_id):
+    try:
+        response = urllib.request.urlopen("http://app.strava.com/rides/%s" % (ride_id))
+        pool = BeautifulSoup(response.read().decode('utf-8'))
+        achievements = pool.findAll('div', attrs={'class': 'achievement'})
+        print achievements
     except urllib.error.URLError:
         return False
 

@@ -5,9 +5,11 @@ import json
 import datetime
 import time
 from urllib.parse import urlparse
+from bs4 import BeautifulSoup
 
 
 def __init__(self):
+    """ On init, do a system check which runs upgrades and creates tables. """
     strava_check_system()  # Check the system for tables and/or upgrades
 
 
@@ -17,15 +19,18 @@ def strava_software_version():
 
 
 def strava_check_system():
+    """ Run upgrades and check on initial table creation/installation """
     strava_check_upgrades()
     strava_check_create_tables()
 
 
 def strava_check_upgrades():
+    """ Check the version in the database and upgrade the system recursively until we're at the current version """
     software_version = strava_get_version('software')
     latest_version = strava_software_version()
     if(software_version == False):
-        # This must be a new revision, we need to set it to the current version that is being installed.
+        # This must be a new revision
+        # we need to set it to the current version that is being installed.
         strava_set_version('software', latest_version)
         strava_check_upgrades()
     elif(software_version < strava_software_version()):
@@ -40,7 +45,9 @@ def strava_set_version(version_field, version_number):
     conn = sqlite3.connect('strava.sqlite')
     c = conn.cursor()
     query = "INSERT INTO version VALUES (:version_field, :version_number)"
-    c.execute(query, {'version_field': version_field, 'version_number': version_number})
+    c.execute(query,
+        {'version_field': version_field,
+        'version_number': version_number})
     conn.commit()
     c.close()
 
@@ -78,16 +85,28 @@ def strava_check_create_tables():
             c.close()
 
 
-def strava_insert_athlete(e):
+def strava_insert_athlete(nick, athlete_id):
+    """ Insert a user's strava id into the athletes table """
     conn = sqlite3.connect('strava.sqlite')
     c = conn.cursor()
     query = "INSERT INTO athletes VALUES (:user, :strava_id)"
-    c.execute(query, {'user': e.nick, 'strava_id': e.input})
+    c.execute(query, {'user': nick, 'strava_id': athlete_id})
+    conn.commit()
+    c.close()
+
+
+def strava_delete_athlete(nick, athlete_id):
+    """ Delete a user's strava id from the athletestable """
+    conn = sqlite3.connect('strava.sqlite')
+    c = conn.cursor()
+    query = "DELETE FROM athletes WHERE user = :user AND strava_id = :strava_id"
+    c.execute(query, {'user': nick, 'strava_id': athlete_id})
     conn.commit()
     c.close()
 
 
 def strava_get_athlete(nick):
+    """ Get an athlete ID by user """
     conn = sqlite3.connect('strava.sqlite')
     c = conn.cursor()
     query = "SELECT strava_id FROM athletes WHERE UPPER(user) = UPPER(?)"
@@ -101,6 +120,7 @@ def strava_get_athlete(nick):
 
 
 def strava_line_parser(self, e):
+    """ Watch every line for a valid strava line """
     url = re.search(r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>])*\))+(?:\(([^\s()<>])*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", e.input)
     if url:
         url = url.group(0)
@@ -108,7 +128,7 @@ def strava_line_parser(self, e):
         if url_parts[1] == 'www.strava.com' or url_parts[1] == 'app.strava.com':
             ride = re.match(r"^/rides/(\d+)", url_parts[2])
             if ride and ride.group(1):
-                recent_ride = strava_get_extended_ride_info(ride.group(1))
+                recent_ride = strava_get_ride_extended_info(ride.group(1))
                 if recent_ride:
                     e.output = strava_ride_to_string(recent_ride)
                 else:
@@ -120,55 +140,116 @@ strava_line_parser.lineparser = True
 
 
 def strava_set_athlete(self, e):
-    """ Set an athlete's user ID. """
-    strava_insert_athlete(e)
+    """ Set an athlete's Strava ID. """
+    if e.input.isdigit():
+        # Insert the user strava id, we should probably validate the user though right?
+        if (strava_is_valid_user(e.input)):
+            strava_insert_athlete(e.nick, e.input)
+            self.irccontext.privmsg(e.nick, "Your Strava ID has been set to %s" % (e.input))
+        else:
+            # Inform the user that the strava id isn't valid.
+            self.irccontext.privmsg(e.nick, "Sorry that is not a valid Strava user.")
+    else:
+        # Bark at stupid users.
+        self.irccontext.privmsg(e.nick, "Usage: !strava-set <strava id>")
 
 
 strava_set_athlete.command = "!strava-set"
 strava_set_athlete.helptext = """
-                        Usage: !strava-set <strava id>"
+                        Usage: !strava-set <strava id>
                         Example: !strava-set 12345
-                        Saves your strava id to the bot.
-                        Once your strava id is saved you can use those commands without an argument.
-                        """
+                        Saves your Strava ID to the bot.
+                        Once your Strava ID is saved you can use those commands without an argument."""
+
+
+def strava_reset_athlete(self, e):
+    """ Resets an athlete's Strava ID. """
+    athlete_id = strava_get_athlete(e.nick)
+    if athlete_id:
+        strava_delete_athlete(e.nick, athlete_id)
+        self.irccontext.privmsg(e.nick, "Your Strava ID has been reset.")
+    else:
+        self.irccontext.privmsg(e.nick, "You don't even have a Strava ID set.")
+
+
+strava_reset_athlete.command = "!strava-reset"
+strava_reset_athlete.helptext = """
+                        Usage: !strava-reset
+                        Removes your Strava ID from the bot."""
 
 
 def strava(self, e):
     strava_id = strava_get_athlete(e.nick)
-    if e.input:
-        # Process a last ride request for a specific strava id.
-        response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % e.input)
-        rides_response = json.loads(response.read().decode('utf-8'))
-        e.output = strava_extract_latest_ride(rides_response, e)
+    if e.input.isdigit():
+        try:
+            if strava_is_valid_user(e.input):
+                # Process a last ride request for a specific strava id.
+                response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % (e.input))
+                rides_response = json.loads(response.read().decode('utf-8'))
+                e.output = strava_extract_latest_ride(rides_response, e)
+            else:
+                e.output = "That is not a valid Strava ID"
+        except urllib.error.URLError:
+            e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
+    elif e.input:
+        # We still have some sort of string, but it isn't numberic.
+        e.output = "Sorry but %s is not a valid Strava ID." % (e.input)
     elif strava_id:
-        # Process the last ride for the current strava id.
-        response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % strava_id)
-        rides_response = json.loads(response.read().decode('utf-8'))
-        e.output = strava_extract_latest_ride(rides_response, e)
+        try:
+            if strava_is_valid_user(strava_id):
+                # Process the last ride for the current strava id.
+                response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % (strava_id))
+                rides_response = json.loads(response.read().decode('utf-8'))
+                e.output = strava_extract_latest_ride(rides_response, e)
+            else:
+                e.output = "That is not a valid Strava ID"
+        except urllib.error.URLError:
+            e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
     else:
-        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % e.nick
+        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % (e.nick)
     return e
+
 
 strava.command = "!strava"
 strava.helptext = """
                         Usage: !strava [strava id]"
                         Example: !strava-last, !strava-last 12345
-                        Gets the information about the last ride for the strava user.
-                        If you have a strava id set with !strava-set you can use this command without an arguement.
+                        Gets the information about the last ride for the Strava user.
+                        If you have a Strava ID set with !strava-set you can use this command without an arguement.
                         """
+
+
+def strava_achievements(self, e):
+    """ Get Achievements for a ride. """
+    ride_info = strava_get_ride_extended_info(e.input)
+    if ride_info:
+        achievements = strava_get_ride_achievements(e.input)
+        if achievements:
+            e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+        else:
+            e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+    else:
+        e.output = "Sorry, that is an invalid Strava Ride ID."
+    return e
+
+
+strava_achievements.command = "!strava-achievements"
+strava_achievements.helptext = """
+                        Usage: !strava-achievements [ride id]
+                        Gets the achievements for a Ride ID"""
 
 
 def strava_extract_latest_ride(response, e):
     """ Grab the latest ride from a list of rides and gather some statistics about it """
     if 'rides' in response:
         recent_ride = response['rides'][0]
-        recent_ride = strava_get_extended_ride_info(recent_ride['id'])
+        recent_ride = strava_get_ride_extended_info(recent_ride['id'])
         if recent_ride:
             return strava_ride_to_string(recent_ride)
         else:
-            return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details." % e.nick
+            return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details." % (e.nick)
     else:
-        return "Sorry %s, no rides have been recorded yet." % e.nick
+        return "Sorry %s, no rides have been recorded yet." % (e.nick)
 
 
 def strava_ride_to_string(recent_ride):
@@ -190,56 +271,104 @@ def strava_ride_to_string(recent_ride):
     return return_string
 
 
-def strava_get_extended_ride_info(ride_id):
+def strava_get_ride_extended_info(ride_id):
     """ Get all the details about a ride. """
-    response = urllib.request.urlopen("http://app.strava.com/api/v1/rides/%s" % ride_id)
-    ride_details = json.loads(response.read().decode('utf-8'))
-    if 'ride' in ride_details:
-        return ride_details['ride']
-    else:
+    try:
+        response = urllib.request.urlopen("http://app.strava.com/api/v1/rides/%s" % (ride_id))
+        ride_details = json.loads(response.read().decode('utf-8'))
+        if 'ride' in ride_details:
+            return ride_details['ride']
+        else:
+            return False
+    except urllib.error.URLError:
         return False
 
 
 def strava_get_ride_efforts(ride_id):
     """ Get all the efforts (segments and their respective performance) from a ride. """
-    response = urllib.request.urlopen("http://www.strava.com/api/v1/rides/%s/efforts" % ride_id)
-    ride_efforts = json.loads(response.read().decode('utf-8'))
-    if 'efforts' in ride_efforts:
-        return ride_efforts['efforts']
-    else:
+    try:
+        response = urllib.request.urlopen("http://www.strava.com/api/v1/rides/%s/efforts" % (ride_id))
+        ride_efforts = json.loads(response.read().decode('utf-8'))
+        if 'efforts' in ride_efforts:
+            return ride_efforts['efforts']
+        else:
+            return False
+    except urllib.error.URLError:
+        return False
+
+
+def strava_get_ride_achievements(ride_id):
+    try:
+        ride_achievements = list()
+        response = urllib.request.urlopen("http://app.strava.com/rides/%s" % (ride_id))
+        page_text = response.read().decode('utf-8')
+        soup = BeautifulSoup(page_text)
+        table = soup.find('table', {'class': 'top-achievements'})
+        if table:
+            trs = table.findAll('tr')
+            if trs:
+                for tr in trs:
+                    tds = tr.findAll('td')
+                    if tds:
+                        if tds[1].find('em', {'class': 'more'}):
+                            continue
+                        else:
+                            tx = re.sub('\n', ' ', ''.join(tds[1].findAll(text=True))).strip()
+                            ride_achievements.append(tx)
+        return ride_achievements
+    except urllib.error.URLError:
         return False
 
 
 def strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count=0):
     """ Recursively aggregate all of the ride mileage since the begin_date by using strava's pagination """
-    ride_distance_sum = 0
-    response = urllib.request.urlopen("http://app.strava.com/api/v1/rides?date=%s&athleteId=%s&offset=%s" % (begin_date, athlete_id, offset_count))
-    rides_details = json.loads(response.read().decode('utf-8'))
-    if 'rides' in rides_details:
-        for ride in rides_details['rides']:
-            ride_details = strava_get_extended_ride_info(ride['id'])
-            if 'distance' in ride_details:
-                ride_distance_sum = ride_distance_sum + strava_convert_meters_to_miles(ride_details['distance'])
-        ride_distance_sum = ride_distance_sum + strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count + 50)
-    else:
-        return ride_distance_sum
+    try:
+        ride_distance_sum = 0
+        response = urllib.request.urlopen("http://app.strava.com/api/v1/rides?date=%s&athleteId=%s&offset=%s" % (begin_date, athlete_id, offset_count))
+        rides_details = json.loads(response.read().decode('utf-8'))
+        if 'rides' in rides_details:
+            for ride in rides_details['rides']:
+                ride_details = strava_get_ride_extended_info(ride['id'])
+                if 'distance' in ride_details:
+                    ride_distance_sum = ride_distance_sum + strava_convert_meters_to_miles(ride_details['distance'])
+            ride_distance_sum = ride_distance_sum + strava_get_ride_distance_since_date(athlete_id, begin_date, offset_count + 50)
+        else:
+            return ride_distance_sum
+    except urllib.error.URLError:
+        return 0
+
+
+def strava_is_valid_user(strava_id):
+    """ Checks to see if a strava id is a valid strava user """
+    try:
+        response = urllib.request.urlopen("http://app.strava.com/athletes/%s" % (strava_id))
+        if response:
+            return True
+        else:
+            return False
+    except urllib.error.URLError:
+        return False
 
 
 def strava_convert_meters_per_second_to_miles_per_hour(mps):
+    """ Converts meters per second to miles per hour, who the fuck uses this to measure bike speed? """
     mph = 2.23694 * float(mps)
     return round(mph, 1)
 
 
 def strava_convert_meters_per_hour_to_miles_per_hour(meph):
+    """ Convert meters per hour to miles per hour. """
     mph = 0.000621371192 * float(meph)
     return round(mph, 1)
 
 
 def strava_convert_meters_to_miles(meters):
+    """ Convert meters to miles. """
     miles = 0.000621371 * float(meters)
     return round(miles, 1)
 
 
 def strava_convert_meters_to_feet(meters):
+    """ Convert meters to feet. """
     feet = 3.28084 * float(meters)
     return round(feet, 1)

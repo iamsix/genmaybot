@@ -294,7 +294,8 @@ def strava_get_ride_achievements(self, ride_id):
         page_text = response.read().decode('utf-8')
         pool = BeautifulSoup(page_text)
         achievements = pool.findAll('div', attrs={'class': 'achievement'})
-        self.event_log.write(achievements)
+        for achievement in achievements:
+            self.event_log.write(''.join(achievement.findAll(text=True)))
     except urllib.error.URLError:
         return False
 

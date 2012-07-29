@@ -94,6 +94,16 @@ def strava_insert_athlete(nick, athlete_id):
     c.close()
 
 
+def strava_delete_athlete(nick, athlete_id):
+    """ Delete a user's strava id from the athletestable """
+    conn = sqlite3.connect('strava.sqlite')
+    c = conn.cursor()
+    query = "DELETE FROM athletes WHERE user = :user AND strava_id = :strava_id"
+    c.execute(query, {'user': nick, 'strava_id': athlete_id})
+    conn.commit()
+    c.close()
+
+
 def strava_get_athlete(nick):
     """ Get an athlete ID by user """
     conn = sqlite3.connect('strava.sqlite')
@@ -129,7 +139,7 @@ strava_line_parser.lineparser = True
 
 
 def strava_set_athlete(self, e):
-    """ Set an athlete's user ID. """
+    """ Set an athlete's Strava ID. """
     if e.input.isdigit():
         # Insert the user strava id, we should probably validate the user though right?
         if (strava_is_valid_user(e.input)):
@@ -147,8 +157,24 @@ strava_set_athlete.command = "!strava-set"
 strava_set_athlete.helptext = """
                         Usage: !strava-set <strava id>
                         Example: !strava-set 12345
-                        Saves your strava id to the bot.
-                        Once your strava id is saved you can use those commands without an argument."""
+                        Saves your Strava ID to the bot.
+                        Once your Strava ID is saved you can use those commands without an argument."""
+
+
+def strava_reset_athlete(self, e):
+    """ Resets an athlete's Strava ID. """
+    athlete_id = strava_get_athlete(e.nick)
+    if athlete_id:
+        strava_delete_athlete(e.nick, athlete_id)
+        self.irccontext.privmsg(e.nick, "Your Strava ID has been reset.")
+    else:
+        self.irccontext.privmsg(e.nick, "You don't even have a Strava ID set.")
+
+
+strava_reset_athlete.command = "!strava-reset"
+strava_reset_athlete.helptext = """
+                        Usage: !strava-reset
+                        Removes your Strava ID from the bot."""
 
 
 def strava(self, e):
@@ -178,8 +204,8 @@ strava.command = "!strava"
 strava.helptext = """
                         Usage: !strava [strava id]"
                         Example: !strava-last, !strava-last 12345
-                        Gets the information about the last ride for the strava user.
-                        If you have a strava id set with !strava-set you can use this command without an arguement.
+                        Gets the information about the last ride for the Strava user.
+                        If you have a Strava ID set with !strava-set you can use this command without an arguement.
                         """
 
 

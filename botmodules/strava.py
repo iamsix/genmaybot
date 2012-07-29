@@ -221,7 +221,16 @@ strava.helptext = """
 
 def strava_achievements(self, e):
     """ Get Achievements for a ride. """
-    strava_get_ride_achievements(self, e.input)
+    ride_info = strava_get_ride_extended_info(e.input)
+    if ride_info:
+        achievements = strava_get_ride_achievements(e.input)
+        if achievements:
+            e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+        else:
+            e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+    else:
+        e.output = "Sorry, that is an invalid Strava Ride ID."
+    return e
 
 
 strava_achievements.command = "!strava-achievements"
@@ -288,35 +297,25 @@ def strava_get_ride_efforts(ride_id):
         return False
 
 
-def strava_get_ride_achievements(self, ride_id):
+def strava_get_ride_achievements(ride_id):
     try:
+        ride_achievements = list()
         response = urllib.request.urlopen("http://app.strava.com/rides/%s" % (ride_id))
         page_text = response.read().decode('utf-8')
         soup = BeautifulSoup(page_text)
-        table = soup.find('table', attrs={'class': 'unstyled top-achievements'})
-        tbody = table.find('tbody')
-        if tbody:
-            self.event_log.write("Found the table:tbody")
-            rows = table.findAll('tr')
-            if rows:
-                self.event_log.write("Found the rows")
-                for row in rows:
-                    cols = row.findAll('td')
-                    if cols:
-                        self.event_log.write("Find the cols")
-                        for col in cols:
-                            # text = ''.join(col.find(text=True))
-                            self.event_log.write("Found an achievement")
-                    else:
-                        self.event_log.write("Coudln't find the cols")
-            else:
-                self.event_log.write("Could not find the rows")
-        else:
-            self.event_log.write("Could not find the table:tbody")
-
-        # achievements = pool.findAll('div', attrs={'class': 'achievement'})
-        # for achievement in achievements:
-        #     self.event_log.write(''.join(achievement.findAll(text=True)))
+        table = soup.find('table', {'class': 'top-achievements'})
+        if table:
+            trs = table.findAll('tr')
+            if trs:
+                for tr in trs:
+                    tds = tr.findAll('td')
+                    if tds:
+                        if tds[1].find('em', {'class': 'more'}):
+                            continue
+                        else:
+                            tx = re.sub('\n', ' ', ''.join(tds[1].findAll(text=True))).strip()
+                            ride_achievements.append(tx)
+        return ride_achievements
     except urllib.error.URLError:
         return False
 

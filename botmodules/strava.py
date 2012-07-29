@@ -296,12 +296,24 @@ def strava_get_ride_achievements(self, ride_id):
         table = soup.find('table', attrs={'class': 'top-achievements'})
         tbody = table.find('tbody')
         if tbody:
+            self.event_log.write("Found the table:tbody")
             rows = table.findAll('tr')
-            for row in rows:
-                cols = row.findAll('td')
-                for col in cols:
-                    text = ''.join(col.find(text=True))
-                    self.even_log.write(text)
+            if rows:
+                self.event_log.write("Found the rows")
+                for row in rows:
+                    cols = row.findAll('td')
+                    if cols:
+                        self.event_log.write("Find the cols")
+                        for col in cols:
+                            # text = ''.join(col.find(text=True))
+                            self.event_log.write("Found an achievement")
+                    else:
+                        self.event_log.write("Coudln't find the cols")
+            else:
+                self.event_log.write("Could not find the rows")
+        else:
+            self.event_log.write("Could not find the table:tbody")
+
         # achievements = pool.findAll('div', attrs={'class': 'achievement'})
         # for achievement in achievements:
         #     self.event_log.write(''.join(achievement.findAll(text=True)))

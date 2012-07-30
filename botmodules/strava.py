@@ -371,7 +371,7 @@ def strava_is_valid_user(strava_id):
 
 
 def strava_convert_meters_per_second_to_miles_per_hour(mps):
-    """ Converts meters per second to miles per hour, who the fuck uses this to measure bike speed? """
+    """ Converts meters per second to miles per hour, who the fuck uses this to measure bike speed? Idiots. """
     mph = 2.23694 * float(mps)
     return round(mph, 1)
 

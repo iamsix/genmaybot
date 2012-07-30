@@ -242,9 +242,9 @@ def strava_achievements(self, e):
                     recent_ride = rides_response['rides'][0]
                     achievements = strava_get_ride_achievements(recent_ride['id'])
                     if achievements:
-                        e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+                        e.output = "Achievements for %s: %s" % (recent_ride['name'], ', '.join(achievements))
                     else:
-                        e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+                        e.output = "There were no achievements on %s, time to harden the fuck up." % (recent_ride['name'])
                 else:
                     e.output = "You do not have any recent achievements."
             else:

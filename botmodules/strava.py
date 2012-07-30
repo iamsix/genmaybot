@@ -221,15 +221,38 @@ strava.helptext = """
 
 def strava_achievements(self, e):
     """ Get Achievements for a ride. """
-    ride_info = strava_get_ride_extended_info(e.input)
-    if ride_info:
-        achievements = strava_get_ride_achievements(e.input)
-        if achievements:
-            e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+    strava_id = strava_get_athlete(e.nick)
+    if e.input:
+        ride_info = strava_get_ride_extended_info(e.input)
+        if ride_info:
+            achievements = strava_get_ride_achievements(e.input)
+            if achievements:
+                e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+            else:
+                e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
         else:
-            e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+            e.output = "Sorry, that is an invalid Strava Ride ID."
+    elif strava_id:
+        try:
+            if strava_is_valid_user(strava_id):
+                # Process the last ride for the current strava id.
+                response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % (strava_id))
+                rides_response = json.loads(response.read().decode('utf-8'))
+                if 'rides' in rides_response:
+                    recent_ride = rides_response['rides'][0]
+                    achievements = strava_get_ride_achievements(recent_ride['id'])
+                    if achievements:
+                        e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+                    else:
+                        e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+                else:
+                    e.output = "You do not have any recent achievements."
+            else:
+                e.output = "You do not have a valid Strava ID setup."
+        except urllib.error.URLError:
+            e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
     else:
-        e.output = "Sorry, that is an invalid Strava Ride ID."
+        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % (e.nick)
     return e
 
 
@@ -310,11 +333,8 @@ def strava_get_ride_achievements(ride_id):
                 for tr in trs:
                     tds = tr.findAll('td')
                     if tds:
-                        if tds[1].find('em', {'class': 'more'}):
-                            continue
-                        else:
-                            tx = re.sub('\n', ' ', ''.join(tds[1].findAll(text=True))).strip()
-                            ride_achievements.append(tx)
+                        tx = re.sub('\n', ' ', ''.join(tds[1].findAll(text=True))).strip()
+                        ride_achievements.append(tx)
         return ride_achievements
     except urllib.error.URLError:
         return False

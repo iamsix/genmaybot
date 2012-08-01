@@ -192,8 +192,21 @@ def strava(self, e):
         except urllib.error.URLError:
             e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
     elif e.input:
-        # We still have some sort of string, but it isn't numberic.
-        e.output = "Sorry but %s is not a valid Strava ID." % (e.input)
+        athlete_id = strava_get_athlete(e.input)
+        if athlete_id:
+            try:
+                if strava_is_valid_user(athlete_id):
+                    # Process a last ride request for a specific strava id.
+                    response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % (athlete_id))
+                    rides_response = json.loads(response.read().decode('utf-8'))
+                    e.output = strava_extract_latest_ride(rides_response, e)
+                else:
+                    e.output = "That is not a valid Strava ID"
+            except urllib.error.URLError:
+                e.output = "Unable to retrieve rides from Strava ID: %s" % (athlete_id)
+        else:
+            # We still have some sort of string, but it isn't numberic.
+            e.output = "Sorry but %s is not a valid Strava ID." % (e.input)
     elif strava_id:
         try:
             if strava_is_valid_user(strava_id):

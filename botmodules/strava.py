@@ -235,7 +235,7 @@ strava.helptext = """
 def strava_achievements(self, e):
     """ Get Achievements for a ride. """
     strava_id = strava_get_athlete(e.nick)
-    if e.input:
+    if e.input.isdigit():
         ride_info = strava_get_ride_extended_info(e.input)
         if ride_info:
             achievements = strava_get_ride_achievements(e.input)
@@ -245,6 +245,29 @@ def strava_achievements(self, e):
                 e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
         else:
             e.output = "Sorry, that is an invalid Strava Ride ID."
+    elif e.input:
+        athlete_id = strava_get_athlete(e.input)
+        if athlete_id:
+            try:
+                if strava_is_valid_user(athlete_id):
+                    # Process the last ride for the current strava id.
+                    response = urllib.request.urlopen('http://app.strava.com/api/v1/rides?athleteId=%s' % (athlete_id))
+                    rides_response = json.loads(response.read().decode('utf-8'))
+                    if 'rides' in rides_response:
+                        recent_ride = rides_response['rides'][0]
+                        achievements = strava_get_ride_achievements(recent_ride['id'])
+                        if achievements:
+                            e.output = "Achievements for %s: %s" % (recent_ride['name'], ', '.join(achievements))
+                        else:
+                            e.output = "There were no achievements on %s, time to harden the fuck up." % (recent_ride['name'])
+                    else:
+                        e.output = "%s does not have any recent achievements." % (e.input)
+                else:
+                    e.output = "The Strava ID setup for %s is invalid." % (e.input)
+            except urllib.error.URLError:
+                e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
+        else:
+            e.output = "%s does not have a valid Strava ID setup." % (e.input)
     elif strava_id:
         try:
             if strava_is_valid_user(strava_id):

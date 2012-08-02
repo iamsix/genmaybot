@@ -132,7 +132,7 @@ def strava_line_parser(self, e):
                 if recent_ride:
                     e.output = strava_ride_to_string(recent_ride)
                 else:
-                    e.output = "Sorry %s, an error has occured attempting to retrieve ride details for %s." % (e.nick, url)
+                    e.output = "Sorry %s, an error has occured attempting to retrieve ride details for %s. They said Ruby was webscale..." % (e.nick, url)
                 return e
     else:
         return
@@ -145,10 +145,10 @@ def strava_set_athlete(self, e):
         # Insert the user strava id, we should probably validate the user though right?
         if (strava_is_valid_user(e.input)):
             strava_insert_athlete(e.nick, e.input)
-            self.irccontext.privmsg(e.nick, "Your Strava ID has been set to %s" % (e.input))
+            self.irccontext.privmsg(e.nick, "Your Strava ID has been set to %s. Now go play bikes." % (e.input))
         else:
             # Inform the user that the strava id isn't valid.
-            self.irccontext.privmsg(e.nick, "Sorry that is not a valid Strava user.")
+            self.irccontext.privmsg(e.nick, "Sorry, that is not a valid Strava user.")
     else:
         # Bark at stupid users.
         self.irccontext.privmsg(e.nick, "Usage: !strava-set <strava id>")
@@ -167,9 +167,9 @@ def strava_reset_athlete(self, e):
     athlete_id = strava_get_athlete(e.nick)
     if athlete_id:
         strava_delete_athlete(e.nick, athlete_id)
-        self.irccontext.privmsg(e.nick, "Your Strava ID has been reset.")
+        self.irccontext.privmsg(e.nick, "Your Strava ID has been reset, but remember, if it's not on Strava, it didn't happen.")
     else:
-        self.irccontext.privmsg(e.nick, "You don't even have a Strava ID set.")
+        self.irccontext.privmsg(e.nick, "You don't even have a Strava ID set, why would you want to reset it?")
 
 
 strava_reset_athlete.command = "!strava-reset"
@@ -188,9 +188,9 @@ def strava(self, e):
                 rides_response = json.loads(response.read().decode('utf-8'))
                 e.output = strava_extract_latest_ride(rides_response, e)
             else:
-                e.output = "That is not a valid Strava ID"
+                e.output = "Sorry, that is not a valid Strava user."
         except urllib.error.URLError:
-            e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
+            e.output = "Unable to retrieve rides from Strava ID: %s. They said Ruby was webscale..." % (e.input)
     elif e.input:
         athlete_id = strava_get_athlete(e.input)
         if athlete_id:
@@ -201,12 +201,12 @@ def strava(self, e):
                     rides_response = json.loads(response.read().decode('utf-8'))
                     e.output = strava_extract_latest_ride(rides_response, e)
                 else:
-                    e.output = "That is not a valid Strava ID"
+                    e.output = "Sorry, that is not a valid Strava user."
             except urllib.error.URLError:
-                e.output = "Unable to retrieve rides from Strava ID: %s" % (athlete_id)
+                e.output = "Unable to retrieve rides from Strava ID: %s". They said Ruby was webscale... % (athlete_id)
         else:
             # We still have some sort of string, but it isn't numberic.
-            e.output = "Sorry but %s is not a valid Strava ID." % (e.input)
+            e.output = "Sorry, %s is not a valid Strava ID." % (e.input)
     elif strava_id:
         try:
             if strava_is_valid_user(strava_id):
@@ -215,11 +215,11 @@ def strava(self, e):
                 rides_response = json.loads(response.read().decode('utf-8'))
                 e.output = strava_extract_latest_ride(rides_response, e)
             else:
-                e.output = "That is not a valid Strava ID"
+                e.output = "Sorry, that is not a valid Strava user."
         except urllib.error.URLError:
-            e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
+            e.output = "Unable to retrieve rides from Strava ID: %s. They said Ruby was webscale..." % (e.input)
     else:
-        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % (e.nick)
+        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command. Remember, if it's not on Strava, it didn't happen." % (e.nick)
     return e
 
 
@@ -265,9 +265,9 @@ def strava_achievements(self, e):
                 else:
                     e.output = "The Strava ID setup for %s is invalid." % (e.input)
             except urllib.error.URLError:
-                e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
+                e.output = "Unable to retrieve rides from Strava ID: %s. They said Ruby was webscale..." % (e.input)
         else:
-            e.output = "%s does not have a valid Strava ID setup." % (e.input)
+            e.output = "%s does not have a valid Strava ID setup. Remember, if it's not on Strava, it didn't happen." % (e.input)
     elif strava_id:
         try:
             if strava_is_valid_user(strava_id):
@@ -288,7 +288,7 @@ def strava_achievements(self, e):
         except urllib.error.URLError:
             e.output = "Unable to retrieve rides from Strava ID: %s" % (e.input)
     else:
-        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command." % (e.nick)
+        e.output = "Sorry %s, you don't have a Strava ID setup yet, please enter one with the !strava-set command. Remember, if it's not on Strava, it didn't happen." % (e.nick)
     return e
 
 
@@ -306,9 +306,9 @@ def strava_extract_latest_ride(response, e):
         if recent_ride:
             return strava_ride_to_string(recent_ride)
         else:
-            return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details." % (e.nick)
+            return "Sorry %s, an error has occured attempting to retrieve the most recent ride's details. They said Ruby was webscale..." % (e.nick)
     else:
-        return "Sorry %s, no rides have been recorded yet." % (e.nick)
+        return "Sorry %s, no rides have been recorded yet. Remember, if it's not on Strava, it didn't happen." % (e.nick)
 
 
 def strava_ride_to_string(recent_ride):

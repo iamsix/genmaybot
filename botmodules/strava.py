@@ -203,7 +203,7 @@ def strava(self, e):
                 else:
                     e.output = "Sorry, that is not a valid Strava user."
             except urllib.error.URLError:
-                e.output = "Unable to retrieve rides from Strava ID: %s". They said Ruby was webscale... % (athlete_id)
+                e.output = "Unable to retrieve rides from Strava ID: %s. They said Ruby was webscale..." % (athlete_id)
         else:
             # We still have some sort of string, but it isn't numberic.
             e.output = "Sorry, %s is not a valid Strava ID." % (e.input)

@@ -78,7 +78,7 @@ def bbnet(self, e):
         e.output = "%s%s" % (e.output, "l")
         e.output = "%s%s" % (e.output, "oo" if random.randint(0, 5) == 0 else "o")
     
-    e.output = e.output + " %s" % string.len(e.output)
+    e.output = "%s %s" % (e.output, e.output.__len__())
     return e 
 
 bbnet.command = "!bbnet"

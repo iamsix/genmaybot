@@ -12,6 +12,7 @@ def wotd_trigger(self, e):
         wotd_trigger.wotd = common_words[random.randint(0, len(common_words) - 1)]
         wotd_trigger.wotd_setter = ""
         wotd_trigger.wotd_finder = ""
+        wotd_trigger.found = 0
         wotd_trigger.wotd_found_timestamp = time.time()
     if re.search(wotd_trigger.wotd, e.input, re.I) and re.search(" ", e.input) and e.source != e.nick and e.nick != "Whatsisname":
         do_wotd(self, e)

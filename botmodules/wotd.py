@@ -101,7 +101,7 @@ common_words = ["the", "people", "would", "really", "think", "right", "there", "
 def do_wotd(self, e):
     #If the word was found over 10 minutes ago but a new one wasn't set, allow the new person who got it to set it.
     if time.time() - wotd_trigger.wotd_found_timestamp > 600 and wotd_trigger.found:
-        wotd_trigger.wotd_found = 0
+        wotd_trigger.found = 0
     if not wotd_trigger.found:
         wotd_trigger.wotd_finder = e.hostmask
         wotd_trigger.wotd_found_timestamp = time.time()

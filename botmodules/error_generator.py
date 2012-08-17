@@ -70,21 +70,26 @@ mba_generator.helptext = "Usage: !mba\nGenerates random corporate jargon"
 
 
 def bbnet(self, e):
-    if (e.nick.lower().startswith('bbnet')):
-        e.output = "<%s> !bbnet\n^\n" % e.nick
-    elif (e.nick.lower().startswith('rc')):
+   if (e.nick.lower().startswith('rc')):
         e.output = "lol"
-    else:
-        rand = random.randint(2, 10)
-        for n in range(0, rand):
-            e.output = "%s%s" % (e.output, "l")
-            e.output = "%s%s" % (e.output, "oo" if random.randint(0, 5) == 0 else "o")
+        return e
     
-        e.output = "%s %s" % (e.output, e.output.__len__())
+    lols = generatelols()
+    if (e.nick.lower().startswith('bbnet')):
+        e.output = "<%s> !bbnet\n^\n%s" % (e.nick, lols)
+    
+    e.output = "%s %s" % (e.output, lols.__len__())
     return e 
 
 bbnet.command = "!bbnet"
 
+def generatelols(self):
+    output = ""
+    rand = random.randint(2, 10)
+    for n in range(0, rand):
+        output = "%s%s" % (output, "l")
+        output = "%s%s" % (output, "oo" if random.randint(0, 5) == 0 else "o")
+    return output
 
 def fortune(self, e):
     e.output = urllib.request.urlopen("http://www.fortunefortoday.com/getfortuneonly.php").read().decode('utf-8').replace('\n', ' ').replace('\r', '').strip()

@@ -85,7 +85,7 @@ def bbnet(self, e):
 
 bbnet.command = "!bbnet"
 
-def generatelols(self):
+def generatelols():
     output = ""
     rand = random.randint(2, 10)
     for n in range(0, rand):

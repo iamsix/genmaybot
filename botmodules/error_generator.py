@@ -80,7 +80,7 @@ def bbnet(self, e):
     else:
         e.output = lols
     
-    e.output = "%s %s" % (e.output, lols.__len__())
+   # e.output = "%s %s" % (e.output, lols.__len__())
     return e 
 
 bbnet.command = "!bbnet"

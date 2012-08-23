@@ -63,7 +63,7 @@ def get_redditpics(url):
     for cat in cats['data']['children']:
         if 'jpg' in cat['data']['url'] or 'imgur.com' in cat['data']['url']:
             pic_title = cat['data']['title']
-            pic_title.replace('\n', '')
+            pic_title = pic_title.replace('\n', '')
             catlist.append(cat['data']['url'] + " - " + pic_title)
 
     cats = catlist.pop(random.randint(0, len(catlist) - 1)) + " :: " + catlist.pop(random.randint(0, len(catlist) - 1))

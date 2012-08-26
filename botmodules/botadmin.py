@@ -119,3 +119,16 @@ def show_channels(line, nck, self, c):
     return ", ".join(self.channels)
 show_channels.admincommand = "channels"
 
+def quake_filter(line, nick, self, c):
+    if len(line.split(" ")) >= 2:
+        try:
+            quake_alert.filter = line.split(" ")[1:]
+        except:
+            return "Quake module doesn't seem to be loaded."
+    else:
+        return "Correct syntax: quake-filter [title string]   For example: quake-filter Honshu -> this will disable any quake alerts containing the word Honshu"
+quake_filter.admincommand = "quake-filter"
+      
+
+
+

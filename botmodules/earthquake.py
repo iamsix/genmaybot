@@ -16,11 +16,20 @@ get_quake.helptext = "Usage: !q\nShows the latest earthquake larger than M2.5 
 def quake_alert():
     #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
     qtitle, updated, ago, elevation = get_quake_data()
+    
+    try: #if a filter is set
+        if qtitle.find(quake_alert.filter) != -1:
+            return
+    except:
+        pass
+        
+    
     if not quake_alert.lastquakecheck:
         quake_alert.lastquakecheck = updated
     if updated > quake_alert.lastquakecheck:
         quake_alert.lastquakecheck = updated
         return "Latest Earthquake: %s - Depth: %s (%s minutes ago)" % (qtitle, elevation, ago)
+
 
 quake_alert.lastquakecheck = ""
 quake_alert.alert = True

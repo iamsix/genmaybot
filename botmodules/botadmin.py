@@ -122,7 +122,7 @@ show_channels.admincommand = "channels"
 def quake_filter(line, nick, self, c):
     if len(line.split(" ")) >= 2:
         try:
-            quake_alert.filter = line.split(" ")[1:]
+             earthquake.quake_alert.filter = line.split(" ")[1:]
         except:
             return "Quake module doesn't seem to be loaded."
     else:

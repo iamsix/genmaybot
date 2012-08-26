@@ -1,4 +1,4 @@
-import time, sys
+import time, sys, traceback
 
 #test commit
 
@@ -124,6 +124,7 @@ def quake_filter(line, nick, self, c):
         try:
              earthquake.quake_alert.filter = line.split(" ")[1:]
         except:
+            traceback.print_exc()
             return "Quake module doesn't seem to be loaded."
     else:
         return "Correct syntax: quake-filter [title string]   For example: quake-filter Honshu -> this will disable any quake alerts containing the word Honshu"

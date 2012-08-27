@@ -124,8 +124,8 @@ def quake_filter(line, nick, self, c):
         if alert.__name__ == "quake_alert":
             if len(line.split(" ")) >= 2:
                 try:
-                     alert.filter = line.split(" ")[1:]
-                     return "Earthquake alerts containing '%s' will not be shown." % line.split(" ")[1:]
+                     alert.filter = " ".join(line.split(" ")[1:])
+                     return "Earthquake alerts containing '%s' will not be shown." % " ".join(line.split(" ")[1:])
                 except:
                     traceback.print_exc()
                     return "Quake module doesn't seem to be loaded."

@@ -21,7 +21,18 @@ def get_weather(self, e):
     weatherdata = weather["data"]
 
     if 'error' not in weatherdata:
-        city = "%s, %s, %s" % (weatherdata['nearest_area'][0]['areaName'][0]['value'], weatherdata['nearest_area'][0]['region'][0]['value'], weatherdata['nearest_area'][0]['country'][0]['value'])
+    
+        country = weatherdata['nearest_area'][0]['country'][0]['value']
+        
+        if country=="United States of America" or country=="Canada" or country=="USA":
+            country = ""
+        elif country=="United Kingdom":
+            country = ", UK"
+        else: 
+            country = ", " + country
+        
+    
+        city = "%s, %s%s" % (weatherdata['nearest_area'][0]['areaName'][0]['value'], weatherdata['nearest_area'][0]['region'][0]['value'], country)
         desc = weatherdata['current_condition'][0]['weatherDesc'][0]['value']
         temp = "{}°F {}°C".format(weatherdata['current_condition'][0]['temp_F'], weatherdata['current_condition'][0]['temp_C'])
         humidity = "%s%%" % (weatherdata['current_condition'][0]['humidity'])
@@ -40,9 +51,14 @@ def get_weather(self, e):
         else:
             precip = ""
 
-        visibility = "%skm" % (weatherdata['current_condition'][0]['visibility'])
+        if int(weatherdata['current_condition'][0]['visibility']) < 10:
+            visibility = "Visibility: %skm / " % (weatherdata['current_condition'][0]['visibility'])
+        else: 
+            visibility = ""
+        
+        
 
-        message = "{} / {} / {} / Humidity: {} / Visibility: {} / Wind: {} / {}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
+        message = "{} / {} / {} / Humidity: {} / {}Wind: {} / {}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
         e.output = message
         return e
     else:

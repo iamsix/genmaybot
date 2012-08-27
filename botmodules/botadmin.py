@@ -120,15 +120,16 @@ def show_channels(line, nck, self, c):
 show_channels.admincommand = "channels"
 
 def quake_filter(line, nick, self, c):
-    print (self.botalerts[0])
-    if len(line.split(" ")) >= 2:
-        try:
-             self.earthquake.quake_alert.filter = line.split(" ")[1:]
-        except:
-            traceback.print_exc()
-            return "Quake module doesn't seem to be loaded."
-    else:
-        return "Correct syntax: quake-filter [title string]   For example: quake-filter Honshu -> this will disable any quake alerts containing the word Honshu"
+    for alert in self.botalerts:
+        if alert.__name__ == "quake_alert":
+            if len(line.split(" ")) >= 2:
+                try:
+                     alert.filter = line.split(" ")[1:]
+                except:
+                    traceback.print_exc()
+                    return "Quake module doesn't seem to be loaded."
+            else:
+                return "Correct syntax: quake-filter [title string]   For example: quake-filter Honshu -> this will disable any quake alerts containing the word Honshu"
 quake_filter.admincommand = "quake-filter"
       
 

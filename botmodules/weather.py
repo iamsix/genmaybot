@@ -29,7 +29,7 @@ def get_weather(self, e):
         high = "{}°F {}°C".format(weather['weather'][0]['tempMaxF'], weather['weather'][0]['tempMaxC'])
         low = "{}°F {}°C".format(weather['weather'][0]['tempMinF'], weather['weather'][0]['tempMinC'])
         outlook = weather['weather'][0]['weatherDesc'][0]['value']
-        message = "{} / {} / {} / Humidity: {} / Wind: {} / High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, wind, high, low, outlook)
+        message = "{} / {} / {} / Humidity: {}% / Wind: {} / High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, wind, high, low, outlook)
         e.output = message
         return e
     else:

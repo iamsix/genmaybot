@@ -99,7 +99,7 @@ npr_science.command="!npr-sci"
 npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Health and Science RSS feed"
 
 def npr_most_emailed(self, e):
-    ## Grab the latest entry from the NPR Health and Science RSS feed
+    ## Grab the latest entry from the NPR Most Emailed RSS feed
     url = "http://www.npr.org/rss/rss.php?id=100"
     e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
     return e
@@ -107,5 +107,12 @@ def npr_most_emailed(self, e):
 npr_most_emailed.command="!npr-top"
 npr_most_emailed.helptext="Usage: !npr-top\nShows the latest entry from the NPR Most Emailed RSS feed"    
 
+def npr_headlines(self, e):
+    ## Grab the latest entry from the NPR headlines RSS feed
+    url = "http://www.npr.org/rss/rss.php?id=1001"
+    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    return e
 
+npr_headlines.command="!npr"
+npr_most_emailed.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
 

@@ -14,22 +14,35 @@ def get_weather(self, e):
     if location == "" and user:
         location = user.get_location(e.nick)
     location = urllib.parse.quote(location)
-    url = "http://free.worldweatheronline.com/feed/weather.ashx?q={}&format=json&num_of_days=1&key={}".format(location, self.botconfig["APIkeys"]["wwoAPIkey"])
+    url = "http://free.worldweatheronline.com/feed/weather.ashx?q={}&format=json&num_of_days=1&includeLocation=yes&key={}".format(location, self.botconfig["APIkeys"]["wwoAPIkey"])
 
     response = urllib.request.urlopen(url).read().decode('utf-8')
     weather = json.loads(response)
-    weather = weather["data"]
+    weatherdata = weather["data"]
 
-    if 'error' not in weather:
-        city = weather['request'][0]['query']
-        desc = weather['current_condition'][0]['weatherDesc'][0]['value']
-        temp = "{}°F {}°C".format(weather['current_condition'][0]['temp_F'], weather['current_condition'][0]['temp_C'])
-        humidity = weather['current_condition'][0]['humidity']
-        wind = "{} at {} mph".format(weather['current_condition'][0]['winddir16Point'], weather['current_condition'][0]['windspeedMiles'])
-        high = "{}°F {}°C".format(weather['weather'][0]['tempMaxF'], weather['weather'][0]['tempMaxC'])
-        low = "{}°F {}°C".format(weather['weather'][0]['tempMinF'], weather['weather'][0]['tempMinC'])
-        outlook = weather['weather'][0]['weatherDesc'][0]['value']
-        message = "{} / {} / {} / Humidity: {}% / Wind: {} / High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, wind, high, low, outlook)
+    if 'error' not in weatherdata:
+        city = "%s, %s, %s" % (weatherdata['nearest_area'][0]['areaName'][0]['value'], weatherdata['nearest_area'][0]['region'][0]['value'], weatherdata['nearest_area'][0]['country'][0]['value'])
+        desc = weatherdata['current_condition'][0]['weatherDesc'][0]['value']
+        temp = "{}°F {}°C".format(weatherdata['current_condition'][0]['temp_F'], weatherdata['current_condition'][0]['temp_C'])
+        humidity = "%s%%" % (weatherdata['current_condition'][0]['humidity'])
+        wind = "%s at %s mph (%s km/h)" % (weatherdata['current_condition'][0]['winddir16Point'], weatherdata['current_condition'][0]['windspeedMiles'], weatherdata['current_condition'][0]['windspeedKmph'])
+        high = "{}°F {}°C".format(weatherdata['weather'][0]['tempMaxF'], weatherdata['weather'][0]['tempMaxC'])
+        low = "{}°F {}°C".format(weatherdata['weather'][0]['tempMinF'], weatherdata['weather'][0]['tempMinC'])
+        outlook = weatherdata['weather'][0]['weatherDesc'][0]['value']
+
+        if  int(weatherdata['current_condition'][0]['cloudcover']) > 5:
+            cloudcover = "Cloud Cover: %s%% / " % (weatherdata['current_condition'][0]['cloudcover'])
+        else:
+            cloudcover = ""
+
+        if float(weatherdata['current_condition'][0]['precipMM']) > 0:
+            precip = "Precipitation: %s mm / " % (weatherdata['current_condition'][0]['precipMM'])
+        else:
+            precip = ""
+
+        visibility = "%skm" % (weatherdata['current_condition'][0]['visibility'])
+
+        message = "{} / {} / {} / Humidity: {} / Visibility: {} / Wind: {} / {}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
         e.output = message
         return e
     else:

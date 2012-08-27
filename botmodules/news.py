@@ -2,13 +2,9 @@ import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, date
 from bs4 import BeautifulSoup
 
 
-def google_news(self, e):
-    query = urllib.parse.quote(e.input)
-    url = ""
-    if not query:
-        url = "http://news.google.com/news?ned=us&topic=h&output=rss"
-    else:
-        url = "http://news.google.com/news?q=%s&output=rss" % query
+def get_newest_rss(self, url):
+## Retreive an RSS feed and get the newest item
+## Then, nicely format the title and description, and add a shortened URL
 
     dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
     newest_news = dom.getElementsByTagName('item')[0]
@@ -28,15 +24,25 @@ def google_news(self, e):
     description = description.replace("\n", "")
 
     description = self.tools['remove_html_tags'](description)
-#    description = tools.decode_htmlentities(description)
     description = description[0:len(description) - 9]
     description = description.strip()
     if description.rfind(".") != -1:
         description = description[0:description.rfind(".") + 1]
 
     link = self.tools['shorten_url'](newest_news.getElementsByTagName('link')[0].childNodes[0].data)
+    
+    return title, description, link
 
-    e.output = "%s - %s [ %s ]" % (title, description, link)
+
+def google_news(self, e):
+    query = urllib.parse.quote(e.input)
+    url = ""
+    if not query:
+        url = "http://news.google.com/news?ned=us&topic=h&output=rss"
+    else:
+        url = "http://news.google.com/news?q=%s&output=rss" % query
+
+    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
 
     return e
 
@@ -85,46 +91,21 @@ def get_breaking_data():
 
 def npr_science(self, e):
     ## Grab the latest entry from the NPR Health and Science RSS feed
-    
     url = "http://www.npr.org/rss/rss.php?id=1007"
-    
-    
     e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
-
     return e
 
 npr_science.command="!npr-sci"
 npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Health and Science RSS feed"
 
+def npr_most_emailed(self, e):
+    ## Grab the latest entry from the NPR Health and Science RSS feed
+    url = "http://www.npr.org/rss/rss.php?id=100"
+    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    return e
 
-def get_newest_rss(self, url):
-## Retreive an RSS feed and get the newest item
-## Then, nicely format the title and description, and add a shortened URL
+npr_most_emailed.command="!npr-top"
+npr_most_emailed.helptext="Usage: !npr-top\nShows the latest entry from the NPR Most Emailed RSS feed"    
 
-    dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
-    newest_news = dom.getElementsByTagName('item')[0]
-    title = newest_news.getElementsByTagName('title')[0].childNodes[0].data
-    description = BeautifulSoup(newest_news.getElementsByTagName('description')[0].childNodes[0].data)
 
-    links = description.findAll('a')
-    for link in links:
-        link.extract()
-    links = description.findAll(color='#6f6f6f')
-    for link in links:
-        link.extract()
-
-    title = title.strip()
-
-    description = str(description)
-    description = description.replace("\n", "")
-
-    description = self.tools['remove_html_tags'](description)
-    description = description[0:len(description) - 9]
-    description = description.strip()
-    if description.rfind(".") != -1:
-        description = description[0:description.rfind(".") + 1]
-
-    link = self.tools['shorten_url'](newest_news.getElementsByTagName('link')[0].childNodes[0].data)
-    
-    return title, description, link
 

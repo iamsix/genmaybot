@@ -24,7 +24,7 @@ def get_weather(self, e):
     
         country = weatherdata['nearest_area'][0]['country'][0]['value']
         
-        if country=="United States of America" or country=="Canada" or country=="USA":
+        if country=="United States Of America" or country=="Canada" or country=="USA":
             country = ""
         elif country=="United Kingdom":
             country = ", UK"
@@ -67,7 +67,7 @@ def get_weather(self, e):
         
         
 
-        message = "{} / {} / {} / Humidity: {} / {}{}{}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
+        message = "{} / {} / {} / Humidity: {} / {}{}{}{}High: {} - Low: {} Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
         e.output = message
         return e
     else:

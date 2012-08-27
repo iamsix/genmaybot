@@ -31,7 +31,7 @@ reload_modules.admincommand = "reload"
 
 def reload_config(line, nick, self, c):
     return self.load_config()
-reload_modules.admincommand = "reloadconfig"
+reload_modules.admincommand = "reconfig"
 
 
 def enable_command(line, nick, self, c):

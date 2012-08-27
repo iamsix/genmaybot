@@ -120,6 +120,8 @@ def show_channels(line, nck, self, c):
 show_channels.admincommand = "channels"
 
 def quake_filter(line, nick, self, c):
+    print "line is: %s" % line
+
     for alert in self.botalerts:
         if alert.__name__ == "quake_alert":
             if len(line.split(" ")) >= 2:

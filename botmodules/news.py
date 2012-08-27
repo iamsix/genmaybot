@@ -1,4 +1,4 @@
-import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom
+import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime
 from bs4 import BeautifulSoup
 
 
@@ -42,3 +42,43 @@ def google_news(self, e):
 
 google_news.command = "!news"
 google_news.helptext = "Usage: !news - reports the top story. !news <query> reports news containing the specified words"
+
+def get_breaking(self, e):
+    #returns the latest earthquake on USGS
+      try:       
+        description,updated,ago = get_breaking_data()   
+        e.output = "%s (%s minutes ago) " % (description, ago)     
+        return e
+      except:
+        return None
+get_breaking.command = "!breaking"
+get_breaking.helptext = "Usage: !breaking\nShows the latest breaking news alert"
+
+def breaking_alert():
+    #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
+      try:
+        description,updated,ago = get_breaking_data()
+        if not breaking_alert.lastcheck:
+            breaking_alert.lastcheck = updated
+        if updated > breaking_alert.lastcheck :
+            breaking_alert.lastcheck = updated     
+            return "%s" % (description)
+      except Exception as inst: 
+          print("breakinglert: " + str(inst))
+          pass
+breaking_alert.lastcheck = ""
+breaking_alert.alert = True
+
+
+def get_breaking_data():
+    request = urllib.request.urlopen("https://api.twitter.com/1/statuses/user_timeline.rss?screen_name=BreakingNews&count=1")
+    dom = xml.dom.minidom.parse(request)
+    latest_update = dom.getElementsByTagName('item')[0]
+    updated = latest_update.getElementsByTagName('pubDate')[0].childNodes[0].data
+    description = latest_update.getElementsByTagName('description')[0].childNodes[0].data
+    #print description
+    updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S +0000")
+    #print updated
+    ago = round((datetime.datetime.utcnow() - updated).seconds/60)
+    request.close()
+    return description, updated, ago

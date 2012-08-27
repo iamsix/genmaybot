@@ -102,6 +102,7 @@ class TestBot(SingleServerIRCBot):
                     c.privmsg(nick, line)
 
         except Exception as inst:
+            traceback.print_exc()
             print("admin exception: " + line + " : " + str(inst))
 
     def process_line(self, c, ircevent, private = False):

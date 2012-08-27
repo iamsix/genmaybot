@@ -87,6 +87,20 @@ def npr_science(self, e):
     ## Grab the latest entry from the NPR Health and Science RSS feed
     
     url = "http://www.npr.org/rss/rss.php?id=1007"
+    
+    
+    e.output = "%s - %s [ %s ]" % (get_newest_rss(url))
+
+    return e
+
+npr_science.command="!npr-sci"
+npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Health and Science RSS feed"
+
+
+def get_newest_rss(url):
+## Retreive an RSS feed and get the newest item
+## Then, nicely format the title and description, and add a shortened URL
+
     dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
     newest_news = dom.getElementsByTagName('item')[0]
     title = newest_news.getElementsByTagName('title')[0].childNodes[0].data
@@ -105,7 +119,6 @@ def npr_science(self, e):
     description = description.replace("\n", "")
 
     description = self.tools['remove_html_tags'](description)
-#    description = tools.decode_htmlentities(description)
     description = description[0:len(description) - 9]
     description = description.strip()
     if description.rfind(".") != -1:
@@ -113,9 +126,5 @@ def npr_science(self, e):
 
     link = self.tools['shorten_url'](newest_news.getElementsByTagName('link')[0].childNodes[0].data)
     
-    e.output = "%s - %s [ %s ]" % (title, description, link)
+    return title, description, link
 
-    return e
-
-npr_science.command="!npr-sci"
-npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Health and Science RSS feed"

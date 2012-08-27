@@ -89,7 +89,7 @@ def npr_science(self, e):
     url = "http://www.npr.org/rss/rss.php?id=1007"
     
     
-    e.output = "%s - %s [ %s ]" % (get_newest_rss(url))
+    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
 
     return e
 
@@ -97,7 +97,7 @@ npr_science.command="!npr-sci"
 npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Health and Science RSS feed"
 
 
-def get_newest_rss(url):
+def get_newest_rss(self, url):
 ## Retreive an RSS feed and get the newest item
 ## Then, nicely format the title and description, and add a shortened URL
 

@@ -10,7 +10,7 @@ def kill_bot(line, nick, self, c):
     c.disconnect(message)
     self.t.cancel()
     sys.exit(0)
-kill_bot.admincommand = "die"    
+kill_bot.admincommand = "die"
 
 def nick(line, nick, self, c):
     print(line)
@@ -26,8 +26,13 @@ clear_bans.admincommand = "clearbans"
 
 def reload_modules(line, nick, self, c):
     return self.loadmodules()
-    
-reload_modules.admincommand = "reload"        
+reload_modules.admincommand = "reload"
+
+
+def reload_config(line, nick, self, c):
+    return self.load_config()
+reload_modules.admincommand = "reloadconfig"
+
 
 def enable_command(line, nick, self, c):
     if len(line.split(" ")) == 2:
@@ -58,7 +63,7 @@ def cooldown_command(line, nick, self, c):
                 return command + " cooldown disabled"
             else:
                 self.commandaccesslist[command] = cooldown
-                self.commandcooldownlast[command] = time.time() - cooldown   
+                self.commandcooldownlast[command] = time.time() - cooldown
                 return command + " cooldown set to " + str(cooldown) + " seconds (set to 0 to disable)"
         else:
             return "bad format: 'cooldown !wiki 30' (30 second cooldown on !wiki)"
@@ -75,7 +80,7 @@ def command_status(line, nick, self, c):
             return command + " Enabled"
     elif len(line.split(" ")) == 1:
         return str(list(self.commandaccesslist.items()))
-    
+
 command_status.admincommand = "status"
 
 def join_chan(line, nick, self, c):
@@ -111,7 +116,7 @@ def say_cmd(line, nick, self, c):
 		words = " ".join(line.split(" ")[2:])
 		c.privmsg(chan, words)
 		return "Said %s to %s" % (words, chan)
-	else: 
+	else:
 		return "Correct syntax: say [#channel/nickname] I hate you!"
 say_cmd.admincommand="say"
 
@@ -132,7 +137,7 @@ def quake_filter(line, nick, self, c):
             else:
                 return "Correct syntax: quake-filter [title string]   For example: quake-filter Honshu -> this will disable any quake alerts containing the word Honshu"
 quake_filter.admincommand = "quake-filter"
-      
+
 
 
 

@@ -31,12 +31,16 @@ def get_weather(self, e):
         else: 
             country = ", " + country
         
-    
-        city = "%s, %s%s" % (weatherdata['nearest_area'][0]['areaName'][0]['value'], weatherdata['nearest_area'][0]['region'][0]['value'], country)
+        
+        try:
+            region = ", " + weatherdata['nearest_area'][0]['region'][0]['value']
+        except:
+            region = ""
+        
+        city = "%s%s%s" % (weatherdata['nearest_area'][0]['areaName'][0]['value'], region, country)
         desc = weatherdata['current_condition'][0]['weatherDesc'][0]['value']
         temp = "{}°F {}°C".format(weatherdata['current_condition'][0]['temp_F'], weatherdata['current_condition'][0]['temp_C'])
         humidity = "%s%%" % (weatherdata['current_condition'][0]['humidity'])
-        wind = "%s at %s mph (%s km/h)" % (weatherdata['current_condition'][0]['winddir16Point'], weatherdata['current_condition'][0]['windspeedMiles'], weatherdata['current_condition'][0]['windspeedKmph'])
         high = "{}°F {}°C".format(weatherdata['weather'][0]['tempMaxF'], weatherdata['weather'][0]['tempMaxC'])
         low = "{}°F {}°C".format(weatherdata['weather'][0]['tempMinF'], weatherdata['weather'][0]['tempMinC'])
         outlook = weatherdata['weather'][0]['weatherDesc'][0]['value']
@@ -55,10 +59,15 @@ def get_weather(self, e):
             visibility = "Visibility: %skm / " % (weatherdata['current_condition'][0]['visibility'])
         else: 
             visibility = ""
+            
+        if int(weatherdata['current_condition'][0]['windspeedMiles']) > 0:
+            wind = "Wind: %s at %s mph (%s km/h) / " % (weatherdata['current_condition'][0]['winddir16Point'], weatherdata['current_condition'][0]['windspeedMiles'], weatherdata['current_condition'][0]['windspeedKmph'])
+        else:
+            wind = ""
         
         
 
-        message = "{} / {} / {} / Humidity: {} / {}Wind: {} / {}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
+        message = "{} / {} / {} / Humidity: {} / {}{}{}{}High: {} - Low: {} - Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
         e.output = message
         return e
     else:

@@ -1,16 +1,11 @@
-import re
-import random
-
-
+import re, random
 def decider(self, e):
-    regex = "^bot[^\s]? (.*)$"
+    regex = "^bot" + "[^\s]? (.*) or ([^?]*)"
     result = re.search(regex, e.input)
     if result:
-        if (result.group(1)):
-            items = result.group(1).split(" or ")
-            item_picked = items[random.randint(0, items.__len__() - 1)].strip()
-            if (item_picked != 'or'):
-                e.output = e.nick + ": " + item_picked
-                return e
-
+        if (random.randint(0,1) == 0):
+            e.output = e.nick + ": " + result.group(1)
+        else:
+            e.output = e.nick + ": " + result.group(2)
+    return e
 decider.lineparser = True

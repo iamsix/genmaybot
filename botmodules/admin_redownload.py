@@ -36,6 +36,7 @@ def redownload_modules(x,y,self,z):
   zip.close()
   shutil.rmtree(tmpdir)
   self.loadmodules()
+  self.load_config()
   return "The bot has redownloaded itself from GitHub and reloaded any changed modules"
 
 redownload_modules.admincommand = "redownload"

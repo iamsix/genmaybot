@@ -8,8 +8,9 @@ def decider(self, e):
     if result:
         if (result.group(1)):
             items = result.group(1).split(" or ")
-            item_picked = items[random.randint(0, items.__len__() - 1)]
-            e.output = e.nick + ": " + item_picked
-            return e
+            item_picked = items[random.randint(0, items.__len__() - 1)].strip()
+            if (item_picked != 'or'):
+                e.output = e.nick + ": " + item_picked
+                return e
 
 decider.lineparser = True

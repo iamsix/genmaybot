@@ -1,6 +1,6 @@
 import re, random
 def decider(self, e):
-    regex = "bot" + "[^\s]? (.*) or ([^?]*)"
+    regex = "^bot" + "[^\s]? (.*) or ([^?]*)"
     result = re.search(regex, e.input)
     if result:
         if (random.randint(0,1) == 0):

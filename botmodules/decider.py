@@ -1,5 +1,5 @@
 import re, random
-function decider(self, e):
+def decider(self, e):
     regex = "bot" + "[^\s]? (.*) or ([^?]*)"
     result = re.search(regex, e.input)
     if result:

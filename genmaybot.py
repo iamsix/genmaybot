@@ -166,8 +166,6 @@ class TestBot(SingleServerIRCBot):
         try:
             if botevent.output:
                 for line in botevent.output.split("\n"):
-                    line = line.replace("join", "join")
-                    line = line.replace("come", "come")
                     if botevent.notice:
                         self.irccontext.notice(botevent.source, line)
                     else:

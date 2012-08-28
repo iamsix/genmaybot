@@ -135,16 +135,15 @@ class TestBot(SingleServerIRCBot):
                     return
                 etmp.append(self.bangcommands[command](self, e))
 
-            else:
-                #lineparsers take the whole line and nick for EVERY line
-                #ensure the lineparser function is short and simple. Try to not to add too many of them
-                #Multiple lineparsers can output data, leading to multiple 'say' lines
-                for command in self.lineparsers:
-                    e = self.botEvent(linesource, from_nick, hostmask, line)
-                    e.botnick = self.botnick #store the bot's nick in the event in case we need it.
-                    if linesource in self.channels and hasattr(command, 'privateonly'):
-                        continue
-                    etmp.append(command(self, e))
+            #lineparsers take the whole line and nick for EVERY line
+            #ensure the lineparser function is short and simple. Try to not to add too many of them
+            #Multiple lineparsers can output data, leading to multiple 'say' lines
+            for command in self.lineparsers:
+                e = self.botEvent(linesource, from_nick, hostmask, line)
+                e.botnick = self.botnick  # store the bot's nick in the event in case we need it.
+                if linesource in self.channels and hasattr(command, 'privateonly'):
+                    continue
+                etmp.append(command(self, e))
 
             firstpass = True
             for e in etmp:

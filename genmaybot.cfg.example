@@ -11,6 +11,7 @@ wolframAPIkey=kA1A1
 fmlAPIkey=cA1A1
 rtAPIkey=fA1a1
 wwoAPIkey=asdfghjkl
+nprAPIkey=asdfghjhkl
 
 [misc]
 #log files for saving stdout and stderr

@@ -116,3 +116,26 @@ def npr_headlines(self, e):
 npr_headlines.command="!npr"
 npr_most_emailed.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
 
+def npr_music(self, e):
+## Get the latest song of the day from NPR Discover Music
+    url = "http://api.npr.org/query?id=1108&fields=title,teaser,audio&dateType=story&sort=dateDesc&output=JSON&numResults=1&apiKey=%s" % ( self.botconfig["APIkeys"]["nprAPIkey"])#MDA5OTg5MzIxMDEzNDYxMTQ4NTc3MzJmZQ001
+    
+    response = urllib.request.urlopen(url).read().decode('utf-8')
+    musicdata = json.loads(response)
+    musicdata = musicdata['list']['story'][0]
+
+    teaser = musicdata['teaser']['$text']
+    teaser = teaser.replace("\"","")
+
+    for links in musicdata['link']:
+        if links['type'] == "short":
+                link = links['$text']
+                break
+
+    title = musicdata['title']['$text']    
+    e.output = "%s - %s [ %s ]" % (title,teaser,link)
+    
+    return e
+
+npr_music.command="!music"
+npr_music.helptext="Usage: !music\nShows the latest music listing from NPR's Discover Music song of the day"

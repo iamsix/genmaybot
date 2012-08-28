@@ -1,4 +1,5 @@
 import time, sys, traceback
+import threading
 
 #test commit
 
@@ -139,5 +140,7 @@ def quake_filter(line, nick, self, c):
 quake_filter.admincommand = "quake-filter"
 
 
-
-
+def debug_listthreads(line, nick, self, c):
+    print(threading.enumerate())
+    return "A list of threads has been printed in the event log"
+debug_listthreads.admincommand = "listthreads"

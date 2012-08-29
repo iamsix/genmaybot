@@ -119,7 +119,7 @@ def get_title(self, e, url):
         except:
             pass
     elif page:
-        title = "Title: " + page.html.head.title.string
+        title = "Title: " + page.find('title').string
 
     return title
 

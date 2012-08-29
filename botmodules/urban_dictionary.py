@@ -1,8 +1,8 @@
-
+import urllib.parse
 
 def get_urbandictionary(self, e):
     searchterm = e.input
-    url = "http://www.urbandictionary.com/define.php?term=%s" % searchterm
+    url = "http://www.urbandictionary.com/define.php?term=%s" % urllib.parse.quote(searchterm)
 
     if searchterm == "wotd":
         e.output = get_urbandictionary_wotd(self)

@@ -118,6 +118,20 @@ def age_get_birthday(nick):
         return False
 
 
+def age_get_all_birthdays():
+    """ Get an user's birthday """
+    conn = sqlite3.connect('age.sqlite')
+    c = conn.cursor()
+    query = "SELECT * FROM users WHERE"
+    result = c.execute(query, [nick]).fetchall()
+    if (result):
+        c.close()
+        return result
+    else:
+        c.close()
+        return False
+
+
 def age_set_birthday(self, e):
     """ Set a user's birthday. """
     if e.input:
@@ -180,3 +194,25 @@ age.helptext = """
                 Gets the age of the user specified or saved via !age-set.
                 If you have an birthday set with !age-set you can use this command without an arguement.
                 """
+
+
+def average_age(self, e):
+    now = date.today()
+    total_age = 0
+    total_age_count = 0
+    all_birthdays = age_get_all_birthdays()
+    for birthday in all_birthdays:
+        nick, year, month, day = birthday
+        delta = now - date(year, month, day)
+        years_diff = delta.days / 365.25
+        total_age = total_age + years_diff
+        total_age_count = total_age_count + 1
+    if total_age_count & total_age:
+        e.output = "Average age is %s" % total_age / total_age_count
+    return e
+
+average_age.command = "!average-age"
+average_age.helptext = """
+                        Usage: !average-age"
+                        Gets the average age of all the users known by the bot.
+                        """

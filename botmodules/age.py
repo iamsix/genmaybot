@@ -123,7 +123,7 @@ def age_get_all_birthdays():
     conn = sqlite3.connect('age.sqlite')
     c = conn.cursor()
     query = "SELECT * FROM users WHERE"
-    result = c.execute(query, [nick]).fetchall()
+    result = c.execute(query).fetchall()
     if (result):
         c.close()
         return result

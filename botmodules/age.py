@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 from dateutil.parser import parse
 
 
@@ -151,17 +152,20 @@ age_reset_birthday.helptext = """
 
 
 def age(self, e):
+    now = date.today()
     self_birthday = age_get_birthday(e.nick)
     if e.input:
         input_birthday = age_get_birthday(e.input)
         if input_birthday:
             input_nick, input_year, input_month, input_day = input_birthday
-            e.output = "Do something with %s" % (input_year)
+            years_diff = (now - date(input_year, input_month, input_day)) / 365.25
+            e.output = "%s is %s years old." % (years_diff)
         else:
             e.output = "Sorry, %s doesn't have an age set." % (e.input)
     elif self_birthday:
         self_nick, self_year, self_month, self_day = self_birthday
-        e.output = "Do something with user's own birthday: %s" % (self_year)
+        years_diff = (now - date(self_year, self_month, self_day)) / 365.25
+        e.output = "%s is %s years old." % (years_diff)
     else:
         e.output = "Sorry %s, you don't have a birthday setup yet, please enter one with the !age-set command." % (e.nick)
     return e

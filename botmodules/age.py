@@ -152,6 +152,7 @@ age_reset_birthday.helptext = """
 
 def age(self, e):
     users_age = age_get_birthday(e.nick)
+    print(users_age)
     if e.input:
         input_age = age_get_birthday(e.input)
         if input_age:

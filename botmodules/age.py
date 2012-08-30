@@ -155,6 +155,7 @@ def age(self, e):
     print(users_age)
     if e.input:
         input_age = age_get_birthday(e.input)
+        print(input_age)
         if input_age:
             e.output = "Do something with %s" % (input_age.year)
         else:

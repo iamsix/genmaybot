@@ -122,7 +122,7 @@ def age_get_all_birthdays():
     """ Get an user's birthday """
     conn = sqlite3.connect('age.sqlite')
     c = conn.cursor()
-    query = "SELECT * FROM users WHERE"
+    query = "SELECT * FROM users"
     result = c.execute(query).fetchall()
     if (result):
         c.close()

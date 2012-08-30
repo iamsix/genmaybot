@@ -207,7 +207,7 @@ def average_age(self, e):
         years_diff = delta.days / 365.25
         total_age = total_age + years_diff
         total_age_count = total_age_count + 1
-    if total_age_count & total_age:
+    if total_age_count and total_age:
         e.output = "Average age is %s" % total_age / total_age_count
     return e
 

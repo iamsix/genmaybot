@@ -82,7 +82,7 @@ def strava_check_create_tables():
             # Run the command.
             c.execute(sql_statement)
             conn.commit()
-            c.close()
+    c.close()
 
 
 def strava_insert_athlete(nick, athlete_id):

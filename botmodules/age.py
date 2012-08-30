@@ -76,7 +76,7 @@ def age_check_create_tables():
             # Run the command.
             c.execute(sql_statement)
             conn.commit()
-            c.close()
+    c.close()
 
 
 def age_insert_birthday(nick, birthday):

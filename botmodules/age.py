@@ -155,11 +155,11 @@ def age(self, e):
     if e.input:
         input_age = age_get_birthday(e.input)
         if input_age:
-            e.output = "Do something with %s" % (input_age['birth_year'])
+            e.output = "Do something with %s" % (input_age[1])
         else:
             e.output = "Sorry, %s doesn't have an age set." % (e.input)
     elif users_age:
-        e.output = "Do something with user's own birthday: %s" % (users_age['birth_year'])
+        e.output = "Do something with user's own birthday: %s" % (users_age[1])
     else:
         e.output = "Sorry %s, you don't have a birthday setup yet, please enter one with the !age-set command." % (e.nick)
     return e

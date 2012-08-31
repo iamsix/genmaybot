@@ -212,7 +212,8 @@ def average_age(self, e):
         total_age = total_age + years_diff
         total_age_count = total_age_count + 1
     if total_age_count and total_age:
-        e.output = "Average age is %s years old." % (float(total_age) / float(total_age_count))
+        average_age = round(float(total_age) / float(total_age_count, 3))
+        e.output = "Average age is %s years old." % (average_age)
     return e
 
 average_age.command = "!average-age"

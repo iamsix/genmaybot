@@ -225,8 +225,8 @@ def age_debug(self, e):
     return e
 
 
-age.command = "!age-debug"
-age.helptext = """
+age_debug.command = "!age-debug"
+age_debug.helptext = """
                 Usage: !age-debug [user]"
                 Example: !age-debug, !age-debug jeffers
                 Gets the age of the user specified or saved via !age-set.

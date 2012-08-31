@@ -10,7 +10,7 @@ def __init__(self):
 
 def age_software_version():
     """ Returns the current version of the module, used upgrade """
-    return 1
+    return 2
 
 
 def age_check_system():
@@ -68,7 +68,7 @@ def age_check_create_tables():
     c = conn.cursor()
     tables = {
         'version': "CREATE TABLE version (version_field TEXT, version_number INTEGER)",
-        'users': "CREATE TABLE users (user TEXT UNIQUE ON CONFLICT REPLACE, birth_year INTEGER, birth_month INTEGER, birth_day INTEGER)"
+        'users': "CREATE TABLE users (user TEXT UNIQUE ON CONFLICT REPLACE, birth_year INTEGER, birth_month INTEGER, birth_day INTEGER, birth_hour INTEGER DEFAULT 0, birth_minute INTEGER DEFAULT 0)"
     }
     # Go through each table and check if it exists, if it doesn't, run the SQL statement to create it.
     for (table_name, sql_statement) in tables.items():
@@ -80,14 +80,24 @@ def age_check_create_tables():
     c.close()
 
 
+def age_upgrade_2():
+    """ Upgrades to version 2 """
+    conn = sqlite3.connect('age.sqlite')
+    c = conn.cursor()
+    c.execute("ALTER TABLE users ADD COLUMN birth_hour INTEGER DEFAULT 0")
+    c.execute("ALTER TABLE users ADD COLUMN birth_minute INTEGER DEFAULT 0")
+    conn.commit()
+    c.close()
+
+
 def age_insert_birthday(nick, birthday):
     """ Insert a user's birthday """
     birthday_parsed = parse(birthday)
     if birthday_parsed:
         conn = sqlite3.connect('age.sqlite')
         c = conn.cursor()
-        query = "INSERT INTO users VALUES (:user, :birth_year, :birth_month, :birth_day)"
-        c.execute(query, {'user': nick, 'birth_year': birthday_parsed.year, 'birth_month': birthday_parsed.month, 'birth_day': birthday_parsed.day})
+        query = "INSERT INTO users VALUES (:user, :birth_year, :birth_month, :birth_day, :birth_hour, :birth_minute)"
+        c.execute(query, {'user': nick, 'birth_year': birthday_parsed.year, 'birth_month': birthday_parsed.month, 'birth_day': birthday_parsed.day, 'birth_hour': birthday_parsed.hour, 'birth_minute': birthday_parsed.minute})
         conn.commit()
         c.close()
         return True
@@ -171,7 +181,7 @@ def age(self, e):
     if e.input:
         input_birthday = age_get_birthday(e.input)
         if input_birthday:
-            input_nick, input_year, input_month, input_day = input_birthday
+            input_nick, input_year, input_month, input_day, input_hour, input_minute = input_birthday
             delta = now - date(input_year, input_month, input_day)
             years_diff = delta.days / 365.25
             years_diff = round(years_diff, 3)
@@ -179,7 +189,7 @@ def age(self, e):
         else:
             e.output = "Sorry, %s doesn't have an age set." % (e.input)
     elif self_birthday:
-        self_nick, self_year, self_month, self_day = self_birthday
+        self_nick, self_year, self_month, self_day, self_hour, self_minute = self_birthday
         delta = now - date(self_year, self_month, self_day)
         years_diff = delta.days / 365.25
         years_diff = round(years_diff, 3)
@@ -204,7 +214,7 @@ def average_age(self, e):
     total_age_count = 0
     all_birthdays = age_get_all_birthdays()
     for birthday in all_birthdays:
-        nick, year, month, day = birthday
+        nick, year, month, day, hour, minute = birthday
         delta = now - date(year, month, day)
         years_diff = delta.days / 365.25
         if years_diff > 100 or years_diff < 5:

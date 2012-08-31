@@ -185,7 +185,10 @@ def age(self, e):
             delta = now - date(input_year, input_month, input_day)
             years_diff = delta.days / 365.25
             years_diff = round(years_diff, 3)
-            e.output = "%s is %s years old." % (input_nick, years_diff)
+            if (years_diff > 0):
+                e.output = "%s is %s years old." % (input_nick, years_diff)
+            else:
+                e.output = "%s will be born in %s years." % (input_nick, years_diff * -1)
         else:
             e.output = "Sorry, %s doesn't have a birthday set." % (e.input)
     elif self_birthday:
@@ -193,7 +196,10 @@ def age(self, e):
         delta = now - date(self_year, self_month, self_day)
         years_diff = delta.days / 365.25
         years_diff = round(years_diff, 3)
-        e.output = "%s is %s years old." % (self_nick, years_diff)
+        if (years_diff > 0):
+            e.output = "%s is %s years old." % (self_nick, years_diff)
+        else:
+            e.output = "%s will be born in %s years." % (self_nick, years_diff * -1)
     else:
         e.output = "Sorry %s, you don't have a birthday setup yet, please enter one with the !age-set command." % (e.nick)
     return e

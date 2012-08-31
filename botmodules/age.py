@@ -205,6 +205,8 @@ def average_age(self, e):
         nick, year, month, day = birthday
         delta = now - date(year, month, day)
         years_diff = delta.days / 365.25
+        if years_diff > 100 or years_diff < 5:
+            continue
         total_age = total_age + years_diff
         total_age_count = total_age_count + 1
     if total_age_count and total_age:

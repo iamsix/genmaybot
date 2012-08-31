@@ -187,7 +187,7 @@ def age(self, e):
             years_diff = round(years_diff, 3)
             e.output = "%s is %s years old." % (input_nick, years_diff)
         else:
-            e.output = "Sorry, %s doesn't have an age set." % (e.input)
+            e.output = "Sorry, %s doesn't have a birthday set." % (e.input)
     elif self_birthday:
         self_nick, self_year, self_month, self_day, self_hour, self_minute = self_birthday
         delta = now - date(self_year, self_month, self_day)
@@ -203,6 +203,32 @@ age.command = "!age"
 age.helptext = """
                 Usage: !age [user]"
                 Example: !age, !age jeffers
+                Gets the age of the user specified or saved via !age-set.
+                If you have an birthday set with !age-set you can use this command without an arguement.
+                """
+
+
+def age_debug(self, e):
+    self_birthday = age_get_birthday(e.nick)
+    if e.input:
+        input_birthday = age_get_birthday(e.input)
+        if input_birthday:
+            input_nick, input_year, input_month, input_day, input_hour, input_minute = input_birthday
+            e.output = "%s => Y:%s M:%s D:%s H:%s M:%s" % (input_nick, input_year, input_month, input_day, input_hour, input_minute)
+        else:
+            e.output = "Sorry, %s doesn't have a birthday set." % (e.input)
+    elif self_birthday:
+        self_nick, self_year, self_month, self_day, self_hour, self_minute = self_birthday
+        e.output = "%s => Y:%s M:%s D:%s H:%s M:%s" % (self_nick, self_year, self_month, self_day, self_hour, self_minute)
+    else:
+        e.output = "Sorry %s, you don't have a birthday setup yet, please enter one with the !age-set command." % (e.nick)
+    return e
+
+
+age.command = "!age-debug"
+age.helptext = """
+                Usage: !age-debug [user]"
+                Example: !age-debug, !age-debug jeffers
                 Gets the age of the user specified or saved via !age-set.
                 If you have an birthday set with !age-set you can use this command without an arguement.
                 """

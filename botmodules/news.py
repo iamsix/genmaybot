@@ -136,6 +136,7 @@ def npr_music(self, e):
     e.output = "%s - %s [ %s ]" % (title,teaser,link)
     e.output = e.output.replace("<em>","")
     e.output = e.output.replace("</em>","")
+    e.output = e.output.replace("First Listen: ","") #Unnecessary spam
     
     return e
 

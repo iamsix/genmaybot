@@ -134,6 +134,8 @@ def npr_music(self, e):
 
     title = musicdata['title']['$text']    
     e.output = "%s - %s [ %s ]" % (title,teaser,link)
+    e.output = e.output.replace("<em>","")
+    e.output = e.output.replace("</em>","")
     
     return e
 

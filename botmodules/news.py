@@ -117,8 +117,8 @@ npr_headlines.command="!npr"
 npr_most_emailed.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
 
 def npr_music(self, e):
-## Get the latest song of the day from NPR Discover Music
-    url = "http://api.npr.org/query?id=1108&fields=title,teaser,audio&dateType=story&sort=dateDesc&output=JSON&numResults=1&apiKey=%s" % ( self.botconfig["APIkeys"]["nprAPIkey"])
+## Get the latest song of the day from NPR First Listen
+    url = "http://api.npr.org/query?id=98679384&fields=title,teaser,audio&dateType=story&sort=dateDesc&output=JSON&numResults=1&apiKey=%s" % ( self.botconfig["APIkeys"]["nprAPIkey"])
     
     response = urllib.request.urlopen(url).read().decode('utf-8')
     musicdata = json.loads(response)

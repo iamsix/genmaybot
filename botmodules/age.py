@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import date
+import datetime
 from dateutil.parser import parse
 
 
@@ -175,16 +175,24 @@ age_reset_birthday.helptext = """
                         Removes your birthday from the bot."""
 
 
+def age_year_decimal_diff(now, birthday):
+    delta = now - birthday
+    years_difference = delta.days / 365.25
+    seconds_difference = delta.seconds / (60 * 60 * 24)
+    seconds_difference_as_year = seconds_difference / 365.25
+    difference = years_difference + seconds_difference_as_year
+    return difference
+
+
 def age(self, e):
-    now = date.today()
+    now = datetime.datetime.today()
     self_birthday = age_get_birthday(e.nick)
     if e.input:
         input_birthday = age_get_birthday(e.input)
         if input_birthday:
             input_nick, input_year, input_month, input_day, input_hour, input_minute = input_birthday
-            delta = now - date(input_year, input_month, input_day)
-            years_diff = delta.days / 365.25
-            years_diff = round(years_diff, 3)
+            years_diff = age_year_decimal_diff(now, datetime.datetime(input_year, input_month, input_day, input_hour, input_minute))
+            years_diff = round(years_diff, 5)
             if (years_diff > 0):
                 e.output = "%s is %s years old." % (input_nick, years_diff)
             else:
@@ -193,9 +201,8 @@ def age(self, e):
             e.output = "Sorry, %s doesn't have a birthday set." % (e.input)
     elif self_birthday:
         self_nick, self_year, self_month, self_day, self_hour, self_minute = self_birthday
-        delta = now - date(self_year, self_month, self_day)
-        years_diff = delta.days / 365.25
-        years_diff = round(years_diff, 3)
+        years_diff = age_year_decimal_diff(now, datetime.datetime(self_year, self_month, self_day, self_hour, self_minute))
+        years_diff = round(years_diff, 5)
         if (years_diff > 0):
             e.output = "%s is %s years old." % (self_nick, years_diff)
         else:
@@ -241,14 +248,14 @@ age_debug.helptext = """
 
 
 def average_age(self, e):
-    now = date.today()
+    now = datetime.datetime.today()
     total_age = 0
     total_age_count = 0
     all_birthdays = age_get_all_birthdays()
     for birthday in all_birthdays:
         nick, year, month, day, hour, minute = birthday
-        delta = now - date(year, month, day)
-        years_diff = delta.days / 365.25
+        years_diff = age_year_decimal_diff(now, datetime.datetime(year, month, day, hour, minute))
+        years_diff = round(years_diff, 5)
         if years_diff > 100 or years_diff < 5:
             continue
         total_age = total_age + years_diff

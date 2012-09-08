@@ -1498,6 +1498,7 @@ numeric_events = {
     "375": "motdstart",
     "376": "endofmotd",
     "377": "motd2",        # 1997-10-16 -- tkil
+    "378": "whoishostline", # Added by KpaBap - this is a line that shows the user's true hostname if the bot is an IRCop
     "381": "youreoper",
     "382": "rehashing",
     "384": "myportis",

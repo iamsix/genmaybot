@@ -856,9 +856,9 @@ class ServerConnection(Connection):
         """Send a WHO command."""
         self.send_raw("WHO%s%s" % (target and (" " + target), op and (" o")))
 
-    def whois(self, targets):
+    def whois(self, target):
         """Send a WHOIS command."""
-        self.send_raw("WHOIS " + ",".join(targets))
+        self.send_raw("WHOIS " + target)
 
     def whowas(self, nick, max="", server=""):
         """Send a WHOWAS command."""

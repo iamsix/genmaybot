@@ -9,11 +9,28 @@ except:
 def get_weather(self, e):
     # WWO weather of place specified in 'zip'
     # http://www.worldweatheronline.com/free-weather-feed.aspx
+    
+    #This callback handling code should be able to be reused in any other function
+    if get_weather.waitfor_callback:
+        return
+    
 
-    location = e.input
+    try:
+        location = e.location
+    except:
+        location = e.input
+        
     if location == "" and user:
         location = user.get_location(e.nick)
+        if location=="":
+            get_weather.waitfor_callback=True
+            user.get_geoIP_location(self, e, "", "", "", get_weather)
+            
+            return
+        
     location = urllib.parse.quote(location)
+    
+    #End callback handling code
     url = "http://free.worldweatheronline.com/feed/weather.ashx?q={}&format=json&num_of_days=1&includeLocation=yes&key={}".format(location, self.botconfig["APIkeys"]["wwoAPIkey"])
 
     response = urllib.request.urlopen(url).read().decode('utf-8')
@@ -73,7 +90,7 @@ def get_weather(self, e):
     else:
         return get_weather2(self, e)
 
-
+get_weather.waitfor_callback=False
 get_weather.command = "!w"
 get_weather.helptext = "Usage: !w <location>\nExample: !w hell, mi\nShows weather info from google.com.\nUse !setlocation <location> to save your location"
 

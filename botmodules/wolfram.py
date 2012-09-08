@@ -5,8 +5,24 @@ except: pass
 
 def get_wolfram(self, e):
     #query 'input' on wolframalpha and get the plaintext result back
-    if user:
-        location = urllib.parse.quote(user.get_location(e.nick))
+    if get_wolfram.waitfor_callback:
+        return
+    
+    try:
+        location = e.location
+    except:
+        location = ""
+    
+    if location == "" and user:
+        location = user.get_location(e.nick)
+        if location=="":
+            get_wolfram.waitfor_callback=True
+            user.get_geoIP_location(self, e, "", "", "", get_wolfram)
+            
+            return
+            
+    location = urllib.parse.quote(location)
+            
     socket.setdefaulttimeout(30)
     url = "http://api.wolframalpha.com/v2/query?appid=%s&format=plaintext&input=%s&location=%s" % (self.botconfig["APIkeys"]["wolframAPIkey"], urllib.parse.quote(e.input), location)
     dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
@@ -40,7 +56,8 @@ def get_wolfram(self, e):
             result = self.bangcommands["!error"](self, e).output
             e.output = result
             return e
-
+            
+get_wolfram.waitfor_callback = False
 get_wolfram.command = "!wolfram"
 get_wolfram.helptext = "Usage: !wolfram <query>\nExample: !wolfram population of New York City\nPerforms a query through Wolfram|Alpha and returns the first result"
 

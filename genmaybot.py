@@ -28,7 +28,7 @@ socket.setdefaulttimeout(5)
 class TestBot(SingleServerIRCBot):
 
     def __init__(self, channel, nickname, server, port=6667):
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname, 30)
+        SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname, 15)
         self.channel = channel
         self.doingcommand = False
         self.botnick = nickname
@@ -68,12 +68,28 @@ class TestBot(SingleServerIRCBot):
 
     def on_disconnect(self, c, e):
         print("DISCONNECT: " + str(e.arguments()))
-
+        
+        
     def on_welcome(self, c, e):
         c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
+        c.oper(self.botconfig['irc']['opernick'], self.botconfig['irc']['operpassword'])
         c.join(self.channel)
         self.alerts(c)
         self.irccontext = c
+        
+       
+    
+    def on_youreoper(self, c, e):
+        print ("I'm an IRCop bitches!")
+        
+    
+    def on_whoishostline(self, c, e):
+         try:
+            
+            self.whoisIP_reply_handler(self, self.whoisIP_sourceEvent, e.arguments()[1].split()[-1],"",True)
+         except:
+            pass #No whois host line reply handler
+
 
     def on_pubmsg(self, c, e):
         self.process_line(c, e)

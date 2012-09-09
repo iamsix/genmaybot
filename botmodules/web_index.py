@@ -30,8 +30,10 @@ class Root:
 
     def __init__(self,bot): #make a reference to the main bot object
         self.bot = bot
+        self.auth = AuthController(self.bot)
+        
 
-    auth = AuthController()
+    
 
     restricted = RestrictedArea()
 
@@ -102,5 +104,8 @@ def __init__(bot):
     cherrypy.config.update({'engine.autoreload_on': False})
     cherrypy.log.screen=False
     cherrypy.server.socket_host = "0.0.0.0"
+
+    cherrypy.server.socket_port = int(bot.botconfig['webui']['port'])
+    
     thread = threading.Thread(target=cherrypy.quickstart, args=(Root(bot),))
     thread.start()

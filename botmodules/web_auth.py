@@ -8,11 +8,11 @@ import cherrypy, urllib.parse
 
 SESSION_KEY = '_cp_username'
 
-def check_credentials(username, password):
+def check_credentials(username, password, bot):
     """Verifies credentials for username and password.
     Returns None on success or a string describing the error on failure"""
     # Adapt to your needs
-    if username in ('joe', 'steve') and password == 'secret':
+    if username==bot.botconfig['webui']['username'] and password == bot.botconfig['webui']['password']:
         return None
     else:
         return "Incorrect username or password."
@@ -103,6 +103,9 @@ def all_of(*conditions):
 # Controller to provide login and logout actions
 
 class AuthController(object):
+
+    def __init__(self,bot): #make a reference to the main bot object
+        self.bot = bot
     
     def on_login(self, username):
         """Called on successful login"""
@@ -125,7 +128,7 @@ class AuthController(object):
         if username is None or password is None:
             return self.get_loginform("", from_page=from_page)
         
-        error_msg = check_credentials(username, password)
+        error_msg = check_credentials(username, password, self.bot)
         if error_msg:
             return self.get_loginform(username, error_msg, from_page)
         else:

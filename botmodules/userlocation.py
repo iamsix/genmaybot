@@ -31,12 +31,12 @@ def get_geoIP_location(self, e="", ip="", nick="", whois_reply=False, callback="
 # This function gets called twice so we need to account for the different calls
 # It gets called once by a server side event
 # then again when the server responds with the whois IP information
-    #import pdb; pdb.set_trace()
+    ##import pdb; pdb.set_trace()
     if callback:
         get_geoIP_location.callback = callback
 
     
- 
+
     if whois_reply and get_geoIP_location.callback:
 
         #we're basically doing a fake call to the original requestor function
@@ -44,7 +44,7 @@ def get_geoIP_location(self, e="", ip="", nick="", whois_reply=False, callback="
         # GeoIP URL is http://freegeoip.net/json/<ip>
         
         get_geoIP_location.callback.waitfor_callback=False
-        #import pdb; pdb.set_trace()
+        ##import pdb; pdb.set_trace()
         e.location = get_geoIP(ip)
         response = get_geoIP_location.callback(self, e)
         self.botSay(response) #since this is a callback, we have to say the line ourselves
@@ -63,7 +63,7 @@ def get_geoIP_location(self, e="", ip="", nick="", whois_reply=False, callback="
             else:
                 request_whoisIP(self, get_geoIP_location, nick, e)    
         except:
-            request_whoisIP(self, get_geoIP_location, nick, e)
+            pass
     else:
         request_whoisIP(self, get_geoIP_location, nick, e)
     
@@ -71,19 +71,53 @@ get_geoIP_location.command = "!geoip"
 get_geoIP_location.callback = None
 
 def get_geoIP(ip):
+    location = get_geoIP_netimpact(ip)
+    if location:
+        return location
+    #import pdb; pdb.set_trace()
+    location = get_geoIP_free(ip)
+    if location:
+        return location
 
+    
+def get_geoIP_free(ip):
     ip = urllib.parse.quote(ip)
+    
     url = "http://freegeoip.net/json/{}".format(ip)
+
     response = urllib.request.urlopen(url).read().decode('utf-8')
-    geoip = json.loads(response)
+
+    try:
+        response = urllib.request.urlopen(url).read().decode('utf-8')
+        geoip = json.loads(response)
+    except:
+        return False
+
     if geoip['city']:
         return "%s, %s" % (geoip['city'], geoip['region_name'])
     else:
-        return ""
-    
+        return False
+
+def get_geoIP_netimpact(ip):
+
+#http://api.netimpact.com/qv1.php?key=WdpY8qgDVuAmvgyJ&qt=geoip&d=json&q=<ip>
+    ip = urllib.parse.quote(ip)
+
+    url = "http://api.netimpact.com/qv1.php?key=WdpY8qgDVuAmvgyJ&qt=geoip&d=json&q={}".format(ip)
+    try:
+        response = urllib.request.urlopen(url).read().decode('utf-8')
+        geoip = json.loads(response)[0]
+    except:
+        return False
+
+    if geoip:
+        return "%s, %s, %s" % (geoip[0], geoip[1], geoip[2])
+    else:
+        return False
 
 
 def request_whoisIP(self, reply_handler, nick="", e=""):
+    #import pdb; pdb.set_trace()
 # This function sends the whois request and registers the response handler    
 # We also need to store the source event that triggered the whois request     
 # So we can respond back to it properly

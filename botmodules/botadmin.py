@@ -2,6 +2,16 @@ import time, sys, traceback
 import threading
 
 #test commit
+def manual_spamban(line, nick, self, c):
+    if len(line.split(" ")) == 3:
+        user = line.split(" ")[1]
+        bantime = line.split(" ")[2]
+        self.spam[user] = {}
+        self.spam[user]['count'] = 2
+        self.spam[user]['last'] = time.time()
+        self.spam[user]['first'] = time.time()
+        self.spam[user]['limit'] = bantime
+manual_spamban.admincommand = "spamban"
 
 def kill_bot(line, nick, self, c):
     print("got die command from " + nick)

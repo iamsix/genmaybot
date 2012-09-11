@@ -1,4 +1,5 @@
 # 9/11/2012 Nevar Forget
+import time
 def age(self, e):
     self.irccontext.privmsg("Angstserv", "deprotect {} {}".format(e.source, e.nick))
     time.sleep(1)

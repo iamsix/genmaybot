@@ -179,7 +179,7 @@ def age_year_decimal_diff(now, birthday):
     # Take  YYYY-MM-DD HH:MM times and find their decimal year difference.
     # Patent pending by DVQ, software is totally patentable. #dealwithit
     delta = now - birthday
-    years_difference = delta.days / 365.25
+    years_difference = delta.years
     seconds_difference = delta.seconds / (60 * 60 * 24)
     seconds_difference_as_year = seconds_difference / 365.25
     difference = years_difference + seconds_difference_as_year

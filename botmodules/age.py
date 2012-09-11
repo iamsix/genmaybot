@@ -180,7 +180,9 @@ def age_year_decimal_diff(now, birthday):
     # Patent pending by DVQ, software is totally patentable. #dealwithit
     delta = now - birthday
     theDate = date(today.year, birthday.month, birthday.day)
-    years_difference = now.year - birthday.year + (theDate > date.today() ? 1 : 0)
+    years_difference = now.year - birthday.year
+    if theDate < date.today():
+        years_difference = years_difference - 1
     seconds_difference = delta.seconds / (60 * 60 * 24)
     seconds_difference_as_year = seconds_difference / 365.25
     difference = years_difference + seconds_difference_as_year

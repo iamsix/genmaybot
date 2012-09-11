@@ -124,7 +124,7 @@ def ban_user(self, e):
     self.irccontext.mode(e.source, '+b {}'.format(e.hostmask))
     self.irccontext.kick(e.source, e.nick, "Congratulations! You found the word of the day, courtesy of {}!".format(wotd_trigger.wotd_setter or self.irccontext.get_nickname()))
     threading.Timer(60, unban_user, [self, e.nick, e.hostmask, e.source]).start()
-
+ban_user.command = "!age"
 
 def unban_user(self, nick, hostmask, channel):
     self.irccontext.mode(channel, '-b {}'.format(hostmask))

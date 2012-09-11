@@ -179,7 +179,7 @@ def age_year_decimal_diff(now, birthday):
     # Take  YYYY-MM-DD HH:MM times and find their decimal year difference.
     # Patent pending by DVQ, software is totally patentable. #dealwithit
     delta = now - birthday
-    theDate = datetime.date(today.year, birthday.month, birthday.day)
+    theDate = datetime.date(datetime.date.today().year, birthday.month, birthday.day)
     years_difference = now.year - birthday.year
     if theDate < datetime.date.today():
         years_difference = years_difference - 1

@@ -52,11 +52,11 @@ class TestBot(SingleServerIRCBot):
         config.readfp(cfgfile)
         self.botconfig = config
         self.botadmins = config["irc"]["botadmins"].split(",")
-        #self.error_log = simpleLogger(config['misc']['error_log'])
-        #self.event_log = simpleLogger(config['misc']['event_log'])
+        self.error_log = simpleLogger(config['misc']['error_log'])
+        self.event_log = simpleLogger(config['misc']['event_log'])
 
-        #sys.stdout = self.event_log
-        #sys.stderr = self.error_log
+        sys.stdout = self.event_log
+        sys.stderr = self.error_log
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")

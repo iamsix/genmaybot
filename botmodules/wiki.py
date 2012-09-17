@@ -22,8 +22,21 @@ def get_wiki(self, e, urlposted=False, forcemediawiki=False):
         else:
             title = read_wiki_page(self, url)
 
+    title = title.encode('utf-8')
+
     if not urlposted:
         url = self.tools['shorten_url'](url)
+        
+        # Shorten the title to fit perfectly in the IRC 510-character per line limit
+        # To do so properly, you have to convert to utf-8 because of double-byte characters
+        # The protocol garbage before the real message is 
+        # :<nick>!<realname>@<hostname> PRIVMSG <target> :
+        
+        maxlen = 510-len(":{}!{}@{} PRIVMSG {} : [ {} ]".format(e.botnick,self.realname,self.hostname,e.source,url))
+        title = title[0:maxlen]
+        
+        title = title.decode('utf-8')
+        
         title = (title + " [ %s ]" % url)
 
     e.output = title
@@ -53,11 +66,14 @@ def read_wiki_page(self, url):
     title = self.tools['remove_html_tags'](page)
     title = re.sub(r'\[.*?\]', '', title)
     title = title.replace("\n", " ")
+    
 
-    title = title[0:420]
+    title = title[0:510]
     if title.rfind(".") != -1:
         title = title[0:title.rfind(".") + 1]
-
+    
+    
+    
     return title
 
 
@@ -84,7 +100,7 @@ def get_wiki_file_description(self, url):
             return
 
     desc = desc.replace("English:", "")
-    desc = desc[0:420]
+    desc = desc[0:510]
     if desc.rfind(".") != -1:
         desc = desc[0:desc.rfind(".") + 1]
 

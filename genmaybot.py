@@ -52,11 +52,11 @@ class TestBot(SingleServerIRCBot):
         config.readfp(cfgfile)
         self.botconfig = config
         self.botadmins = config["irc"]["botadmins"].split(",")
-        self.error_log = simpleLogger(config['misc']['error_log'])
-        self.event_log = simpleLogger(config['misc']['event_log'])
+        #self.error_log = simpleLogger(config['misc']['error_log'])
+        #self.event_log = simpleLogger(config['misc']['event_log'])
 
-        sys.stdout = self.event_log
-        sys.stderr = self.error_log
+        #sys.stdout = self.event_log
+        #sys.stderr = self.error_log
 
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
@@ -76,6 +76,7 @@ class TestBot(SingleServerIRCBot):
         c.join(self.channel)
         self.alerts(c)
         self.irccontext = c
+        c.who(c.get_nickname())
         
        
     
@@ -107,6 +108,16 @@ class TestBot(SingleServerIRCBot):
 
     def on_whoreply(self, c, e):
         nick = e.arguments()[4]
+        
+        # The bot does a whois on itself to find its cloaked hostname after it connects
+        # This if statement handles that situation and stores the data accordingly        
+        if nick == c.get_nickname():
+            self.realname = e.arguments()[1]
+            self.hostname = e.arguments()[2]
+            #The protocol garbage before the real message is 
+            #:<nick>!<realname>@<hostname> PRIVMSG <target> :
+            return
+        
         line = self.admincommand
         command = line.split(" ")[0]
         self.admincommand = ""
@@ -144,7 +155,7 @@ class TestBot(SingleServerIRCBot):
             #commands names are defined by the module as function.command = "!commandname"
             if command in self.bangcommands and (self.commandaccess(command) or from_nick in self.botadmins):
                 e = self.botEvent(linesource, from_nick, hostmask, args)
-                e.botnick = self.botnick #store the bot's nick in the event in case we need it.
+                e.botnick = c.get_nickname() #store the bot's nick in the event in case we need it.
 
                 if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
                     self.doingcommand = False
@@ -156,7 +167,7 @@ class TestBot(SingleServerIRCBot):
             #Multiple lineparsers can output data, leading to multiple 'say' lines
             for command in self.lineparsers:
                 e = self.botEvent(linesource, from_nick, hostmask, line)
-                e.botnick = self.botnick  # store the bot's nick in the event in case we need it.
+                e.botnick = c.get_nickname()  # store the bot's nick in the event in case we need it.
                 if linesource in self.channels and hasattr(command, 'privateonly'):
                     continue
                 etmp.append(command(self, e))

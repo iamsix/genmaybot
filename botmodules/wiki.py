@@ -22,9 +22,8 @@ def get_wiki(self, e, urlposted=False, forcemediawiki=False):
         else:
             title = read_wiki_page(self, url)
 
-    title = title.encode('utf-8')
-
     if not urlposted:
+        title = title.encode('utf-8')
         url = self.tools['shorten_url'](url)
         
         # Shorten the title to fit perfectly in the IRC 510-character per line limit

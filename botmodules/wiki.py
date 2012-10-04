@@ -22,7 +22,7 @@ def get_wiki(self, e, urlposted=False, forcemediawiki=False):
         else:
             title = read_wiki_page(self, url)
 
-    if not urlposted:
+    if not urlposted and title:
         title = title.encode('utf-8')
         url = self.tools['shorten_url'](url)
         

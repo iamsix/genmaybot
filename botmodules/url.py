@@ -81,7 +81,7 @@ def url_posted(self, e):
         url = "http://imgur.com/" + imgurid
 
     # Ignore strava ride links because Dan said so, fuck modularity, embace tight coupling. 
-    if url.find("app.strava.com/rides") != -1 or url.find("www.strava.com/rides") != -1:
+    if url.find("app.strava.com/activities") != -1 or url.find("www.strava.com/activities") != -1:
         return None
 
     if not title:

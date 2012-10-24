@@ -126,7 +126,7 @@ def strava_line_parser(self, e):
         url = url.group(0)
         url_parts = urlparse(url)
         if url_parts[1] == 'www.strava.com' or url_parts[1] == 'app.strava.com':
-            ride = re.match(r"^/rides/(\d+)", url_parts[2])
+            ride = re.match(r"^/activities/(\d+)", url_parts[2])
             if ride and ride.group(1):
                 recent_ride = strava_get_ride_extended_info(ride.group(1))
                 if recent_ride:

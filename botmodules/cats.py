@@ -49,7 +49,7 @@ get_sandwich.command = "!sandwiches"
 def get_rpics(self, e):
     if not e.input:
         e.input = "pics"
-    elif e.input == "spaceclop":
+    elif "spaceclop" in e.input:
         self.irccontext.kick(e.source, e.nick, "No spaceclop allowed!")
         return e
     url = "http://www.reddit.com/r/%s/.json" % e.input

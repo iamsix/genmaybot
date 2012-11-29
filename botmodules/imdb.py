@@ -17,7 +17,7 @@ def get_imdb(self, e, urlposted=False):
         summary = ""
         imdbid = re.search("tt\\d{7}", url)
         imdburl = ('http://www.imdb.com/title/' + imdbid.group(0) + '/')
-        page = self.tools["load_html_from_URL"](imdburl, 40960)
+        page = self.tools["load_html_from_URL"](imdburl)
 
         movietitle = page.html.head.title.string.replace(" - IMDb", "")
         movietitle = movietitle.replace("IMDb - ", "")
@@ -32,7 +32,7 @@ def get_imdb(self, e, urlposted=False):
 
             if len(page.findAll('p')) == 2:
 
-                summary = str(page.findAll('p')[1])
+                summary = str(page.find('p', itemprop='description'))
 
                 summary = re.sub(r'\<a.*\/a\>', '', summary)
                 summary = self.tools['remove_html_tags'](summary)

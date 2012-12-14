@@ -94,7 +94,7 @@ class _CleverbotSession(ChatterBotSession):
         data_to_digest = data[9:29]
         data_digest = hashlib.md5(data_to_digest.encode()).hexdigest()
         data = data + '&icognocheck=' + data_digest
-        url_response = urllib.request.urlopen(self.bot.url, data.encode('utf-8'))
+        url_response = urllib.request.urlopen(self.bot.url, data.encode('utf-8'), 60)
         response = url_response.read().decode('utf-8')
         response_values = response.split('\r')
         #self.vars['??'] = response_values[0] if len(response_values) > 0 else ''
@@ -148,7 +148,7 @@ class _PandorabotsSession(ChatterBotSession):
         self.vars['input'] = thought.text
         data = urllib.parse.urlencode(self.vars)
         data = data.encode('utf-8')
-        url_response = urllib.request.urlopen('http://www.pandorabots.com/pandora/talk-xml', data)
+        url_response = urllib.request.urlopen('http://www.pandorabots.com/pandora/talk-xml', data, 60)
         response = url_response.read().decode('utf-8')
         response_dom = xml.dom.minidom.parseString(response)
         response_thought = ChatterBotThought()

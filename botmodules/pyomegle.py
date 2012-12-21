@@ -23,10 +23,13 @@ class omevent(omegle.EventHandler):
 
 
 def startomegle (self, e):
+    try:
+        self.omegleinstance.disconnect()
+    except:
+        pass
+    
     omevent.bot = self
     omevent.e = e
-    if self.omegleinstance:
-        self.omegleinstance.disconnect()
     self.omegleinstance = omegle.OmegleChat()
     self.omegleinstance.connect_events(omevent())
     self.omegleinstance.connect(threaded=True)

@@ -13,12 +13,13 @@ class omevent(omegle.EventHandler):
         chat.terminate()
 
     def typing(self,chat,var):
-        pass
-        #omevent.bot.irccontext.privmsg(omevent.e.source, "Typing...")
+        omevent.bot.irccontext.privmsg(omevent.e.source, "Typing...")
 
     def stoppedTyping(self,chat,var):
-        pass
-        #omevent.bot.irccontext.privmsg(omevent.e.source, "Stopped Typing...")
+        omevent.bot.irccontext.privmsg(omevent.e.source, "Stopped Typing...")
+        
+    def error(self, chat, message):
+        omevent.bot.irccontext.privmsg(omevent.e.source, message)
 
 
 def startomegle (self, e):

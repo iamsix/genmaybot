@@ -61,12 +61,35 @@ def mba_generator(self, e):
     verb = verbs[random.randint(0, len(verbs) - 1)]
     adjective = adjectives[random.randint(0, len(adjectives) - 1)]
     noun = nouns[random.randint(0, len(nouns) - 1)]
-
     e.output = "%s %s %s" % (verb, adjective, noun)
     return e
 
 mba_generator.command = "!mba"
 mba_generator.helptext = "Usage: !mba\nGenerates random corporate jargon"
+
+
+def development_generator(self, e):
+    verb = seng_thirdwords[random.randint(0, len(seng_thirdwords) - 1)]
+    adjective = seng_firstwords[random.randint(0, len(seng_firstwords) - 1)]
+    noun = seng_secondwords[random.randint(0, len(seng_secondwords) - 1)]
+    e.output = "%s %s %s" % (verb, adjective, noun)
+    return e
+
+
+development_generator.command = "!developers"
+development_generator.helptext = "Usage: !developers\nGenerates random programming engineering bullshit"
+
+# Adjectives
+seng_firstwords = ["Sequential", "Downwards", "Structural", "Modified", "Extreme", "Up Front", "Waterfall", "Agile", "Critical", "Flawed",
+"Top-Down", "Discrete", "Evolutionary", "Initial", "Scrum", "Horizontal", "Usability", "Throwaway", "Rapid", "Incremental", "Extreme", "Reduced", "Insufficient",
+"Dynamic", "Business", "Operating", "Rapid", "Object-Oriented", "Iterative", "Unified", "V-Model", "Linear", "Unit", "Spiral", "Daily", "Retrospective", "Epic", "Rockstar"]
+# Nouns
+seng_secondwords = ["Prototype", "Software", "Critical View", "Requirements Specification", "Model", "Architecture", "Meeting", "Products", "Objectives", "Logic",
+"Application", "Environment", "Task", "Deployment", "Process", "Abstraction", "Data Structure", "NoSQL", "Web 2.0", "XML", "XSL", "Memcache", "Cloud", "Cluster",
+"Version Control", "Code", "Feedback Loop", "Master", "Stakeholders", "Managers", "Storytime", "User Story", "Programmer"]
+# Verbs
+seng_thirdwords = ["Design", "Maintenance", "Testing", "Production", "Implementation", "Research", "Conception", "Analysis", "Initiation",
+"Programming", "Development", "Review", "Verification" "Replication", "Evaluate", "Integrate", "Sprint", "Backlog Grooming", "Termination"]
 
 
 def bbnet(self, e):

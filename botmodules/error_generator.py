@@ -89,7 +89,7 @@ seng_secondwords = ["Prototype", "Software", "Critical View", "Requirements Spec
 "Version Control", "Code", "Feedback Loop", "Master", "Stakeholders", "Managers", "Storytime", "User Story", "Programmer"]
 # Verbs
 seng_thirdwords = ["Design", "Maintenance", "Testing", "Production", "Implementation", "Research", "Conception", "Analysis", "Initiation",
-"Programming", "Development", "Review", "Verification" "Replication", "Evaluate", "Integrate", "Sprint", "Backlog Grooming", "Termination"]
+"Programming", "Development", "Review", "Verification", "Replication", "Evaluate", "Integrate", "Sprint", "Backlog Grooming", "Termination"]
 
 
 def bbnet(self, e):

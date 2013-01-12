@@ -59,7 +59,7 @@ def read_wiki_page(self, url):
 
         if str(page[0])[0:9] == '<p><span ':
             page = str(page[1].extract())
-        elif self.tools['remove_html_tags'](page[0]).strip() == '':
+        elif self.tools['remove_html_tags'](str(page[0])).strip() == '':
             page = str(page[1].extract())
         else:
             page = str(page[0].extract())

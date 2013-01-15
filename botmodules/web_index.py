@@ -65,7 +65,6 @@ class Root:
 
 
     @cherrypy.expose
-    @require()
     def commands(self):
         commandlist = ""
 

@@ -69,7 +69,9 @@ class Root:
         commandlist = ""
 
         for command in self.bot.bangcommands:
-            try: helptext=self.bot.bangcommands[command].helptext.replace("\n","<br>")
+            try: 
+                helptext = self.bot.bangcommands[command].helptext
+                helptext = helptext.replace("\n","<br>")
             except: helptext=""
 
             commandlist+= "<p>%s - %s</p>" % (command,helptext)

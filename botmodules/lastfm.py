@@ -36,14 +36,23 @@ def nowplaying(self, e):
             trackinfo = get_trackinfo(self.botconfig["APIkeys"]["lastfmAPIkey"], trackid, lastfmuser)
             artist = trackinfo['artist']['name']
             trackname = trackinfo['name']
-            dmin, dsec = divmod(datetime.timedelta(milliseconds=int(trackinfo['duration'])).total_seconds(), 60)
-            duration = "%s:%s" % (int(dmin), int(dsec))
-            playcount = trackinfo['userplaycount']
-            genres = []
-            for genre in trackinfo['toptags']['tag']:
-                genres.append(genre['name'])
-            genres = ", ".join(genres)
-            e.output = "%s np: %s - %s [%s] :: Playcount: %s (%s)" % (lastfmuser, artist, trackname, duration, playcount, genres)
+            try:
+                dmin, dsec = divmod(datetime.timedelta(milliseconds=int(trackinfo['duration'])).total_seconds(), 60)
+                duration = " [%s:%s]" % (int(dmin), int(dsec))
+            except:
+                duration = ""
+            try:
+                playcount = " Playcount: %s" % trackinfo['userplaycount']
+            except:
+                playcount = ""
+            try:
+                genres = []
+                for genre in trackinfo['toptags']['tag']:
+                    genres.append(genre['name'])
+                genres = " (%s)" % ", ".join(genres)
+            except:
+                genres = ""
+            e.output = "%s np: %s - %s%s ::%s%s" % (lastfmuser, artist, trackname, duration, playcount, genres)
         except:
             #an exception means they are not currently playing a track
             artist = track['recenttracks']['track']['artist']['#text']
@@ -100,7 +109,7 @@ def compare(self, e):
         url="http://ws.audioscrobbler.com/2.0/?api_key=%s&method=tasteometer.compare&type1=user&type2=user&value1=%s&value2=%s&format=json" % (self.botconfig["APIkeys"]["lastfmAPIkey"], user1, user2)
         response = urllib.request.urlopen(url).read().decode('utf-8')
         match = json.loads(response)
-        score = "{:.2%}".format(match['comparison']['result']['score'])
+        score = "{:.2%}".format(float(match['comparison']['result']['score']))
         try:
             artistmatches = match['comparison']['result']['artists']['@attr']['matches']
             jsonartists = match['comparison']['result']['artists']['artist']

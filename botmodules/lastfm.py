@@ -21,7 +21,12 @@ setlastfmuser.command = "!setlastfm"
 def nowplaying(self, e):
     conn = sqlite3.connect('lastfm.sqlite')
     c = conn.cursor()
-    lastfmuser = c.execute("SELECT lastfmuser FROM lastfm WHERE user = LOWER(?)", [e.nick]).fetchone()
+    if e.input:
+        lastfmuser = c.execute("SELECT lastfmuser FROM lastfm WHERE user = LOWER(?)", [e.input]).fetchone()
+        if not lastfmuser:
+            lastfmuser = [e.input]
+    else:
+        lastfmuser = c.execute("SELECT lastfmuser FROM lastfm WHERE user = LOWER(?)", [e.nick]).fetchone()
 
     if lastfmuser:
         lastfmuser = lastfmuser[0]
@@ -29,16 +34,16 @@ def nowplaying(self, e):
         response = urllib.request.urlopen(url).read().decode('utf-8')
         track = json.loads(response)
         try:
-            #artist = track['recenttracks']['track'][0]['artist']['#text']
-            #trackname = track['recenttracks']['track'][0]['name']
-            trackid = track['recenttracks']['track'][0]['mbid']
-            print(trackid)
-            trackinfo = get_trackinfo(self.botconfig["APIkeys"]["lastfmAPIkey"], trackid, lastfmuser)
+            artist = track['recenttracks']['track'][0]['artist']['#text']
+            trackname = track['recenttracks']['track'][0]['name']
+#            trackid = track['recenttracks']['track'][0]['mbid']
+#            print(trackid)
+            trackinfo = get_trackinfo(self.botconfig["APIkeys"]["lastfmAPIkey"], artist, trackname, lastfmuser)
             artist = trackinfo['artist']['name']
             trackname = trackinfo['name']
             try:
                 dmin, dsec = divmod(datetime.timedelta(milliseconds=int(trackinfo['duration'])).total_seconds(), 60)
-                duration = " [%s:%s]" % (int(dmin), int(dsec))
+                duration = " [{:.0f}:{:02.0f}]".format(dmin, dsec)
             except:
                 duration = ""
             try:
@@ -66,11 +71,13 @@ def nowplaying(self, e):
 nowplaying.command = "!np"
 
 
-def get_trackinfo(apikey, trackid, userid):
-    url = "http://ws.audioscrobbler.com/2.0/?api_key=%s&format=json&method=track.getInfo&mbid=%s&username=%s" % (apikey, trackid, userid)
+def get_trackinfo(apikey, artist, trackname, userid):
+    artist = urllib.parse.quote(artist)
+    trackname = urllib.parse.quote(trackname)
+    url = "http://ws.audioscrobbler.com/2.0/?api_key=%s&format=json&method=track.getInfo&artist=%s&track=%s&username=%s" % (apikey, artist, trackname, userid)
     response = urllib.request.urlopen(url).read().decode('utf-8')
     track = json.loads(response)
-    print(track)
+#    print(track)
     return track['track']
 
 def compare(self, e):

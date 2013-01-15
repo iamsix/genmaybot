@@ -27,9 +27,13 @@ def nowplaying(self, e):
         url = "http://ws.audioscrobbler.com/2.0/?api_key=%s&limit=1&format=json&method=user.getRecentTracks&user=%s" % (self.botconfig["APIkeys"]["lastfmAPIkey"], lastfmuser)
         response = urllib.request.urlopen(url).read().decode('utf-8')
         track = json.loads(response)
-        artist = track['recenttracks']['track']['artist']['#text']
-        trackname = track['recenttracks']['track']['name']
-        e.output = "%s np: %s - %s" % (lastfmuser, artist, trackname)
+        try:
+            artist = track['recenttracks']['track'][0]['artist']['#text']
+            trackname = track['recenttracks']['track'][0]['name']
+            e.output = "%s np: %s - %s" % (lastfmuser, artist, trackname)
+        except:
+            #an exception means they are not currently playing a track
+            pass
     else:
         e.output = "You don't have a last.fm user set up"
 

@@ -75,7 +75,7 @@ class Root:
 
             commandlist+= "<tr>%s - %s<br/><br/></tr>" % (command,helptext)
 
-        return "<table><td>%s</td></table>" % commandlist
+        return "<table width='100%'><td>%s</td></table>" % commandlist
 
     @cherrypy.expose
     @require()

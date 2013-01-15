@@ -35,10 +35,10 @@ def nowplaying(self, e):
             #an exception means they are not currently playing a track
             pass
     else:
-        e.output = "You don't have a last.fm user set up"
+        e.output = "You don't have a last.fm user set up - use !setlastfm <username>"
 
     return e
-nowplaying.command = "~np"
+nowplaying.command = "!np"
 
 def compare(self, e):
     conn = sqlite3.connect('lastfm.sqlite')
@@ -57,7 +57,7 @@ def compare(self, e):
             else:
                 user2 = e.input
         else:
-            e.output = "you don't have a last.fm user set up"
+            e.output = "you don't have a last.fm user set up - use !setlastfm <username>"
     elif len(e.input.split(" ")) == 2:
         var1 = e.input.split(" ")[0]
         var2 = e.input.split(" ")[1]
@@ -89,4 +89,4 @@ def compare(self, e):
         e.output = "Matching %s and %s :: Score: %s - Artists (%s matches): %s" % (user1, user2, score, artistmatches, artists)
 
     return e
-compare.command = "~compare"
+compare.command = "!compare"

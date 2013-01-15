@@ -73,9 +73,9 @@ class Root:
             try: helptext=self.bot.bangcommands[command].helptext.replace("\n","<br>")
             except: helptext=""
 
-            commandlist+= "<tr>%s - %s<br/><br/></tr>" % (command,helptext)
+            commandlist+= "<p>%s - %s</p>" % (command,helptext)
 
-        return "<table width='100%'><td>%s</td></table>" % commandlist
+        return commandlist
 
     @cherrypy.expose
     @require()

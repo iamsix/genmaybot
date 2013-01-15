@@ -114,7 +114,7 @@ def npr_headlines(self, e):
     return e
 
 npr_headlines.command="!npr"
-npr_most_emailed.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
+npr_headlines.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
 
 def npr_music(self, e):
 ## Get the latest song of the day from NPR First Listen

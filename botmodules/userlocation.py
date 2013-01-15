@@ -69,6 +69,7 @@ def get_geoIP_location(self, e="", ip="", nick="", whois_reply=False, callback="
     
 get_geoIP_location.command = "!geoip"
 get_geoIP_location.callback = None
+get_geoIP_location.helptext = "Looks up your IP address and attempts to return a location based on it."
 
 def get_geoIP(ip):
     location = get_geoIP_netimpact(ip)

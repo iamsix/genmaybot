@@ -91,6 +91,7 @@ def new_wotd(self, e):
     return e
 new_wotd.command = "!newwotd"
 new_wotd.privateonly = True
+new_wotd.helptext = "Use this command in a PM to the bot to set a new word of the day when you find it."
 
 
 common_words = ["the", "people", "would", "really", "think", "right", "there", "about", "were", "when", "your", "can",

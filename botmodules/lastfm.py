@@ -2,7 +2,6 @@
 import sqlite3
 import urllib
 import json
-import datetime
 
 
 def setlastfmuser(self, e):
@@ -16,7 +15,9 @@ def setlastfmuser(self, e):
     conn.commit()
     c.close()
 setlastfmuser.command = "!setlastfm"
-
+setlastfmuser.helptext = """Usage: !setlastfm <last.fm username>
+Example: !setlastfm jbeiber
+Sets your last.fm username so you can use the !np and !compare commands without needing to provide your username"""
 
 def nowplaying(self, e):
     conn = sqlite3.connect('lastfm.sqlite')
@@ -36,18 +37,19 @@ def nowplaying(self, e):
         try:
             artist = track['recenttracks']['track'][0]['artist']['#text']
             trackname = track['recenttracks']['track'][0]['name']
-#            trackid = track['recenttracks']['track'][0]['mbid']
-#            print(trackid)
-            trackinfo = get_trackinfo(self.botconfig["APIkeys"]["lastfmAPIkey"], artist, trackname, lastfmuser)
-            artist = trackinfo['artist']['name']
-            trackname = trackinfo['name']
             try:
-                dmin, dsec = divmod(datetime.timedelta(milliseconds=int(trackinfo['duration'])).total_seconds(), 60)
+                trackinfo = get_trackinfo(self.botconfig["APIkeys"]["lastfmAPIkey"], artist, trackname, lastfmuser)
+                artist = trackinfo['artist']['name']
+                trackname = trackinfo['name']
+            except:
+                pass
+            try:
+                dmin, dsec = divmod((int(trackinfo['duration']) / 1000), 60)
                 duration = " [{:.0f}:{:02.0f}]".format(dmin, dsec)
             except:
                 duration = ""
             try:
-                playcount = " Playcount: %s" % trackinfo['userplaycount']
+                playcount = " :: Playcount: %s" % trackinfo['userplaycount']
             except:
                 playcount = ""
             try:
@@ -57,7 +59,7 @@ def nowplaying(self, e):
                 genres = " (%s)" % ", ".join(genres)
             except:
                 genres = ""
-            e.output = "%s np: %s - %s%s ::%s%s" % (lastfmuser, artist, trackname, duration, playcount, genres)
+            e.output = "%s np: %s - %s%s%s%s" % (lastfmuser, artist, trackname, duration, playcount, genres)
         except:
             #an exception means they are not currently playing a track
             artist = track['recenttracks']['track']['artist']['#text']
@@ -69,7 +71,9 @@ def nowplaying(self, e):
 
     return e
 nowplaying.command = "!np"
-
+nowplaying.helptext = """Usage: !np or !np <last.fm username/IRC nick>
+Example: !np
+Shows your currently playing trak on last.fm. To use !np without arguments your username must be set up first with !setlastfm"""
 
 def get_trackinfo(apikey, artist, trackname, userid):
     artist = urllib.parse.quote(artist)
@@ -132,3 +136,6 @@ def compare(self, e):
 
     return e
 compare.command = "!compare"
+compare.helptext = """Usage: !compare <last.fm user/IRC nick> or !compare <last.fm username/IRC nick #1> <last.fm username/IRC nick #2>
+Example: !compare jbieber jeffers
+Compares your last.fm musical tastes with another user. A single argument compares your !setlastfm user with the specified user, 2 arguments compares the specified users."""

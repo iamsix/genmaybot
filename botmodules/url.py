@@ -77,10 +77,12 @@ def url_posted(self, e):
     except:
         pass
     if url.find("imgur.com") != -1 and url.find("/a/") == -1:
-        imgurid = url[url.rfind('/') + 1: url.rfind('/') + 6]
+        imgurid = url[url.rfind('/') + 1:]
+        if "." in imgurid:
+            imgurid = imgurid[:imgurid.rfind('.')]
         url = "http://imgur.com/" + imgurid
 
-    # Ignore strava ride links because Dan said so, fuck modularity, embace tight coupling. 
+    # Ignore strava ride links because Dan said so, fuck modularity, embace tight coupling.
     if url.find("app.strava.com/activities") != -1 or url.find("www.strava.com/activities") != -1:
         return None
 

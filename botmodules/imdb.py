@@ -30,7 +30,7 @@ def get_imdb(self, e, urlposted=False):
                 rating = self.tools['remove_html_tags'](str(page.find("div", "star-box-giga-star").text))
                 rating = " - Rating: " + rating.replace("\n", "")  # remove newlines since BS4 adds them in there
 
-            if len(page.findAll('p')) == 2:
+            try:
 
                 summary = str(page.find('p', itemprop='description'))
 
@@ -39,6 +39,8 @@ def get_imdb(self, e, urlposted=False):
                 summary = summary.replace('&raquo;', "")
                 summary = summary.replace("\n", "")
                 summary = " - " + summary
+            except:
+                pass
 
         title = movietitle + rating + summary
         if not urlposted:

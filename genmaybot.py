@@ -302,7 +302,8 @@ class TestBot(SingleServerIRCBot):
                 say = command()
                 if say:
                     for channel in self.channels:
-                        context.privmsg(channel, say)
+                        if channel != '#bopgun' and channel != '#fsw':
+                            context.privmsg(channel, say)
         except Exception as inst:
             print("alerts: " + str(inst))
             pass

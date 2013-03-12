@@ -1,5 +1,6 @@
 import cherrypy
 import threading
+import pprint
 from botmodules.web_auth import AuthController, require, member_of, name_is
 
 class RestrictedArea:
@@ -47,10 +48,15 @@ class Root:
         <a href="/botconfig" target="output">Bot Config</a>&nbsp;&nbsp;&nbsp;
         <a href="/event_log" target="output">Event log</a>&nbsp;&nbsp;&nbsp;
         <a href="/error_log" target="output">Error log</a>&nbsp;&nbsp;&nbsp;
+        <a href="/bot_obj" target="output">Bot Object</a>&nbsp;&nbsp;&nbsp;
        <br><br>
        <iframe name="output" width="1024px" height="768px"></iframe>
 
         """
+    @cherrypy.expose
+    @require()
+    def bot_obj(self):
+        return "<pre>"+pprint.pformat(self.bot)+"</pre>"
 
 
     @cherrypy.expose

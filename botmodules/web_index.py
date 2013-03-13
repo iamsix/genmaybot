@@ -74,9 +74,9 @@ class Root:
                 if isinstance(botobjects[obj_name],list): 
                     for func in botobjects[obj_name]:
                         if str(func).find("wotd") != --1:
-                            obj_val += "<br />\t\t%s -><br />\t%s" % (str(func)replace("<","&lt;").replace(">","&gt;"), str(func.__dict__))
+                            obj_val += "<br />\t\t%s -><br />\t%s" % (str(func).replace("<","&lt;").replace(">","&gt;"), str(func.__dict__))
                         else:
-                            obj_val += "<br />\t\t%s" % (str(func)replace("<","&lt;").replace(">","&gt;"))
+                            obj_val += "<br />\t\t%s" % (str(func).replace("<","&lt;").replace(">","&gt;"))
                         # end hack
                 obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
             

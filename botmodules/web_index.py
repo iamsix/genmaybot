@@ -62,9 +62,7 @@ class Root:
         botobjects = self.bot.__dict__
         for obj_name in botobjects:
             
-            obj_val = str(botobjects[obj_name]).replace("<","&lt;")
-            obj_val = str(botobjects[obj_name]).replace(">","&gt;")
-            
+            obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
             output+= "<b>%s</b> -> %s <br />" %(obj_name, obj_val)
         return output
 

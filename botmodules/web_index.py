@@ -1,6 +1,6 @@
 import cherrypy
 import threading
-import pprint
+from inspect import isfunction
 from botmodules.web_auth import AuthController, require, member_of, name_is
 
 class RestrictedArea:
@@ -73,7 +73,7 @@ class Root:
                 #hack to find the wotd lineparser if it exists
                 if isinstance(botobjects[obj_name],list): 
                     for func in botobjects[obj_name]:
-                        if True: #str(func).find("wotd") != -1:
+                        if isfunction(func):#str(func).find("wotd") != -1:
                             obj_val += "<br />\t\t%s ->" % (str(func).replace("<","&lt;").replace(">","&gt;"))
                             for attrib in func.__dict__:
                                 obj_val += "<br />\t\t\t%s = %s" % (attrib, func.__dict__[attrib])

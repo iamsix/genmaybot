@@ -73,7 +73,7 @@ class Root:
                 #hack to find the wotd lineparser if it exists
                 if isinstance(botobjects[obj_name],list): 
                     for func in botobjects[obj_name]:
-                        if str(func).find("wotd") != -1:
+                        if True: #str(func).find("wotd") != -1:
                             obj_val += "<br />\t\t%s ->" % (str(func).replace("<","&lt;").replace(">","&gt;"))
                             for attrib in func.__dict__:
                                 obj_val += "<br />\t\t\t%s = %s" % (attrib, func.__dict__[attrib])

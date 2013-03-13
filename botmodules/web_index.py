@@ -50,7 +50,7 @@ class Root:
         <a href="/error_log" target="output">Error log</a>&nbsp;&nbsp;&nbsp;
         <a href="/bot_obj" target="output">Bot Object</a>&nbsp;&nbsp;&nbsp;
        <br><br>
-       <iframe name="output" width="1024px" height="768px"></iframe>
+       <iframe name="output" width="1280px" height="1024px"></iframe>
 
         """
     @cherrypy.expose

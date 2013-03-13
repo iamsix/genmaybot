@@ -58,6 +58,7 @@ class Root:
     def bot_obj(self):
         
         output="<pre>"
+        obj_val=""
         
         botobjects = self.bot.__dict__
         for obj_name in botobjects.keys():
@@ -66,7 +67,7 @@ class Root:
             
             try:
                 for key in botobjects[obj_name].keys():
-                    obj_val = "\t\t<br />%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
+                    obj_val += "<br />\t\t%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
             except:
                 obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
             

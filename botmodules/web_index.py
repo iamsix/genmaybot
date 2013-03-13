@@ -60,8 +60,12 @@ class Root:
         output="<pre>"
         
         botobj = self.bot.__dict__
-        for obj in botobj:
-            output+= "<b>%s</b> -> %s <br />" %(obj, botobj[obj])
+        for obj_name in botobjects:
+            
+            obj_val = str(botobjects[obj_name]).replace("<","&lt;")
+            obj_val = str(botobjects[obj_name]).replace(">","&gt;")
+            
+            output+= "<b>%s</b> -> %s <br />" %(obj_name, )
         return output
 
     @cherrypy.expose

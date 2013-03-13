@@ -67,8 +67,15 @@ class Root:
             
             try:
                 for key in botobjects[obj_name].keys():
-                    if key.find("__") != 0:                        
-                        obj_val += "<br />\t\t%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
+                    if key.find("__") != 0:
+                        for func in botobjects[obj_name][key]:
+                            if isfunction(func):#str(func).find("wotd") != -1:
+                                obj_val += "<br />\t\t%s ->" % (str(func).replace("<","&lt;").replace(">","&gt;"))
+                                for attrib in func.__dict__:
+                                    obj_val += "<br />\t\t\t%s = %s" % (attrib, func.__dict__[attrib])
+                            else:
+                                obj_val += "<br />\t\t%s" % (str(func).replace("<","&lt;").replace(">","&gt;"))
+                            #obj_val += "<br />\t\t%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
             except:
                 #hack to find the wotd lineparser if it exists
                 if isinstance(botobjects[obj_name],list): 

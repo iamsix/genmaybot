@@ -65,7 +65,7 @@ class Root:
             obj_val = str(botobjects[obj_name]).replace("<","&lt;")
             obj_val = str(botobjects[obj_name]).replace(">","&gt;")
             
-            output+= "<b>%s</b> -> %s <br />" %(obj_name, )
+            output+= "<b>%s</b> -> %s <br />" %(obj_name, obj_val)
         return output
 
     @cherrypy.expose

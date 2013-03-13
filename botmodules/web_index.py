@@ -56,8 +56,13 @@ class Root:
     @cherrypy.expose
     @require()
     def bot_obj(self):
-        return "<pre>"+pprint.pformat(self.bot)+"</pre>"
-
+        
+        output=""
+        
+        botobj = self.bot.__dict__
+        for obj in botobj:
+            output+= "<b>%s</b> -> %s <br />" %(obj, botobj[obj])
+        return output
 
     @cherrypy.expose
     @require()

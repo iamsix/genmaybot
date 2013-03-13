@@ -78,7 +78,8 @@ class Root:
                         else:
                             obj_val += "<br />\t\t%s" % (str(func).replace("<","&lt;").replace(">","&gt;"))
                         # end hack
-                obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
+                else:
+                    obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
             
             output+= "<b>%s</b> -> %s <br />" %(obj_name, obj_val)
             obj_val=""

@@ -67,7 +67,8 @@ class Root:
             
             try:
                 for key in botobjects[obj_name].keys():
-                    obj_val += "<br />\t\t%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
+                    if str(botobjects[obj_name][key]).find("__") != 0:                        
+                        obj_val += "<br />\t\t%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
             except:
                 obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
             

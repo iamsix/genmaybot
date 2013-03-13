@@ -60,9 +60,16 @@ class Root:
         output="<pre>"
         
         botobjects = self.bot.__dict__
-        for obj_name in botobjects:
+        for obj_name in botobjects.keys():
             
-            obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
+            #obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
+            
+            try:
+                for key in botobjects[obj_name].keys():
+                    obj_val = "\t\t<br />%s -> %s" % (key, str(botobjects[obj_name][key]).replace("<","&lt;").replace(">","&gt;"))
+            except:
+                obj_val = str(botobjects[obj_name]).replace("<","&lt;").replace(">","&gt;")
+            
             output+= "<b>%s</b> -> %s <br />" %(obj_name, obj_val)
         return output
 

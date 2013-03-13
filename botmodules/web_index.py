@@ -57,7 +57,7 @@ class Root:
     @require()
     def bot_obj(self):
         
-        output=""
+        output="<pre>"
         
         botobj = self.bot.__dict__
         for obj in botobj:

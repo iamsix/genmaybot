@@ -59,7 +59,7 @@ class Root:
         
         output="<pre>"
         
-        botobj = self.bot.__dict__
+        botobjects = self.bot.__dict__
         for obj_name in botobjects:
             
             obj_val = str(botobjects[obj_name]).replace("<","&lt;")

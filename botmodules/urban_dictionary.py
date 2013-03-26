@@ -24,9 +24,9 @@ def get_urbandictionary(self, e):
 ## if that fails, get the word under the initial <td> tag
 
     try:
-        first_word = page.findAll('td', attrs={"class": "word"})[0].contents[1].string
+        first_word = page.findAll('td', attrs={"class": "word"})[0].contents[1].a.string
     except:
-        first_word = page.findAll('td', attrs={"class": "word"})[0].contents[0].string
+        first_word = page.findAll('td', attrs={"class": "word"})[0].contents[1].string
 
     first_word = first_word.replace("\n", "")
 

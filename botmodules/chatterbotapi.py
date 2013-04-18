@@ -96,7 +96,6 @@ class _CleverbotSession(ChatterBotSession):
         data = data + '&icognocheck=' + data_digest
         url_response = urllib.request.urlopen(self.bot.url, data.encode())
         response = url_response.read().decode()
-        print(response)
         response_values = response.split('\r')
         #self.vars['??'] = _utils_string_at_index(response_values, 0)
         self.vars['sessionid'] = _utils_string_at_index(response_values, 1)

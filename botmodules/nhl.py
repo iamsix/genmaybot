@@ -1,4 +1,4 @@
-import datetime, urllib.request, xml.dom.minidom
+import datetime, urllib.request
 import xml.etree.ElementTree as ET
 
 def get_nhl_live_games(self, e):
@@ -52,6 +52,7 @@ def get_nhl_live_streams(self, e):
         
     for game in games:
         streamtext = ""
+        gametext = ""
         try:
             awayteam = game.findtext('away-team/name')
             hometeam = game.findtext('home-team/name')
@@ -78,8 +79,7 @@ def get_nhl_live_streams(self, e):
             streamstext = "There are no games currently being played."
         else:
             streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
-
-    streamstext = streamstext[0:-10]
+            streamstext = streamstext[0:-10]
     
     e.source = e.nick
     e.notice = True

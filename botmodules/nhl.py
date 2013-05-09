@@ -1,4 +1,4 @@
-import datetime, urllib.request
+import datetime, urllib.request, xml.dom.minidom
 import xml.etree.ElementTree as ET
 
 def get_nhl_live_games(self, e):

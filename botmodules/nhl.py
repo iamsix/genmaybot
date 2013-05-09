@@ -22,7 +22,7 @@ def get_nhl_live_games(self, e):
                     
             scoreaway = game.getElementsByTagName('away-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
             scorehome = game.getElementsByTagName('home-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
-            gametext = "%s - %s %s:%s (%s)" % (awayteam, hometeam, scoreaway, scorehome, progress)
+            gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
             if gametext != "":
                 gamestext += gametext + " | " 
         except:

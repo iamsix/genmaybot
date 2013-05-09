@@ -69,6 +69,7 @@ def get_nhl_live_streams(self, e):
         streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
 
     streamstext = streamstext[0:-10]
+    e.notice = True
     e.output = streamstext
     return e    
         

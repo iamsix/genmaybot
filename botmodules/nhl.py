@@ -1,32 +1,40 @@
-import xml.dom.minidom, datetime, urllib.request
+import datetime, urllib.request
+import xml.etree.ElementTree as ET
 
 def get_nhl_live_games(self, e):
     url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))
-    dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
-    games = dom.getElementsByTagName("game")
+    games = ET.parse(urllib.request.urlopen(url)).getroot().getchildren()
     
     gamestext = "" 
     
     for game in games:
         gametext = ""
-        try:
-            state = game.getElementsByTagName('game-state')[0].childNodes[0].data
+#        try:
+            awayteam = game.findtext('away-team/name')
+            hometeam = game.findtext('home-team/name')
+            
+            state = game.findtext('game-state')
             
             if state == "LIVE":       
-                progress = game.getElementsByTagName('progress-time')[0].childNodes[0].data
+                progress = game.findtext('progress-time')
+            elif state =="": #If the game hasn't started yet, get and show the start time
+                starttime = game.findtext('eastern-start-time')
+                starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
+                gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
+                if gametext != "":
+                    gamestext += gametext + " | " 
+                continue
             else:
                 progress = state
+   
+            scoreaway = game.findtext('away-team/goals')
+            scorehome = game.findtext('home-team/goals')
             
-            awayteam = game.getElementsByTagName('away-team')[0].getElementsByTagName('name')[0].childNodes[0].data
-            hometeam = game.getElementsByTagName('home-team')[0].getElementsByTagName('name')[0].childNodes[0].data
-                    
-            scoreaway = game.getElementsByTagName('away-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
-            scorehome = game.getElementsByTagName('home-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
             gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
             if gametext != "":
                 gamestext += gametext + " | " 
-        except:
-            pass
+#        except:
+#            pass
 
 
     gamestext = gamestext[0:-3]

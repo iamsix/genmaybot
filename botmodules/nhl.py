@@ -72,8 +72,8 @@ def get_nhl_live_streams(self, e):
             awayradio = game.findtext('streams/iphone/away/radio')
             homeradio = game.findtext('streams/iphone/home/radio')
             streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
-            except:
-                pass
+        except:
+            pass
         if not gametext:
             streamstext = "There are no games currently being played."
         else:

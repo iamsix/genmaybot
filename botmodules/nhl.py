@@ -10,29 +10,29 @@ def get_nhl_live_games(self, e):
     for game in games:
         gametext = ""
 #        try:
-            awayteam = game.findtext('away-team/name')
-            hometeam = game.findtext('home-team/name')
-            
-            state = game.findtext('game-state')
-            
-            if state == "LIVE":       
-                progress = game.findtext('progress-time')
-            elif state =="": #If the game hasn't started yet, get and show the start time
-                starttime = game.findtext('eastern-start-time')
-                starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
-                gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
-                if gametext != "":
-                    gamestext += gametext + " | " 
-                continue
-            else:
-                progress = state
-   
-            scoreaway = game.findtext('away-team/goals')
-            scorehome = game.findtext('home-team/goals')
-            
-            gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
+        awayteam = game.findtext('away-team/name')
+        hometeam = game.findtext('home-team/name')
+        
+        state = game.findtext('game-state')
+        
+        if state == "LIVE":       
+            progress = game.findtext('progress-time')
+        elif state =="": #If the game hasn't started yet, get and show the start time
+            starttime = game.findtext('eastern-start-time')
+            starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
+            gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
             if gametext != "":
                 gamestext += gametext + " | " 
+            continue
+        else:
+            progress = state
+
+        scoreaway = game.findtext('away-team/goals')
+        scorehome = game.findtext('home-team/goals')
+        
+        gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
+        if gametext != "":
+            gamestext += gametext + " | " 
 #        except:
 #            pass
 

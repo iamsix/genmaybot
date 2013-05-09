@@ -52,30 +52,32 @@ def get_nhl_live_streams(self, e):
         
     for game in games:
         streamtext = ""
-       # try:
-        awayteam = game.findtext('away-team/name')
-        hometeam = game.findtext('home-team/name')
-        
-        state = game.findtext('game-state')
-        
-        if state == "LIVE":       
-            progress = game.findtext('progress-time')
+        try:
+            awayteam = game.findtext('away-team/name')
+            hometeam = game.findtext('home-team/name')
+            
+            state = game.findtext('game-state')
+            
+            if state == "LIVE":       
+                progress = game.findtext('progress-time')
+            else:
+                continue
+
+            scoreaway = game.findtext('away-team/goals')
+            scorehome = game.findtext('home-team/goals')
+            gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
+            awaystream = game.findtext('streams/sony_ced/away/live').replace("ced","4500")
+            homestream = game.findtext('streams/sony_ced/home/live').replace("ced","4500")
+
+            awayradio = game.findtext('streams/iphone/away/radio')
+            homeradio = game.findtext('streams/iphone/home/radio')
+            streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
+            except:
+                pass
+        if not gametext:
+            streamstext = "There are no games currently being played."
         else:
-            continue
-
-        scoreaway = game.findtext('away-team/goals')
-        scorehome = game.findtext('home-team/goals')
-        gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
-        awaystream = game.findtext('streams/sony_ced/away/live').replace("ced","4500")
-        homestream = game.findtext('streams/sony_ced/home/live').replace("ced","4500")
-
-        awayradio = game.findtext('streams/iphone/away/radio')
-        homeradio = game.findtext('streams/iphone/home/radio')
-        streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
-        #except:
-        #    pass
-
-        streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
+            streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
 
     streamstext = streamstext[0:-10]
     

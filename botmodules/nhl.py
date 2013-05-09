@@ -9,32 +9,32 @@ def get_nhl_live_games(self, e):
     
     for game in games:
         gametext = ""
-#        try:
-        awayteam = game.findtext('away-team/name')
-        hometeam = game.findtext('home-team/name')
-        
-        state = game.findtext('game-state')
-        
-        if state == "LIVE":       
-            progress = game.findtext('progress-time')
-        elif state =="": #If the game hasn't started yet, get and show the start time
-            starttime = game.findtext('eastern-start-time')
-            starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
-            gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
+        try:
+            awayteam = game.findtext('away-team/name')
+            hometeam = game.findtext('home-team/name')
+            
+            state = game.findtext('game-state')
+            
+            if state == "LIVE":       
+                progress = game.findtext('progress-time')
+            elif state =="": #If the game hasn't started yet, get and show the start time
+                starttime = game.findtext('eastern-start-time')
+                starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
+                gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
+                if gametext != "":
+                    gamestext += gametext + " | " 
+                continue
+            else:
+                progress = state
+
+            scoreaway = game.findtext('away-team/goals')
+            scorehome = game.findtext('home-team/goals')
+            
+            gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
             if gametext != "":
                 gamestext += gametext + " | " 
-            continue
-        else:
-            progress = state
-
-        scoreaway = game.findtext('away-team/goals')
-        scorehome = game.findtext('home-team/goals')
-        
-        gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
-        if gametext != "":
-            gamestext += gametext + " | " 
-#        except:
-#            pass
+        except:
+            pass
 
 
     gamestext = gamestext[0:-3]
@@ -46,33 +46,34 @@ get_nhl_live_games.helptext = "Usage: !nhl Shows today's hockey games and curren
 
 def get_nhl_live_streams(self, e):
     url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))
-    dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
-    games = dom.getElementsByTagName("game")
+    games = ET.parse(urllib.request.urlopen(url)).getroot().getchildren()
 
     streamstext = "" 
         
     for game in games:
         streamtext = ""
-    #    try:
-        state = game.getElementsByTagName('game-state')[0].childNodes[0].data
+       # try:
+        awayteam = game.findtext('away-team/name')
+        hometeam = game.findtext('home-team/name')
+        
+        state = game.findtext('game-state')
+        
         if state == "LIVE":       
-            progress = game.getElementsByTagName('progress-time')[0].childNodes[0].data
+            progress = game.findtext('progress-time')
         else:
             continue
 
-        awayteam = game.getElementsByTagName('away-team')[0].getElementsByTagName('name')[0].childNodes[0].data
-        hometeam = game.getElementsByTagName('home-team')[0].getElementsByTagName('name')[0].childNodes[0].data
-        scoreaway = game.getElementsByTagName('away-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
-        scorehome = game.getElementsByTagName('home-team')[0].getElementsByTagName('goals')[0].childNodes[0].data
+        scoreaway = game.findtext('away-team/goals')
+        scorehome = game.findtext('home-team/goals')
         gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
-        awaystream = game.getElementsByTagName('streams')[0].getElementsByTagName("sony_ced")[0].getElementsByTagName("away")[0].getElementsByTagName("live")[0].childNodes[0].data.replace("ced","4500")
-        homestream = game.getElementsByTagName('streams')[0].getElementsByTagName("sony_ced")[0].getElementsByTagName("home")[0].getElementsByTagName("live")[0].childNodes[0].data.replace("ced","4500")
+        awaystream = game.findtext('streams/sony_ced/away/live').replace("ced","4500")
+        homestream = game.findtext('streams/sony_ced/home/live').replace("ced","4500")
 
-        awayradio = game.getElementsByTagName('streams')[0].getElementsByTagName("iphone")[0].getElementsByTagName("away")[0].getElementsByTagName('radio')[0].childNodes[0].data
-        homeradio = game.getElementsByTagName('streams')[0].getElementsByTagName("iphone")[0].getElementsByTagName("home")[0].getElementsByTagName('radio')[0].childNodes[0].data
+        awayradio = game.findtext('streams/iphone/away/radio')
+        homeradio = game.findtext('streams/iphone/home/radio')
         streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
-    #    except:
-    #        pass
+        #except:
+        #    pass
 
         streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
 

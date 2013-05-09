@@ -10,7 +10,13 @@ def get_nhl_live_games(self, e):
     for game in games:
         gametext = ""
         try:
-            progress = game.getElementsByTagName('progress-time')[0].childNodes[0].data
+            state = game.getElementsByTagName('game-state')[0].childNodes[0].data
+            
+            if state == "LIVE":       
+                progress = game.getElementsByTagName('progress-time')[0].childNodes[0].data
+            else:
+                progress = state
+            
             awayteam = game.getElementsByTagName('away-team')[0].getElementsByTagName('name')[0].childNodes[0].data
             hometeam = game.getElementsByTagName('home-team')[0].getElementsByTagName('name')[0].childNodes[0].data
                     

@@ -75,11 +75,11 @@ def get_nhl_live_streams(self, e):
             streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
         except:
             pass
-        if not gametext:
-            streamstext = "There are no games currently being played."
-        else:
-            streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
-            streamstext = streamstext[0:-10]
+    if not gametext:
+        streamstext = "There are no games currently being played."
+    else:
+        streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
+        streamstext = streamstext[0:-10]
     
     e.source = e.nick
     e.notice = True

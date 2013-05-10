@@ -19,7 +19,7 @@ def get_nhl_live_games(self, e):
                 progress = game.findtext('progress-time')
             elif state =="": #If the game hasn't started yet, get and show the start time
                 starttime = game.findtext('eastern-start-time')
-                if datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S").minute == 0
+                if datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S").minute == 0:
                     starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
                 else:
                     starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I:%M %p Eastern")

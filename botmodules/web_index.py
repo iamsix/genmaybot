@@ -1,5 +1,6 @@
 import cherrypy
 import threading
+import traceback
 from inspect import isfunction
 from botmodules.web_auth import AuthController, require, member_of, name_is
 
@@ -119,7 +120,8 @@ class Root:
             if self.bot.bangcommands[command].webExposed:
                 return self.bot.bangcommands[command](None, None,True) #Arguments are self, e, webCall
         except:
-            return "Invalid command."
+            return traceback.format_exc()
+
         
 
     @cherrypy.expose

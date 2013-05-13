@@ -113,6 +113,13 @@ class Root:
         return commandlist
 
     @cherrypy.expose
+    def doCommand(self, command=None):
+        command = "!"+command
+        if self.bot.bangcommands[command].webExposed:
+            return self.bot.bangcommands[command]("",True) #First arg is e, second is webCall
+        
+
+    @cherrypy.expose
     @require()
     def botconfig(self):
         output=""

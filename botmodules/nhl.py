@@ -47,7 +47,7 @@ def get_nhl_live_games(self, e):
 get_nhl_live_games.command = "!nhl"
 get_nhl_live_games.helptext = "Usage: !nhl Shows today's hockey games and current scores"
 
-def get_nhl_live_streams(self, e):
+def get_nhl_live_streams(self, e, webCall=False):
     url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))
     games = ET.parse(urllib.request.urlopen(url)).getroot().getchildren()
 
@@ -92,6 +92,9 @@ def get_nhl_live_streams(self, e):
     if streamstext.find("http") == -1:
         streamstext = "There are no games being played. Check today's games with !nhl"
 
+    if webCall:
+        return streamstext
+
     e.source = e.nick
     e.notice = True
     e.output = streamstext
@@ -99,5 +102,5 @@ def get_nhl_live_streams(self, e):
         
 get_nhl_live_streams.command = "!nhl-vid"
 get_nhl_live_streams.helptext = "Usage: !nhl-vid Shows today's hockey game live video and audio stream URLs"            
-            
+get_nhl_live_streams.webExposed = True            
             

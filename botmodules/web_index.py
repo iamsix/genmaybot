@@ -116,11 +116,12 @@ class Root:
     @cherrypy.expose
     def doCommand(self, cmd=None):
         try:        
-            command = "!"+command
-            if self.bot.bangcommands[command].webExposed:
-                return self.bot.bangcommands[command](None, None,True) #Arguments are self, e, webCall
+            cmd = "!"+cmd
+            if self.bot.bangcommands[cmd].webExposed:
+                return self.bot.bangcommands[cmd](None, None,True) #Arguments are self, e, webCall
         except:
-            return traceback.format_exc()
+            print (traceback.format_exc())
+            return "Invalid command."
 
         
 

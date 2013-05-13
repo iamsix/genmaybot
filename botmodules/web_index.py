@@ -116,7 +116,7 @@ class Root:
     def doCommand(self, command=None):
         command = "!"+command
         if self.bot.bangcommands[command].webExposed:
-            return self.bot.bangcommands[command]("",True) #First arg is e, second is webCall
+            return self.bot.bangcommands[command](None, None,True) #Arguments are self, e, webCall
         
 
     @cherrypy.expose

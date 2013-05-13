@@ -88,7 +88,15 @@ def get_nhl_live_streams(self, e, webCall=False):
 
             awayradio = game.findtext('streams/iphone/away/radio')
             homeradio = game.findtext('streams/iphone/home/radio')
-            streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
+            
+            if webCall:
+                a_begin = "<a href='"
+                a_end = "'>"
+            else:
+                a_begin = ""
+                a_end = ""
+            
+            streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, a_begin+awaystream+a_end, hometeam, a_begin+homestream+a_end, awayteam, a_begin+awayradio+a_end, hometeam, a_begin+homeradio+a_end)
         except:
             pass
         streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    
@@ -98,7 +106,7 @@ def get_nhl_live_streams(self, e, webCall=False):
         streamstext = "There are no games being played. Check today's games with !nhl"
 
     if webCall:
-        return streamstext
+        return streamstext.replace("\n","<br />")
 
     e.source = e.nick
     e.notice = True

@@ -59,18 +59,26 @@ def get_nhl_live_streams(self, e):
         try:
             awayteam = game.findtext('away-team/name')
             hometeam = game.findtext('home-team/name')
+            awaystream = game.findtext('streams/sony_ced/away/live').replace("ced","4500")
+
             
             state = game.findtext('game-state')
             
             if state == "LIVE":       
                 progress = game.findtext('progress-time')
-            else:
+            elif awaystream=="":
                 continue
+            else:
+                starttime = game.findtext('eastern-start-time')
+                if datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S").minute == 0:
+                    starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
+                else:
+                    starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I:%M %p Eastern")
+                
 
             scoreaway = game.findtext('away-team/goals')
             scorehome = game.findtext('home-team/goals')
             gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
-            awaystream = game.findtext('streams/sony_ced/away/live').replace("ced","4500")
             homestream = game.findtext('streams/sony_ced/home/live').replace("ced","4500")
 
             awayradio = game.findtext('streams/iphone/away/radio')

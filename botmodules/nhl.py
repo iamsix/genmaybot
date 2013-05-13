@@ -90,13 +90,9 @@ def get_nhl_live_streams(self, e, webCall=False):
             homeradio = game.findtext('streams/iphone/home/radio')
             
             if webCall:
-                a_begin = "<a href='"
-                a_end = "'>"
+                streamtext = "<a href='%s'>%s stream</a><br /> <a href='%s'>%s stream</a><br /><a href='%s'>%s radio</a><br /><a href='%s'>%s radio</a>" % (awaystream,awayteam, homestream, hometeam, awayradio, awayteam, homeradio, hometeam)
             else:
-                a_begin = ""
-                a_end = ""
-            
-            streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, a_begin+awaystream+a_end, hometeam, a_begin+homestream+a_end, awayteam, a_begin+awayradio+a_end, hometeam, a_begin+homeradio+a_end)
+                streamtext = "%s stream: %s\n%s stream: %s\n%s radio: %s\n%s radio: %s" % (awayteam, awaystream, hometeam, homestream, awayteam, awayradio, hometeam, homeradio)
         except:
             pass
         streamstext += "%s\n%s\n---------\n" % (gametext, streamtext)    

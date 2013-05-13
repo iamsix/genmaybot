@@ -1,7 +1,7 @@
 import datetime, urllib.request
 import xml.etree.ElementTree as ET
 
-def get_nhl_live_games(self, e):
+def get_nhl_live_games(self, e, webCall=False):
     url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))
     games = ET.parse(urllib.request.urlopen(url)).getroot().getchildren()
     
@@ -41,11 +41,16 @@ def get_nhl_live_games(self, e):
 
 
     gamestext = gamestext[0:-3]
+    
+    if webCall:
+        return gamestext
+    
     e.output = gamestext
     return e
 
 get_nhl_live_games.command = "!nhl"
 get_nhl_live_games.helptext = "Usage: !nhl Shows today's hockey games and current scores"
+get_nhl_live_games.webExposed = True 
 
 def get_nhl_live_streams(self, e, webCall=False):
     url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))

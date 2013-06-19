@@ -61,8 +61,8 @@ def nowplaying(self, e):
             except:
                 genres = ""
             try:
-                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'youtube.com/watch?v=')
-                yt = yt[yt.find("v=") + 1:]
+                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch%3Fv%3D')
+                yt = yt[yt.find("%3Fv%3D") + 7:]
                 yt = " - http://youtu.be/" + yt
             except:
                 yt = ""
@@ -72,7 +72,13 @@ def nowplaying(self, e):
             artist = track['recenttracks']['track']['artist']['#text']
             trackname = track['recenttracks']['track']['name']
             played = track['recenttracks']['track']['date']['#text']
-            e.output = "%s is not playing a track, but last played: %s - %s on %s" % (lastfmuser, artist, trackname, played)
+            try:
+                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch%3Fv%3D')
+                yt = yt[yt.find("%3Fv%3D") + 7:]
+                yt = " - http://youtu.be/" + yt
+            except:
+                yt = ""
+            e.output = "%s is not playing a track, but last played: %s - %s on %s%s" % (lastfmuser, artist, trackname, played, yt)
     else:
         e.output = "You don't have a last.fm user set up - use !setlastfm <username>"
 

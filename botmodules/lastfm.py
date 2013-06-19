@@ -60,7 +60,13 @@ def nowplaying(self, e):
                 genres = " (%s)" % ", ".join(genres)
             except:
                 genres = ""
-            e.output = "%s np: %s - %s%s%s%s" % (lastfmuser, artist, trackname, duration, playcount, genres)
+            try:
+                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'youtube.com/watch?v=')
+                yt = yt[yt.find("v=") + 1:]
+                yt = " - http://youtu.be/" + yt
+            except:
+                yt = ""
+            e.output = "%s np: %s - %s%s%s%s%s" % (lastfmuser, artist, trackname, duration, playcount, genres, yt)
         except:
             #an exception means they are not currently playing a track
             artist = track['recenttracks']['track']['artist']['#text']

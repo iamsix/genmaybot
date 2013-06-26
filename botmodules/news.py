@@ -77,7 +77,7 @@ breaking_alert.alert = True
 
 
 def get_breaking_data():
-    request = urllib.request.urlopen("https://api.twitter.com/1/statuses/user_timeline.rss?screen_name=BreakingNews&count=1")
+    request = urllib.request.urlopen("http://www.twitter-rss.com/user_timeline.php?screen_name=breakingnews")
     dom = xml.dom.minidom.parse(request)
     latest_update = dom.getElementsByTagName('item')[0]
     updated = latest_update.getElementsByTagName('pubDate')[0].childNodes[0].data

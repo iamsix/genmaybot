@@ -1,6 +1,6 @@
 import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime, json
 from bs4 import BeautifulSoup
-from email.utils import parsedate_tz
+from email.utils import parsedate
 import time
 
 def __init__ (self):
@@ -19,7 +19,7 @@ def get_newest_rss(self, url):
     try:
         updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S %Z")
     except:
-        updated = datetime.datetime.fromtimestamp(time.mktime(parsedate_tz(updated)))
+        updated = datetime.datetime.fromtimestamp(time.mktime(parsedate(updated)))
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
 
 

@@ -16,10 +16,7 @@ def get_newest_rss(self, url):
     description = BeautifulSoup(newest_news.getElementsByTagName('description')[0].childNodes[0].data)
 
     updated = dom.getElementsByTagName('pubDate')[0].childNodes[0].data
-    try:
-        updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S %Z")
-    except:
-        updated = datetime.datetime.fromtimestamp(time.mktime(parsedate(updated)))
+    updated = datetime.datetime.fromtimestamp(time.mktime(parsedate(updated)))
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
 
 
@@ -37,7 +34,7 @@ def get_newest_rss(self, url):
     description = description.replace("\n", "")
 
     description = self.tools['remove_html_tags'](description)
-    description = description[0:len(description) - 9]
+    #description = description[0:len(description) - 9]
     description = description.strip()
     if description.rfind(".") != -1:
         description = description[0:description.rfind(".") + 1]

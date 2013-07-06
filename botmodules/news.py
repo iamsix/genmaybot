@@ -83,7 +83,9 @@ def breaking_alert():
 
         if not breaking_alert.lastcheck:
             breaking_alert.lastcheck = updated
-        if updated > breaking_alert.lastcheck :
+            breaking_alert.desc = ""
+        if updated > breaking_alert.lastcheck and breaking_alert.desc != description:
+            breaking_alert.desc = description
             breaking_alert.lastcheck = updated
             return "%s" % (description)
       except Exception as inst:

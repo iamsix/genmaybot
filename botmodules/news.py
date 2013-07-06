@@ -2,6 +2,9 @@ import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, date
 from bs4 import BeautifulSoup
 
 
+def __init__ (self):
+    breaking_alert.hax = self
+
 def get_newest_rss(self, url):
 ## Retreive an RSS feed and get the newest item
 ## Then, nicely format the title and description, and add a shortened URL
@@ -10,6 +13,14 @@ def get_newest_rss(self, url):
     newest_news = dom.getElementsByTagName('item')[0]
     title = newest_news.getElementsByTagName('title')[0].childNodes[0].data
     description = BeautifulSoup(newest_news.getElementsByTagName('description')[0].childNodes[0].data)
+    try:
+        updated = dom.getElementsByTagName('pubDate')[0].childNodes[0].data
+        updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S %Z")
+        ago = round((datetime.datetime.utcnow() - updated).seconds/60)
+    except:
+        updated = datetime.datetime.utcnow()
+        ago = 0
+
 
     links = description.findAll('a')
     for link in links:
@@ -30,8 +41,10 @@ def get_newest_rss(self, url):
         description = description[0:description.rfind(".") + 1]
 
     link = self.tools['shorten_url'](newest_news.getElementsByTagName('link')[0].childNodes[0].data)
-    
-    return title, description, link
+
+    description = "%s - %s [ %s ]" % (title, description, link)
+
+    return description, updated, ago
 
 
 def google_news(self, e):
@@ -42,7 +55,9 @@ def google_news(self, e):
     else:
         url = "http://news.google.com/news?q=%s&output=rss" % query
 
-    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    description, updated, ago = get_newest_rss(self,url)
+
+    e.output = description
 
     return e
 
@@ -51,9 +66,10 @@ google_news.helptext = "Usage: !news - reports the top story. !news <query> repo
 
 def get_breaking(self, e):
     #returns the latest earthquake on USGS
-      try:       
-        description,updated,ago = get_breaking_data()   
-        e.output = "%s (%s minutes ago) " % (description, ago)     
+      try:
+        url = "http://feeds.reuters.com/reuters/MostRead?format=xml"
+        description, updated, ago = get_newest_rss(self,url)
+        e.output = "%s (%s minutes ago)" % (description, ago)
         return e
       except:
         return None
@@ -63,19 +79,22 @@ get_breaking.helptext = "Usage: !breaking\nShows the latest breaking news aler
 def breaking_alert():
     #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
       try:
-        description,updated,ago = get_breaking_data()
+        url = "http://feeds.reuters.com/reuters/MostRead?format=xml"
+        description, updated, ago = get_newest_rss(breaking_alert.hax ,url)
+
         if not breaking_alert.lastcheck:
             breaking_alert.lastcheck = updated
         if updated > breaking_alert.lastcheck :
-            breaking_alert.lastcheck = updated     
+            breaking_alert.lastcheck = updated
             return "%s" % (description)
-      except Exception as inst: 
+      except Exception as inst:
           print("breakinglert: " + str(inst))
           pass
 breaking_alert.lastcheck = ""
 breaking_alert.alert = True
 
 
+<<<<<<< HEAD
 def get_breaking_data():
     request = urllib.request.urlopen("http://www.twitter-rss.com/user_timeline.php?screen_name=breakingnews")
     dom = xml.dom.minidom.parse(request)
@@ -89,10 +108,13 @@ def get_breaking_data():
     request.close()
     return description, updated, ago
 
+=======
+>>>>>>> Change breaking to reuters for now
 def npr_science(self, e):
     ## Grab the latest entry from the NPR Health and Science RSS feed
     url = "http://www.npr.org/rss/rss.php?id=1007"
-    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    description, updated, ago = get_newest_rss(self,url)
+    e.output = description
     return e
 
 npr_science.command="!npr-sci"
@@ -101,25 +123,27 @@ npr_science.helptext="Usage: !npr-sci\nShows the latest entry from the NPR Hea
 def npr_most_emailed(self, e):
     ## Grab the latest entry from the NPR Most Emailed RSS feed
     url = "http://www.npr.org/rss/rss.php?id=100"
-    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    description, updated, ago = get_newest_rss(self,url)
+    e.output = description
     return e
 
 npr_most_emailed.command="!npr-top"
-npr_most_emailed.helptext="Usage: !npr-top\nShows the latest entry from the NPR Most Emailed RSS feed"    
+npr_most_emailed.helptext="Usage: !npr-top\nShows the latest entry from the NPR Most Emailed RSS feed"
 
 def npr_headlines(self, e):
     ## Grab the latest entry from the NPR headlines RSS feed
     url = "http://www.npr.org/rss/rss.php?id=1001"
-    e.output = "%s - %s [ %s ]" % (get_newest_rss(self,url))
+    description, updated, ago = get_newest_rss(self,url)
+    e.output = description
     return e
 
 npr_headlines.command="!npr"
-npr_headlines.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"    
+npr_headlines.helptext="Usage: !npr\nShows the latest entry from the NPR headlines RSS feed"
 
 def npr_music(self, e):
 ## Get the latest song of the day from NPR First Listen
     url = "http://api.npr.org/query?id=98679384&fields=title,teaser,audio&dateType=story&sort=dateDesc&output=JSON&numResults=1&apiKey=%s" % ( self.botconfig["APIkeys"]["nprAPIkey"])
-    
+
     response = urllib.request.urlopen(url).read().decode('utf-8')
     musicdata = json.loads(response)
     musicdata = musicdata['list']['story'][0]
@@ -132,12 +156,12 @@ def npr_music(self, e):
                 link = links['$text']
                 break
 
-    title = musicdata['title']['$text']    
+    title = musicdata['title']['$text']
     e.output = "%s - %s [ %s ]" % (title,teaser,link)
     e.output = e.output.replace("<em>","")
     e.output = e.output.replace("</em>","")
     e.output = e.output.replace("First Listen: ","") #Unnecessary spam
-    
+
     return e
 
 npr_music.command="!music"

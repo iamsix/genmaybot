@@ -94,22 +94,6 @@ breaking_alert.lastcheck = ""
 breaking_alert.alert = True
 
 
-<<<<<<< HEAD
-def get_breaking_data():
-    request = urllib.request.urlopen("http://www.twitter-rss.com/user_timeline.php?screen_name=breakingnews")
-    dom = xml.dom.minidom.parse(request)
-    latest_update = dom.getElementsByTagName('item')[0]
-    updated = latest_update.getElementsByTagName('pubDate')[0].childNodes[0].data
-    description = latest_update.getElementsByTagName('description')[0].childNodes[0].data
-    #print description
-    updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S +0000")
-    #print updated
-    ago = round((datetime.datetime.utcnow() - updated).seconds/60)
-    request.close()
-    return description, updated, ago
-
-=======
->>>>>>> Change breaking to reuters for now
 def npr_science(self, e):
     ## Grab the latest entry from the NPR Health and Science RSS feed
     url = "http://www.npr.org/rss/rss.php?id=1007"

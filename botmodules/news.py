@@ -1,6 +1,7 @@
 import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime, json
 from bs4 import BeautifulSoup
-
+from email.utils import parsedate_tz
+import time
 
 def __init__ (self):
     breaking_alert.hax = self
@@ -13,13 +14,14 @@ def get_newest_rss(self, url):
     newest_news = dom.getElementsByTagName('item')[0]
     title = newest_news.getElementsByTagName('title')[0].childNodes[0].data
     description = BeautifulSoup(newest_news.getElementsByTagName('description')[0].childNodes[0].data)
+
+    updated = dom.getElementsByTagName('pubDate')[0].childNodes[0].data
     try:
-        updated = dom.getElementsByTagName('pubDate')[0].childNodes[0].data
         updated = datetime.datetime.strptime(updated, "%a, %d %b %Y %H:%M:%S %Z")
-        ago = round((datetime.datetime.utcnow() - updated).seconds/60)
     except:
-        updated = datetime.datetime.utcnow()
-        ago = 0
+        updated = datetime.datetime.fromtimestamp(time.mktime(parsedate_tz(updated)))
+    ago = round((datetime.datetime.utcnow() - updated).seconds/60)
+
 
 
     links = description.findAll('a')

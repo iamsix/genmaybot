@@ -3,8 +3,6 @@ from bs4 import BeautifulSoup
 from email.utils import parsedate
 import time
 
-def __init__ (self):
-    breaking_alert.hax = self
 
 def get_newest_rss(self, url):
 ## Retreive an RSS feed and get the newest item
@@ -62,37 +60,6 @@ def google_news(self, e):
 
 google_news.command = "!news"
 google_news.helptext = "Usage: !news - reports the top story. !news <query> reports news containing the specified words"
-
-def get_breaking(self, e):
-    #returns the latest earthquake on USGS
-      try:
-        url = "http://feeds.reuters.com/reuters/MostRead?format=xml"
-        description, updated, ago = get_newest_rss(self,url)
-        e.output = "%s (%s minutes ago)" % (description, ago)
-        return e
-      except:
-        return None
-get_breaking.command = "!breaking"
-get_breaking.helptext = "Usage: !breaking\nShows the latest breaking news alert"
-
-def breaking_alert():
-    #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
-      try:
-        url = "http://feeds.reuters.com/reuters/MostRead?format=xml"
-        description, updated, ago = get_newest_rss(breaking_alert.hax ,url)
-
-        if not breaking_alert.lastcheck:
-            breaking_alert.lastcheck = updated
-            breaking_alert.desc = ""
-        if updated > breaking_alert.lastcheck and breaking_alert.desc != description:
-            breaking_alert.desc = description
-            breaking_alert.lastcheck = updated
-            return "%s" % (description)
-      except Exception as inst:
-          print("breakinglert: " + str(inst))
-          pass
-breaking_alert.lastcheck = ""
-breaking_alert.alert = True
 
 
 def npr_science(self, e):

@@ -20,21 +20,6 @@ def __init__(self):
   except Exception as inst:
       print(inst)
 
-#HAAAAXX
-def set_consumerkey(line, nick, self, c):
-    self.botconfig["APIkeys"]["twitterConsumerKey"] = line[8:]
-    with open('genmaybot.cfg', 'w') as configfile:
-        self.botconfig.write(configfile)
-set_consumerkey.admincommand = "twitkey"
-
-def set_consumersecret(line, nick, self, c):
-    self.botconfig["APIkeys"]["twitterConsumerSecret"] = line[8:]
-    with open('genmaybot.cfg', 'w') as configfile:
-        self.botconfig.write(configfile)
-set_consumersecret.admincommand = "twitsec"
-
-#/HAAX
-
 def read_timeline (user):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=%s&count=1" % user
     opener = urllib.request.build_opener()
@@ -47,12 +32,18 @@ def read_timeline (user):
 
     return text, updated, ago
 
-def get_breaking(self, e):
+def latest_breaking(self, e):
     text, updated, ago = read_timeline('breakingnews')
     e.output =  "%s (%s minutes ago) " % (text, ago)
     return e
-get_breaking.command = "!breaking"
-get_breaking.helptext = "Usage: !breaking\nShows the latest breaking news alert"
+latest_breaking.command = "!breaking"
+latest_breaking.helptext = "Usage: !breaking\nShows the latest breaking news alert"
+
+def latest_tweet(self, e):
+    text, updated, ago = read_timeline(e.input)
+    e.output =  "%s (%s minutes ago) " % (text, ago)
+    return e
+latest_tweet.command = "!lasttweet"
 
 def breaking_alert():
     #returns a new breaking news only if it hasn't returned it before

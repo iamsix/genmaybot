@@ -61,6 +61,11 @@ def google_news(self, e):
 google_news.command = "!news"
 google_news.helptext = "Usage: !news - reports the top story. !news <query> reports news containing the specified words"
 
+def get_breaking(self, e):
+    pass
+
+def breaking_alert():
+    pass
 
 def npr_science(self, e):
     ## Grab the latest entry from the NPR Health and Science RSS feed

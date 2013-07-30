@@ -28,7 +28,7 @@ def read_timeline (user):
     tweet = json.loads(response)
     updated = datetime.datetime.strptime(tweet[0]['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
-    text = "BreakingNews: " + tweet[0]['text']
+    text = tweet[0]['user']['screen_name'] + ": " + tweet[0]['text']
 
     return text, updated, ago
 

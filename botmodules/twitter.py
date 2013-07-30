@@ -6,6 +6,7 @@ import base64
 
 
 def __init__(self):
+  
   try:
     auth = "%s:%s" % (self.botconfig["APIkeys"]["twitterConsumerKey"], self.botconfig["APIkeys"]["twitterConsumerSecret"])
     auth = "Basic ".encode() + base64.b64encode(auth.encode())
@@ -17,6 +18,7 @@ def __init__(self):
     response = urllib.request.urlopen(req)
     response = json.loads(response.read().decode('utf-8'))
     read_timeline.holyshitbearstoken = response['access_token']
+    print(read_timeline.holyshitbearstoken)
   except Exception as inst:
       print(inst)
 

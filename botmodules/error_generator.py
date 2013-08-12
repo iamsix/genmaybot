@@ -124,7 +124,7 @@ fortune.command = "!fortune"
 fortune.helptext = "Usage: just fucking type !fortune"
 
 
-verbs = ["aggregate", "architect", "benchmark", "brand", "cultivate", "deliver", "deploy", "disintermediate", "drive",
+verbs = ["gamify", "aggregate", "architect", "benchmark", "brand", "cultivate", "deliver", "deploy", "disintermediate", "drive",
 "e-enable", "embrace", "empower", "enable", "engage", "engineer", "enhance", "envisioneer", "evolve", "expedite",
 "exploit", "extend", "facilitate", "generate", "grow", "harness", "implement", "incentivize", "incubate",
 "innovate", "integrate", "iterate", "leverage", "matrix", "maximize", "mesh", "monetize", "morph", "optimize",

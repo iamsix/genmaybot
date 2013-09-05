@@ -16,16 +16,17 @@ def request_json(url, self):
     return response
 
 def latest_ride(self, e):
-    data = request_json("https://www.strava.com/api/v3/activities", self)
+    data = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % e.input, self)
+    nick = "Someone"
     name = data[0]['name']
     distance = int(data[0]['distance']) / 1000
     time = int(data[0]['moving_time']) / 60
     elevation = data[0]['total_elevation_gain']
     watts = data[0]['average_watts']
     kj = data[0]['kilojoules']
-    string = "%s rode %s: %skm with %sm elevation in %s minutes. Produced %s watts and spent %s Kilojoules" % (e.nick, name, distance, elevation, time, watts, kj)
+    string = "%s rode %s: %skm with %sm elevation in %s minutes. Produced %s watts and spent %s Kilojoules" % (nick, name, distance, elevation, time, watts, kj)
     e.output = string
     return e
-     
-latest_ride.command = "!strava"
+
+latest_ride.command = "!stravatest"
 

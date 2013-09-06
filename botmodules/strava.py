@@ -9,9 +9,6 @@ from bs4 import BeautifulSoup
 
 
 
-
-
-
 #this is only needed if we ever have to change the strava token
 def set_stravatoken(line, nick, self, c):
      self.botconfig["APIkeys"]["stravaToken"] = line[12:]
@@ -19,42 +16,19 @@ def set_stravatoken(line, nick, self, c):
          self.botconfig.write(configfile)
 set_stravatoken.admincommand = "stravatoken"
 
-def request_json(url, self):
-    headers = {'Authorization': 'access_token ' + self.botconfig["APIkeys"]["stravaToken"]}
+
+def __init__(self):
+    """ On init, read the token to a variable, then do a system check which runs upgrades and creates tables. """
+    request_json.token = self.botconfig["APIkeys"]["stravaToken"]
+    strava_check_system()  # Check the system for tables and/or upgrades
+
+
+def request_json(url):
+    headers = {'Authorization': 'access_token ' + request_json.token}
     req = urllib.request.Request(url, None, headers)
     response = urllib.request.urlopen(req)
     response = json.loads(response.read().decode('utf-8'))
     return response
-
-def latest_ride(self, e):
-    data = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % e.input, self)
-    nick = "Someone"
-    name = data[0]['name']
-    distance = int(data[0]['distance']) / 1000
-    time = int(data[0]['moving_time']) / 60
-    elevation = data[0]['total_elevation_gain']
-    watts = data[0]['average_watts']
-    kj = data[0]['kilojoules']
-    string = "%s rode %s: %skm with %sm elevation in %s minutes. Produced %s watts and spent %s Kilojoules" % (nick, name, distance, elevation, time, watts, kj)
-    e.output = string
-    return e
-
-latest_ride.command = "!stravatest"
-
-
-
-
-
-
-
-
-
-
-
-
-def __init__(self):
-    """ On init, do a system check which runs upgrades and creates tables. """
-    strava_check_system()  # Check the system for tables and/or upgrades
 
 
 def strava_software_version():
@@ -228,7 +202,7 @@ def strava(self, e):
         try:
             if strava_is_valid_user(e.input):
                 # Process a last ride request for a specific strava id.
-                rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % e.input, self)
+                rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % e.input)
                 e.output = strava_extract_latest_ride(rides_response, e)
             else:
                 e.output = "Sorry, that is not a valid Strava user."
@@ -240,7 +214,7 @@ def strava(self, e):
             try:
                 if strava_is_valid_user(athlete_id):
                     # Process a last ride request for a specific strava id.
-                    rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % athlete_id, self)
+                    rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % athlete_id)
                     e.output = strava_extract_latest_ride(rides_response, e)
                 else:
                     e.output = "Sorry, that is not a valid Strava user."
@@ -253,7 +227,7 @@ def strava(self, e):
         try:
             if strava_is_valid_user(strava_id):
                 # Process the last ride for the current strava id.
-                rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % strava_id, self)
+                rides_response = request_json("https://www.strava.com/api/v3/athletes/%s/activities" % strava_id)
                 e.output = strava_extract_latest_ride(rides_response, e)
             else:
                 e.output = "Sorry, that is not a valid Strava user."
@@ -357,12 +331,12 @@ def strava_ride_to_string(recent_ride):
     mph = strava_convert_meters_per_second_to_miles_per_hour(recent_ride['average_speed'])
     miles = strava_convert_meters_to_miles(recent_ride['distance'])
     moving_time = str(datetime.timedelta(seconds=recent_ride['moving_time']))
-    max_mph = strava_convert_meters_per_hour_to_miles_per_hour(recent_ride['max_speed'])
+    max_mph = strava_convert_meters_per_second_to_miles_per_hour(recent_ride['max_speed'])
     feet_climbed = strava_convert_meters_to_feet(recent_ride['total_elevation_gain'])
     ride_datetime = time.strptime(recent_ride['start_date_local'], "%Y-%m-%dT%H:%M:%SZ")
     time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
     # Output string
-    return_string = "%s near %s, %s on %s (http://app.strava.com/rides/%s)\n" % (recent_ride['name'], recent_ride['location_city'], recent_ride['location_state'], time_start, recent_ride['id'])
+    return_string = "%s near %s, %s on %s (http://www.strava.com/activities/%s)\n" % (recent_ride['name'], recent_ride['location_city'], recent_ride['location_state'], time_start, recent_ride['id'])
     return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed" % (miles, moving_time, mph, max_mph, int(feet_climbed))
     # Figure out if we need to add average watts to the string.
     # Users who don't have a weight won't have average watts.
@@ -374,9 +348,10 @@ def strava_ride_to_string(recent_ride):
 def strava_get_ride_extended_info(ride_id):
     """ Get all the details about a ride. """
     try:
-        ride_details = request_json("https://www.strava.com/api/v3/activities/%s" % e.input, self)
+        ride_details = request_json("https://www.strava.com/api/v3/activities/%s" % ride_id)
+        print(ride_details)
         if ride_details:
-            ride_details
+            return ride_details
         else:
             return False
     except urllib.error.URLError:

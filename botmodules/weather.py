@@ -31,7 +31,7 @@ def get_weather(self, e):
     location = urllib.parse.quote(location)
     
     #End callback handling code
-    url = "http://free.worldweatheronline.com/feed/weather.ashx?q={}&format=json&num_of_days=1&includeLocation=yes&key={}".format(location, self.botconfig["APIkeys"]["wwoAPIkey"])
+    url = "http://api.worldweatheronline.com/free/v1/weather.ashx?q={}&format=json&num_of_days=1&includeLocation=yes&key={}".format(location, self.botconfig["APIkeys"]["wwoAPIkey"])
 
     response = urllib.request.urlopen(url).read().decode('utf-8')
     weather = json.loads(response)

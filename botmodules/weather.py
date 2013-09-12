@@ -7,7 +7,7 @@ except:
 
 
 def set_wwokey(line, nick, self, c):
-     self.botconfig["APIkeys"]["stravaToken"] = line[7:]
+     self.botconfig["APIkeys"]["wwoAPIkey"] = line[7:]
      with open('genmaybot.cfg', 'w') as configfile:
          self.botconfig.write(configfile)
 set_wwokey.admincommand = "wwokey"

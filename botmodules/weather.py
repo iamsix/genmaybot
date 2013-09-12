@@ -6,6 +6,12 @@ except:
     pass
 
 
+def set_wwokey(line, nick, self, c):
+     self.botconfig["APIkeys"]["stravaToken"] = line[7:]
+     with open('genmaybot.cfg', 'w') as configfile:
+         self.botconfig.write(configfile)
+set_wwokey.admincommand = "wwokey"
+
 def get_weather(self, e):
     # WWO weather of place specified in 'zip'
     # http://www.worldweatheronline.com/free-weather-feed.aspx

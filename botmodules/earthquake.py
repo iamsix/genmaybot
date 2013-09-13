@@ -41,8 +41,10 @@ def get_quake_data():
     quake = json.loads(request.read().decode())
     request.close()
     quake = quake['features'][0] #select the latest quake
-    updated = quake['properties']['updated'] / 1000
     qtitle = quake['properties']['title']
+    updated = round(quake['properties']['time'] / 1000)
+    tz = (quake['properties']['tz'] + 60) * 60
+    updated = updated - tz
     updated = datetime.datetime.fromtimestamp(updated)
     ago = round((datetime.datetime.utcnow() - updated).seconds / 60)
     depth = quake['geometry']['coordinates'][2]

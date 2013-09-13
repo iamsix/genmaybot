@@ -43,10 +43,8 @@ def get_quake_data():
     quake = quake['features'][0] #select the latest quake
     qtitle = quake['properties']['title']
     updated = round(quake['properties']['time'] / 1000)
-    tz = (quake['properties']['tz'] + 60) * 60
-    updated = updated - tz
     updated = datetime.datetime.fromtimestamp(updated)
-    ago = round((datetime.datetime.utcnow() - updated).seconds / 60)
+    ago = round((datetime.datetime.now() - updated).seconds / 60)
     depth = quake['geometry']['coordinates'][2]
     depthmi = '{0:.2f}'.format(depth / 1.61)
     elevation = "%s km (%s mi)" % (depth, depthmi)

@@ -1,34 +1,34 @@
-import urllib.request, urllib.error, urllib.parse, xml.dom.minidom, datetime
+import urllib.request, urllib.error, urllib.parse
+import json
+import datetime
 
 
 def get_quake(self, e):
     #returns the latest earthquake on USGS
-    try:
-        qtitle, updated, ago, elevation = get_quake_data()
-        e.output = "Latest Earthquake: %s - Depth: %s (%s minutes ago)" % (qtitle, elevation, ago)
-        return e
-    except:
-        return None
+
+    updated, quakestring = get_quake_data()
+    e.output = quakestring
+    return e
 get_quake.command = "!q"
 get_quake.helptext = "Usage: !q\nShows the latest earthquake larger than M2.5 and how long ago it occured"
 
 
 def quake_alert():
     #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
-    qtitle, updated, ago, elevation = get_quake_data()
-    
+    updated, quakestring = get_quake_data()
+
     try: #if a filter is set
-        if qtitle.find(quake_alert.filter) != -1:
+        if quakestring.find(quake_alert.filter) != -1:
             return
     except:
         pass
-        
-    
+
+
     if not quake_alert.lastquakecheck:
         quake_alert.lastquakecheck = updated
     if updated > quake_alert.lastquakecheck:
         quake_alert.lastquakecheck = updated
-        return "Latest Earthquake: %s - Depth: %s (%s minutes ago)" % (qtitle, elevation, ago)
+        return quakestring
 
 
 quake_alert.lastquakecheck = ""
@@ -36,17 +36,26 @@ quake_alert.alert = True
 
 
 def get_quake_data():
-    request = urllib.request.urlopen("http://earthquake.usgs.gov/earthquakes/catalogs/1day-M2.5.xml")
-    dom = xml.dom.minidom.parse(request)
-    latest_quakenode = dom.getElementsByTagName('entry')[0]
-    updated = latest_quakenode.getElementsByTagName('updated')[0].childNodes[0].data
-    qtitle = latest_quakenode.getElementsByTagName('title')[0].childNodes[0].data
-    updated = datetime.datetime.strptime(updated, "%Y-%m-%dT%H:%M:%SZ")
-    ago = round((datetime.datetime.utcnow() - updated).seconds / 60)
-    elevation = int(latest_quakenode.getElementsByTagName('georss:elev')[0].childNodes[0].data)
-    depth = float(elevation) / -1000
-    depthmi = '{0:.2f}'.format(depth / 1.61)
-    depthstring = "%s km (%s mi)" % (depth, depthmi)
+    #Altername URLS for intensities: http://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php
+    request = urllib.request.urlopen("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_hour.geojson")
+    quake = json.loads(request.read().decode())
     request.close()
-    return qtitle, updated, ago, depthstring
+    quake = quake['features'][0] #select the latest quake
+    updated = quake['properties']['updated'] / 1000
+    qtitle = quake['properties']['title']
+    updated = datetime.datetime.fromtimestamp(updated)
+    ago = round((datetime.datetime.utcnow() - updated).seconds / 60)
+    depth = quake['geometry']['coordinates'][2]
+    depthmi = '{0:.2f}'.format(depth / 1.61)
+    elevation = "%s km (%s mi)" % (depth, depthmi)
+    tsunami = ""
+    if quake['properties']['tsunami']:
+        tsunami = " - Tusnami Warning!"
+    alert = ""
+    if quake['properties']['alert']:
+        alert = " - Alert level: %s" % quake['properties']['alert']
+
+    quakestring = "Latest Earthquake: %s - Depth: %s (%s minutes ago)%s%s" % (qtitle, elevation, ago, tsunami, alert)
+
+    return updated, quakestring
 

@@ -77,10 +77,7 @@ def url_posted(self, e):
     except:
         pass
     try:
-        print("yt")
         yt = self.bangcommands["!yt"](self, e, True)
-        print("yt2")
-        print(yt.output)
         if yt:
             title = yt.output
     except:

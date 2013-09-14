@@ -14,9 +14,8 @@ def ytinfo(self, e, urlposted=False):
         yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch%3Fv%3D')
         yt = yt[yt.find("%3Fv%3D") + 7:]
 
-    print(yt)
     url = "http://gdata.youtube.com/feeds/api/videos/{}?v=2&alt=jsonc".format(yt)
-    print(url)
+
     request = urllib.request.urlopen(url)
     ytinfo = json.loads(request.read().decode())
     ytinfo = ytinfo['data']
@@ -31,13 +30,24 @@ def ytinfo(self, e, urlposted=False):
     ytlink = ""
     if not urlposted:
         ytlink = " - http://youtu.be/" + yt
-    print("whatttt")
-    e.output = "Youtube: {} :: length: {}- rated: {} - {} views - {} on {}{}".format(ytinfo['title'],
+
+    content = ""
+    try:
+        if ytinfo['contentRating']:
+            content = " - 4NSFW"
+    except:
+        pass
+
+    e.output = "Youtube: {} :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytinfo['title'],
                                                                         duration,
                                                                         rating,
                                                                         ytinfo['viewCount'],
                                                                         ytinfo['uploader'],
                                                                         ytinfo['uploaded'][:10],
-                                                                        ytlink)
+                                                                        ytlink, content)
     return e
 ytinfo.command = "!yt"
+ytinfo.helptext = """
+Usage: !yt <vide title>
+Example: !yt cad video
+Looks up a given youtube video, and provides information and a link"""

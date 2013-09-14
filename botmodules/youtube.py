@@ -32,7 +32,7 @@ def ytinfo(self, e, urlposted=False):
     if not urlposted:
         ytlink = " - http://youtu.be/" + yt
     print("whatttt")
-    e.output = "{} - length {}- rated {} - {} views - {} on {}{}".format(ytinfo['title'],
+    e.output = "Youtube: {} :: length: {}- rated: {} - {} views - {} on {}{}".format(ytinfo['title'],
                                                                         duration,
                                                                         rating,
                                                                         ytinfo['viewCount'],

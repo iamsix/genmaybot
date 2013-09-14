@@ -15,7 +15,10 @@ get_quake.helptext = "Usage: !q\nShows the latest earthquake larger than M2.5 
 
 def quake_alert():
     #returns a new get_quake_data only if it hasn't returned it before - for use in alerts
-    updated, quakestring = get_quake_data()
+    try: #it's possible for there to be nothing in the json file, so check for it.
+        updated, quakestring = get_quake_data()
+    except:
+        return
 
     try: #if a filter is set
         if quakestring.find(quake_alert.filter) != -1:

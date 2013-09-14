@@ -76,6 +76,15 @@ def url_posted(self, e):
         title = imdb.output
     except:
         pass
+    try:
+        print("yt")
+        yt = self.bangcommands["!yt"](self, e, True)
+        print("yt2")
+        print(yt.output)
+        if yt:
+            title = yt.output
+    except:
+        pass
     if url.find("imgur.com") != -1 and url.find("/a/") == -1:
         imgurid = url[url.rfind('/') + 1:]
         if "." in imgurid:

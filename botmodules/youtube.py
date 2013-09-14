@@ -1,5 +1,6 @@
 import json
 import urllib.request
+import math
 
 
 def ytinfo(self, e, urlposted=False):
@@ -19,12 +20,16 @@ def ytinfo(self, e, urlposted=False):
     request = urllib.request.urlopen(url)
     ytinfo = json.loads(request.read().decode())
     ytinfo = ytinfo['data']
-    mins = round(ytinfo['duration'] /60)
+    mins = math.floor(ytinfo['duration'] /60)
     if mins:
         mins = "{}m ".format(str(mins))
+    else:
+        mins = ""
     secs = ytinfo['duration']  % 60
     if secs:
         secs = "{}s ".format(str(secs))
+    else:
+        secs = ""
     duration = "{}{}".format(mins, secs)
     rating = "{0:.1f}/10".format((int(ytinfo['likeCount']) / ytinfo['ratingCount']) * 10)
     ytlink = ""

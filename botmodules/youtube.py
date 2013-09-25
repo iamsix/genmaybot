@@ -43,7 +43,8 @@ def ytinfo(self, e, urlposted=False):
     except:
         pass
 
-    e.output = "Youtube: {} :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytinfo['title'],
+    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytinfo['title'],
+                                                                        ytinfo['category'],
                                                                         duration,
                                                                         rating,
                                                                         ytinfo['viewCount'],

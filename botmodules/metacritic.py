@@ -3,16 +3,12 @@
 def get_metacritic(self, e):
     url = self.tools['google_url']("site:metacritic.com " + e.input, "www.metacritic.com/")
     page = self.tools["load_html_from_URL"](url)
-    try:
-        titleDiv = page.findAll('div', attrs={"class": "product_title"})[0]
-    except:
-        return
-    title = titleDiv.a.string
+    titleDiv = page.findAll('div', attrs={"class": "product_title"})[0]
+    title = titleDiv.a.span.string.strip()
     titleUrl = titleDiv.a['href']
-
     if titleUrl.find("game/") > 0:
         category = 'Game - '
-        category += titleDiv.findAll('span', attrs={"class": "platform"})[0].a.string
+        category += titleDiv.findAll('span', attrs={"class": "platform"})[0].a.span.string.strip()
     elif titleUrl.find("movie/") > 0:
         category = "Movie"
     elif titleUrl.find("tv/") > 0:
@@ -29,20 +25,15 @@ def get_metacritic(self, e):
     metaScore = ""
     userScore = ""
 
-    try:
-        metaScoreDiv = page.findAll('div', attrs={"class": "metascore_wrap highlight_metascore"})[0]
-        metaScore = metaScoreDiv.findAll('span', attrs={"class": "score_value"})[0].string
-        metaDesc = metaScoreDiv.findAll('span', attrs={"class": "desc"})[0].string
-        metaNum = metaScoreDiv.findAll('span', attrs={"class": "count"})[0].a.span.string
-    except:
-        pass
-    try:
-        userScoreDiv = page.findAll('div', attrs={"class": "userscore_wrap feature_userscore"})[0]
-        userScore = userScoreDiv.findAll('span', attrs={"class": "score_value"})[0].string
-        userDesc = userScoreDiv.findAll('span', attrs={"class": "desc"})[0].string
-        userNum = userScoreDiv.find('span', attrs={"class": "count"}).a.string
-    except:
-        pass
+    metaScoreDiv = page.findAll('div', attrs={"class": "metascore_wrap highlight_metascore"})[0]
+    metaScore = metaScoreDiv.findAll('span', attrs={"itemprop": "ratingValue"})[0].string
+    metaDesc = metaScoreDiv.findAll('span', attrs={"class": "desc"})[0].string.strip()
+    metaNum = metaScoreDiv.findAll('span', attrs={"itemprop": "reviewCount"})[0].string.strip()
+
+    userScoreDiv = page.findAll('div', attrs={"class": "userscore_wrap feature_userscore"})[0]
+    userScore = userScoreDiv.a.div.string
+    userDesc = userScoreDiv.findAll('span', attrs={"class": "desc"})[0].string
+    userNum = userScoreDiv.find('span', attrs={"class": "count"}).a.string
 
     if metaScore:
         metaScore = "Metascore: " + metaScore

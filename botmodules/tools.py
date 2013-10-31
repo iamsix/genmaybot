@@ -57,8 +57,7 @@ def load_html_from_URL(url, readlength=""):
     url = fixurl(url)
     opener = urllib.request.build_opener()
 
-    opener.addheaders = [('User-Agent', "Opera/9.10 (YourMom 8.0)"),
-                         ('Range', "bytes=0-" + str(readlength))]
+    opener.addheaders = [('User-Agent', "Opera/9.10 (YourMom 8.0)")]
 
     page = None
     pagetmp = opener.open(url)

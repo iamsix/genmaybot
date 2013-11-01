@@ -18,7 +18,7 @@ def wotd_trigger(self, e):
         do_wotd(self, e)
     else:
         return
-wotd_trigger.lineparser = True
+wotd_trigger.lineparser = False
 wotd_trigger.wotd = "cat"
 wotd_trigger.wotd_found_timestamp = 0
 wotd_trigger.wotd_setter = ""

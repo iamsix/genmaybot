@@ -234,7 +234,8 @@ class TestBot(SingleServerIRCBot):
                     elif hasattr(func, 'alert'):
                         self.botalerts.append(func)
                     elif hasattr(func, 'lineparser'):
-                        self.lineparsers.append(func)
+                        if func.lineparser:
+                            self.lineparsers.append(func)
 
         commands, botalerts, lineparsers, admincommands = "", "", "", ""
 

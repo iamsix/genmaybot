@@ -114,7 +114,7 @@ def url_posted(self, e):
 
 
 def get_title(self, e, url):
-    length = 10240
+    length = 51200
     if url.find("amazon.") != -1:
         length = 100096  # because amazon is coded like shit
     page = self.tools["load_html_from_URL"](url, length)

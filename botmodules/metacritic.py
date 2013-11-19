@@ -1,10 +1,14 @@
 
-
 def get_metacritic(self, e):
     url = self.tools['google_url']("site:metacritic.com " + e.input, "www.metacritic.com/")
     page = self.tools["load_html_from_URL"](url)
     titleDiv = page.findAll('div', attrs={"class": "product_title"})[0]
-    title = titleDiv.a.span.string.strip()
+    try:
+        title = titleDiv.a.span.string.strip()
+    except: #tv shows have an extra span
+        title = ""
+        for string in titleDiv.a.stripped_strings:
+            title = title + string
     titleUrl = titleDiv.a['href']
     if titleUrl.find("game/") > 0:
         category = 'Game - '

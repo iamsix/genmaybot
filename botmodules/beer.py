@@ -15,7 +15,7 @@ def advocate_beer(self, e):
     socket.setdefaulttimeout(10)
     
     titlestart = beerpage.find("<title>") + 7
-    titleend = beerpage.find(" - ", titlestart)
+    titleend = beerpage.find(" | ", titlestart) or beerpage.find("</title>", titlestart)
     beertitle = beerpage[titlestart:titleend]
 
     score_start_tag = '<span class="BAscore_big">'

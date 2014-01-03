@@ -19,7 +19,7 @@ def advocate_beer(self, e):
     style = beerpage.find("a", href=re.compile("/beer/style/[0-9]+/")).b.string
     abv = beerpage.find("a", href=re.compile("/beer/style/[0-9]+/")).next_sibling.replace("|", "").strip()
 
-    e.output = = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s [ %s ]" % (beertitle, 
+    e.output = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s [ %s ]" % (beertitle, 
                                                                              grade,
                                                                              grade_wording,
                                                                              num_reviews,

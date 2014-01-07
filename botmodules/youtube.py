@@ -7,6 +7,8 @@ import re
 def ytinfo(self, e, urlposted=False):
     if urlposted:
         yt = e.input
+        if "youtube.com" not in yt or "youtu.be" not in yt:
+            return
         yt = re.search("(v=|\/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:
         yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch%3Fv%3D')

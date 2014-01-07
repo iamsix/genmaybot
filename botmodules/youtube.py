@@ -1,16 +1,13 @@
 import json
 import urllib.request
 import math
+import re
 
 
 def ytinfo(self, e, urlposted=False):
     if urlposted:
         yt = e.input
-        if "youtu" not in yt and "watch" not in yt:
-            return
-        yt = yt[yt.find("v=") + 2:]
-        if "&" in yt:
-            yt = yt[:yt.find("&")]
+        yt = re.search("(v=|\/)([\w-]+)(&.+|#t.+)?$", yt).group(2)
     else:
         yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch%3Fv%3D')
         yt = yt[yt.find("%3Fv%3D") + 7:]

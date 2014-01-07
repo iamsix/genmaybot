@@ -7,7 +7,7 @@ import re
 def ytinfo(self, e, urlposted=False):
     if urlposted:
         yt = e.input
-        if "youtube.com" not in yt or "youtu.be" not in yt:
+        if "youtube.com" not in yt and "youtu.be" not in yt:
             return
         yt = re.search("(v=|\/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:

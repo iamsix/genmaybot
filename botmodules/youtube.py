@@ -30,7 +30,12 @@ def ytinfo(self, e, urlposted=False):
     else:
         secs = ""
     duration = "{}{}".format(mins, secs)
-    rating = "{0:.1f}/10".format((int(ytinfo['likeCount']) / ytinfo['ratingCount']) * 10)
+    
+    try:
+        rating = "{0:.1f}/10".format((int(ytinfo['likeCount']) / ytinfo['ratingCount']) * 10)
+    except:
+        rating = "NA"
+    
     ytlink = ""
     if not urlposted:
         ytlink = " - http://youtu.be/" + yt

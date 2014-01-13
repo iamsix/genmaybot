@@ -1,5 +1,6 @@
 import urllib.parse
 
+
 def get_urbandictionary(self, e):
     searchterm = e.input
     url = "http://www.urbandictionary.com/define.php?term=%s" % urllib.parse.quote(searchterm)
@@ -15,15 +16,15 @@ def get_urbandictionary(self, e):
 
     first_definition = ""
 
-    if page.find(id='not_defined_yet') != None:
+    if page.find(id='not_defined_yet') is not None:
         return None
 
-    first_word = page.findAll('div', attrs={"class": "word"})[0].span.string
+    first_word = page.findAll('div', attrs={"class": "word"})[0].a.string
 
     first_word = first_word.replace("\n", "")
 
     for content in page.findAll('div', attrs={"class": "definition"})[0].contents:
-        if content.string != None:
+        if content.string is not None:
             first_definition += content.string
 
     #first_definition = first_definition.encode("utf-8", 'ignore')
@@ -40,7 +41,11 @@ def get_urbandictionary(self, e):
     return e
 
 get_urbandictionary.command = "!ud"
-get_urbandictionary.helptext = "Usage: !ud <word or phrase>\nExample: !ud hella\nShows urbandictionary definition of a word or phrase.\n!ud alone returns a random entry\n!ud wotd returns the current word of the day"
+get_urbandictionary.helptext = """Usage: !ud <word or phrase>
+Example: !ud hella
+Shows urbandictionary definition of a word or phrase.
+!ud alone returns a random entry
+!ud wotd returns the current word of the day"""
 
 
 def get_urbandictionary_wotd(self):
@@ -53,7 +58,7 @@ def get_urbandictionary_wotd(self):
     first_word = first_word.encode("utf-8", 'ignore')
 
     for content in page.findAll('div', attrs={"class": "definition"})[0].contents:
-        if content.string != None:
+        if content.string is not None:
             first_definition += content.string
 
 #    first_definition = tools.decode_htmlentities(first_definition)

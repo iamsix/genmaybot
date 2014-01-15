@@ -53,7 +53,7 @@ def get_quake_data():
     elevation = "%s km (%s mi)" % (depth, depthmi)
     tsunami = ""
     if quake['properties']['tsunami']:
-        tsunami = " - Tusnami Warning!"
+        tsunami = " - Tsunami Warning!"
     alert = ""
     if quake['properties']['alert']:
         alert = " - Alert level: %s" % quake['properties']['alert']

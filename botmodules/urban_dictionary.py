@@ -23,7 +23,7 @@ def get_urbandictionary(self, e):
 
     first_word = first_word.replace("\n", "")
 
-    for content in page.findAll('div', attrs={"class": "definition"})[0].contents:
+    for content in page.findAll('div', attrs={"class": "meaning"})[0].contents:
         if content.string is not None:
             first_definition += content.string
 
@@ -57,7 +57,7 @@ def get_urbandictionary_wotd(self):
     first_word = page.findAll('div', attrs={"class": "word"})[0].contents[1].contents[0].string
     first_word = first_word.encode("utf-8", 'ignore')
 
-    for content in page.findAll('div', attrs={"class": "definition"})[0].contents:
+    for content in page.findAll('div', attrs={"class": "meaning"})[0].contents:
         if content.string is not None:
             first_definition += content.string
 

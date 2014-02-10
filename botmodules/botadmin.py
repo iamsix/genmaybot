@@ -62,6 +62,15 @@ def disable_command(line, nick, self, c):
         return command + " Disabled"
 disable_command.admincommand = "disable"
 
+def disable_alert(line,nick,self,c):
+    if len(line.split(" ")) == 2:
+    	disable_alert = line.split(" ")[1]
+    	for alert in self.botalerts:
+    	    if alert.__name__ == disable_alert:
+    	    	alert.alert = False
+    	   	return disable_alert + " disabled"
+disable_alert.admincommand = "disable_alert"
+
 def cooldown_command(line, nick, self, c):
     if len(line.split(" ")) == 3:
         command = line.split(" ")[1]

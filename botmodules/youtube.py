@@ -1,6 +1,5 @@
 import json
 import urllib.request
-import math
 import re
 
 
@@ -19,7 +18,7 @@ def ytinfo(self, e, urlposted=False):
     request = urllib.request.urlopen(url)
     ytinfo = json.loads(request.read().decode())
     ytinfo = ytinfo['data']
-    mins = math.floor(ytinfo['duration'] /60)
+    mins = ytinfo['duration'] // 60
     if mins:
         mins = "{}m ".format(str(mins))
     else:

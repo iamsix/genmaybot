@@ -1,4 +1,3 @@
-
 def get_trope(self, e, urlposted=False):
 
     if urlposted:
@@ -16,7 +15,10 @@ def get_trope(self, e, urlposted=False):
 
     print(page)
     trope = self.tools['remove_html_tags'](str(page))
-    trope = trope[0:510]
+    
+    trope = trope.replace("\n", " ").strip()
+    
+    trope = trope[0:392]
     if trope.rfind(".") != -1:
         trope = trope[0:trope.rfind(".") + 1]
         

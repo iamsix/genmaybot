@@ -1,5 +1,4 @@
 
-
 def get_trope(self, e, urlposted=False):
 
     if urlposted:
@@ -20,6 +19,8 @@ def get_trope(self, e, urlposted=False):
     trope = trope[0:510]
     if trope.rfind(".") != -1:
         trope = trope[0:trope.rfind(".") + 1]
+        
+    trope = (trope + " [ %s ]" % self.tools['shorten_url'](url))
 
     e.output = trope
     return e

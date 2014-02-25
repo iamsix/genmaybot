@@ -53,7 +53,7 @@ def google_url(searchterm, regexstring):
     return
 
 
-def load_html_from_URL(url, readlength=""):
+def load_html_from_URL(url, readlength="", returnurl=False):
     url = fixurl(url)
     opener = urllib.request.build_opener()
 
@@ -62,12 +62,15 @@ def load_html_from_URL(url, readlength=""):
     page = None
     pagetmp = opener.open(url)
     if pagetmp.headers['content-type'].find("text") != -1:
+        url = pagetmp.geturl()
         if readlength:
             page = pagetmp.read(int(readlength))
         else:
             page = pagetmp.read()
         page = BeautifulSoup(page)
     opener.close()
+    if returnurl:
+        return page, url
     return page
 
 

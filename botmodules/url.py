@@ -1,6 +1,8 @@
 # coding=utf-8
 
-import re, hashlib, datetime
+import re
+import hashlib
+import datetime
 import sqlite3
 
 
@@ -46,23 +48,23 @@ def url_posted(self, e):
 
         plural = ""
         if delta.days > 0:
-          if delta.days > 1:
-            plural = "s"
-          days = " (posted %s day%s ago)" % (str(delta.days), plural)
+            if delta.days > 1:
+                plural = "s"
+            days = " (posted %s day%s ago)" % (str(delta.days), plural)
         else:
-          hrs = int(round(delta.seconds/3600.0,0))
-          if hrs == 0:
-            mins = round(delta.seconds/60)
-            if mins > 1:
-              plural = "s"
-            days = " (posted %s minute%s ago)" % (str(mins), plural)
-            if mins == 0:
-                repost=""
-                days=""
-          else:
-            if hrs > 1:
-              plural = "s"
-            days = " (posted %s hour%s ago)" % (str(hrs), plural)
+            hrs = int(round(delta.seconds / 3600.0, 0))
+            if hrs == 0:
+                mins = round(delta.seconds / 60)
+                if mins > 1:
+                    plural = "s"
+                days = " (posted %s minute%s ago)" % (str(mins), plural)
+                if mins == 0:
+                    repost = ""
+                    days = ""
+            else:
+                if hrs > 1:
+                    plural = "s"
+                days = " (posted %s hour%s ago)" % (str(hrs), plural)
 
     title = ""
 
@@ -80,6 +82,12 @@ def url_posted(self, e):
         yt = self.bangcommands["!yt"](self, e, True)
         if yt:
             title = yt.output
+    except:
+        pass
+    try:
+        trope = self.bangcommands["!trope"](self, e, True)
+        if trope:
+            title = trope.output
     except:
         pass
     if url.find("imgur.com") != -1 and url.find("/a/") == -1:
@@ -120,7 +128,7 @@ def get_title(self, e, url):
     page = self.tools["load_html_from_URL"](url, length)
     title = ""
 
-    if page and page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}) != None:
+    if page and not page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}):
         try:
             wiki = self.bangcommands["!wiki"](self, e, True, True)
             title = wiki.output

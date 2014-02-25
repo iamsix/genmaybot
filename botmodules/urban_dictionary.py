@@ -12,7 +12,7 @@ def get_urbandictionary(self, e):
     if searchterm == "":
         url = "http://www.urbandictionary.com/random.php"
 
-    page = self.tools["load_html_from_URL"](url)
+    page, url = self.tools["load_html_from_URL"](url, returnurl=True)
 
     first_definition = ""
 

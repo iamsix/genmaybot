@@ -99,7 +99,6 @@ def url_posted(self, e):
     # Ignore strava ride links because Dan said so, fuck modularity, embace tight coupling.
     if url.find("app.strava.com/activities") != -1 or url.find("www.strava.com/activities") != -1:
         return None
-
     if not title:
         title = get_title(self, e, url)
 
@@ -128,7 +127,7 @@ def get_title(self, e, url):
     page = self.tools["load_html_from_URL"](url, length)
     title = ""
 
-    if page and not page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}):
+    if page and page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}):
         try:
             wiki = self.bangcommands["!wiki"](self, e, True, True)
             title = wiki.output

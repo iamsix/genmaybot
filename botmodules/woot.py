@@ -1,4 +1,5 @@
-import urllib.request, urllib.error, urllib.parse, xml.dom.minidom
+import urllib.request, urllib.error, urllib.parse
+import xml.dom.minidom
 
 
 def get_woot(self, e):

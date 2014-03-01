@@ -10,7 +10,6 @@ def get_trope(self, e, urlposted=False):
     else:
         searchterm = "site:tvtropes.org " + e.input
         url = self.tools['google_url'](searchterm, "tvtropes.org/pmwiki/pmwiki.php")
-    trope = ""
 
     page, url = self.tools["load_html_from_URL"](url, returnurl=True)
 

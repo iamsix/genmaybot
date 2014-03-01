@@ -8,7 +8,7 @@ def ytinfo(self, e, urlposted=False):
         yt = e.input
         if "youtube.com" not in yt and "youtu.be" not in yt:
             return
-        yt = re.search("(v=|\/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
+        yt = re.search("(v=|/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:
         yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch%3Fv%3D')
         yt = yt[yt.find("%3Fv%3D") + 7:]
@@ -16,14 +16,14 @@ def ytinfo(self, e, urlposted=False):
     url = "http://gdata.youtube.com/feeds/api/videos/{}?v=2&alt=jsonc".format(yt)
 
     request = urllib.request.urlopen(url)
-    ytinfo = json.loads(request.read().decode())
-    ytinfo = ytinfo['data']
-    mins = ytinfo['duration'] // 60
+    ytjson = json.loads(request.read().decode())
+    ytjson = ytjson['data']
+    mins = ytjson['duration'] // 60
     if mins:
         mins = "{}m ".format(str(mins))
     else:
         mins = ""
-    secs = ytinfo['duration']  % 60
+    secs = ytjson['duration'] % 60
     if secs:
         secs = "{}s ".format(str(secs))
     else:
@@ -31,8 +31,8 @@ def ytinfo(self, e, urlposted=False):
     duration = "{}{}".format(mins, secs)
     
     try:
-        rating = "{0:.1f}/10".format((int(ytinfo['likeCount']) / ytinfo['ratingCount']) * 10)
-    except:
+        rating = "{0:.1f}/10".format((int(ytjson['likeCount']) / ytjson['ratingCount']) * 10)
+    except KeyError:
         rating = "NA"
     
     ytlink = ""
@@ -41,19 +41,19 @@ def ytinfo(self, e, urlposted=False):
 
     content = ""
     try:
-        if ytinfo['contentRating']:
+        if ytjson['contentRating']:
             content = " - 4NSFW"
-    except:
+    except KeyError:
         pass
 
-    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytinfo['title'],
-                                                                        ytinfo['category'],
-                                                                        duration,
-                                                                        rating,
-                                                                        ytinfo['viewCount'],
-                                                                        ytinfo['uploader'],
-                                                                        ytinfo['uploaded'][:10],
-                                                                        ytlink, content)
+    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytjson['title'],
+                                                                                            ytjson['category'],
+                                                                                            duration,
+                                                                                            rating,
+                                                                                            ytjson['viewCount'],
+                                                                                            ytjson['uploader'],
+                                                                                            ytjson['uploaded'][:10],
+                                                                                            ytlink, content)
     return e
 ytinfo.command = "!yt"
 ytinfo.helptext = """

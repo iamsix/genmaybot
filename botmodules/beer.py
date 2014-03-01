@@ -4,7 +4,7 @@ import re
 def advocate_beer(self, e):
     query = e.input
     #get the name, rating and style of a beer from beeradvocate.com
-    url = self.tools.google_url("site:beeradvocate.com " + query, "/beer/profile/[0-9]*?/[0-9]+")
+    url = self.tools['google_url']("site:beeradvocate.com " + query, "/beer/profile/[0-9]*?/[0-9]+")
     #url = "http://beeradvocate.com/beer/profile/306/1212/"
 
     beerpage = self.tools["load_html_from_URL"](url)
@@ -24,7 +24,7 @@ def advocate_beer(self, e):
                                                                            num_reviews,
                                                                            style,
                                                                            abv,
-                                                                           self.tools.shorten_url(url))
+                                                                           self.tools['shorten_url'](url))
     return e
 advocate_beer.command = "!beer"
 advocate_beer.helptext = """\

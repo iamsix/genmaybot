@@ -39,8 +39,8 @@ def mlb_schedule(self, e):
                 activeGame[0].attrib['delay_reason'],
                 game.attrib['away_name_abbrev'],
                 game.attrib['home_name_abbrev'],
-                game[1][9].attrib['away'] or 0,
-                game[1][9].attrib['home'] or 0,
+                (game[1][9].attrib['away'] or 0) if game[1]._children.__len__() >= 10 else '0',
+                (game[1][9].attrib['home'] or 0)  if game[1]._children.__len__() >= 10 else '0',
                 activeGame[0].attrib['inning_state'],#game[00].attrib['ind'],
                 game[00].attrib['inning'],
                 activeGame[0].attrib['b'],
@@ -57,8 +57,8 @@ def mlb_schedule(self, e):
             game_details.append('{} vs {} {}-{} {}/{} | WP: {} ({}-{}) {} ERA | LP: {} ({}-{}) {} ERA | SV: {} ({}-{}) {}'.format(
                 game.attrib['away_name_abbrev'],
                 game.attrib['home_name_abbrev'],
-                game[1][9].attrib['away'],
-                game[1][9].attrib['home'],
+                game[1][9].attrib['away'] if game[1]._children.__len__() >= 10 else '0',
+                game[1][9].attrib['home'] if game[1]._children.__len__() >= 10 else '0',
                 game[00].attrib['ind'],
                 game[00].attrib['inning'],
                 game[3].attrib['last'],
@@ -79,8 +79,8 @@ def mlb_schedule(self, e):
                 game_details.append('{} at {} {}-{} {}/{}'.format(
                     game.attrib['away_name_abbrev'],
                     game.attrib['home_name_abbrev'],
-                    game[1][9].attrib['away'],
-                    game[1][9].attrib['home'],
+                    game[1][9].attrib['away'] if game[1]._children.__len__() >= 10 else '0',
+                    game[1][9].attrib['home'] if game[1]._children.__len__() >= 10 else '0',
                     game[00].attrib['ind'],
                     game[00].attrib['inning']
                 ))

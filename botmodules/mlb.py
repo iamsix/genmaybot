@@ -29,7 +29,7 @@ def mlb_schedule(self, e):
 
     for game in games:
         # get results for final game specified
-        if team and (team == game.attrib['home_name_abbrev'] or team == game.attrib['away_name_abbrev']) and game[00].attrib['status'] == 'Final':
+        if team.lower() and (team == game.attrib['home_name_abbrev'].lower() or team == game.attrib['away_name_abbrev'].lower()) and game[00].attrib['status'] == 'Final':
             game_details.append('{} vs {} {}-{} {}/{} | WP: {} ({}-{}) {} ERA | LP: {} ({}-{}) {} ERA | SV: {} ({}-{}) {}'.format(
                 game.attrib['away_name_abbrev'],
                 game.attrib['home_name_abbrev'],

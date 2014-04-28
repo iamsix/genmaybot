@@ -26,7 +26,7 @@ def get_fml(self, e):
     sDeserved = " Deserved it: " + str(iDeserved) + "]"
 
     # Put together the whole line for output
-    fml = fml + sAgree + sDserved
+    fml = fml + sAgree + sDeserved
 
     fml = fml.replace('&quot;', '"')
     fml = fml.replace('&amp;quot;', '"')

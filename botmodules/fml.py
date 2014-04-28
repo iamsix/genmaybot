@@ -19,8 +19,9 @@ def get_fml(self, e):
     iDeserved = int(fmlxml[start:end])
 
     # Use percentages for more meaningful schadenfreude stats
-    iAgree = round(iAgree/(iAgree+iDeserved)*100,1)
-    iDeserved = round(iDeserved/(iAgree+iDeserved)*100,1)
+    total = iAgree+iDeserved
+    iAgree = round(iAgree/(total)*100,1)
+    iDeserved = round(iDeserved/(total)*100,1)
 
     sAgree = " [FYL: " + str(iAgree)
     sDeserved = " Deserved it: " + str(iDeserved) + "]"

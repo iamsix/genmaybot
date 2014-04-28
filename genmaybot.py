@@ -270,6 +270,16 @@ class TestBot(SingleServerIRCBot):
             return True
 
     def isspam(self, user, nick):
+        
+        #Clean up ever-growing spam dictionary
+        cleanupkeys = []
+        for key in spam:
+            if (time.time() - spam[key]['last']) > (24*3600): #anything older than 24 hours
+                cleanupkeys.append(key)
+        for key in cleanupkeys:
+            spam.pop(key)
+        #end clean up job         
+            
 
         if not (user in self.spam):
             self.spam[user] = {}

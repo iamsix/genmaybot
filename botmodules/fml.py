@@ -23,8 +23,8 @@ def get_fml(self, e):
     iAgree = round(iAgree/(total)*100,1)
     iDeserved = round(iDeserved/(total)*100,1)
 
-    sAgree = " [FYL: " + str(iAgree)
-    sDeserved = " Deserved it: " + str(iDeserved) + "]"
+    sAgree = " [FYL: " + str(iAgree) + "%"
+    sDeserved = " Deserved it: " + str(iDeserved) + "%]"
 
     # Put together the whole line for output
     fml = fml + sAgree + sDeserved

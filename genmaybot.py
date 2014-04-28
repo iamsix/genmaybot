@@ -270,18 +270,17 @@ class TestBot(SingleServerIRCBot):
             return True
 
     def isspam(self, user, nick):
-        
-		#Clean up ever-growing spam dictionary
-		cleanupkeys = []
-		for key in spam:
-			if (time.time() - spam[key]['last']) > (24*3600): #anything older than 24 hours
-				cleanupkeys.append(key)
-		for key in cleanupkeys:
-			spam.pop(key)
-		#end clean up job         
+        #Clean up ever-growing spam dictionary
+        cleanupkeys = []
+        for key in spam:
+            if (time.time() - spam[key]['last']) > (24*3600): #anything older than 24 hours
+                cleanupkeys.append(key)
+        for key in cleanupkeys:
+            spam.pop(key)
+        #end clean up job         
 
 
-		if not (user in self.spam):
+        if not (user in self.spam):
             self.spam[user] = {}
             self.spam[user]['count'] = 0
             self.spam[user]['last'] = 0
@@ -297,15 +296,15 @@ class TestBot(SingleServerIRCBot):
         if self.spam[user]['count'] > 1:
             self.spam[user]['limit'] = (self.spam[user]['count'] - 1) * 15
 
-            if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
-                bantime = self.spam[user]['limit'] + 15
-                print("%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime))
-                return True
-            else:
-                self.spam[user]['first'] = 0
-                self.spam[user]['count'] = 0
-                self.spam[user]['limit'] = 15
-                return False
+        if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
+            bantime = self.spam[user]['limit'] + 15
+            print("%s : %s band %s seconds" % (time.strftime("%d %b %Y %H:%M:%S", time.localtime()), nick, bantime))
+            return True
+        else:
+            self.spam[user]['first'] = 0
+            self.spam[user]['count'] = 0
+            self.spam[user]['limit'] = 15
+            return False
 
     def alerts(self, context):
         try:

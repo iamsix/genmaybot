@@ -10,16 +10,25 @@ def get_fml(self, e):
 
 	start = fmlxml.find("<agree>") + 7
 	end = fmlxml.find("</agree>")
-
-	fml = fml + " [FYL: " + str(fmlxml[start:end])
+    
+    iAgree = int(fmlxml[start:end])
 
 	start = fmlxml.find("<deserved>") + 10
 	end = fmlxml.find("</deserved>")
 
-	fml = fml + " Deserved it: " + str(fmlxml[start:end]) + "]"
+    iDeserved = int(fmlxml[start:end])
 
+    # Use percentages for more meaningful schadenfreude stats
+    iAgree = round(iAgree/(iAgree+iDeserved)*100,1)
+    iDeserved = round(iDeserved/(iAgree+iDeserved)*100,1)
 
-	fml = fml.replace('&quot;', '"')
+    sAgree = " [FYL: " + str(iAgree))
+	sDeserved = " Deserved it: " + str(iDeserved) + "]"
+
+    # Put together the whole line for output
+    fml = fml + sAgree + sDserved
+    
+    fml = fml.replace('&quot;', '"')
 	fml = fml.replace('&amp;quot;', '"')
 	fml = fml.replace('&amp;', "&")
 	e.output = self.tools['decode_htmlentities'](fml)

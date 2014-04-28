@@ -273,11 +273,11 @@ class TestBot(SingleServerIRCBot):
         
         #Clean up ever-growing spam dictionary
         cleanupkeys = []
-        for key in spam:
-            if (time.time() - spam[key]['last']) > (24*3600): #anything older than 24 hours
+        for key in self.spam:
+            if (time.time() - self.spam[key]['last']) > (24*3600): #anything older than 24 hours
                 cleanupkeys.append(key)
         for key in cleanupkeys:
-            spam.pop(key)
+            self.spam.pop(key)
         #end clean up job         
             
 
@@ -293,6 +293,7 @@ class TestBot(SingleServerIRCBot):
 
         if self.spam[user]['count'] == 1:
             self.spam[user]['first'] = time.time()
+            return False
 
         if self.spam[user]['count'] > 1:
             self.spam[user]['limit'] = (self.spam[user]['count'] - 1) * 15

@@ -313,7 +313,7 @@ strava_achievements.helptext = """
                         Gets the achievements for a Ride ID"""
 
 
-def strava_extract_latest_ride(response, e, athelete_id=Null):
+def strava_extract_latest_ride(response, e, athelete_id=None):
     """ Grab the latest ride from a list of rides and gather some statistics about it """
     if response:
         recent_ride = response[0]
@@ -326,13 +326,18 @@ def strava_extract_latest_ride(response, e, athelete_id=Null):
         return "Sorry %s, no rides have been recorded yet. Remember, if it's not on Strava, it didn't happen." % (e.nick)
 
 
-def strava_ride_to_string(recent_ride, athlete_id=Null): #if the athlete ID is missing we can default to mph
+def strava_ride_to_string(recent_ride, athlete_id=None): #if the athlete ID is missing we can default to mph
     # Convert a lot of stuff we need to display the message
     moving_time = str(datetime.timedelta(seconds=recent_ride['moving_time']))
     ride_datetime = time.strptime(recent_ride['start_date_local'], "%Y-%m-%dT%H:%M:%SZ")
     time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
     
-    if strava_get_measurement_pref() == "feet" or athlete_id == Null or strava_measurement_pref() == Null:
+    if athlete_id:
+        measurement_pref = strava_get_measurement_pref(athlete_id)
+    else:
+        measurement_pref = None
+    
+    if measurement_pref == "feet" or athlete_id == None or measurement_pref == None:
 
         mph = strava_convert_meters_per_second_to_miles_per_hour(recent_ride['average_speed'])
         miles = strava_convert_meters_to_miles(recent_ride['distance'])
@@ -342,7 +347,7 @@ def strava_ride_to_string(recent_ride, athlete_id=Null): #if the athlete ID is m
         return_string = "%s near %s, %s on %s (http://www.strava.com/activities/%s)\n" % (recent_ride['name'], recent_ride['location_city'], recent_ride['location_state'], time_start, recent_ride['id'])
         return_string += "Ride Stats: %s mi in %s | %s mph average / %s mph max | %s feet climbed" % (miles, moving_time, mph, max_mph, int(feet_climbed))
         
-    elif strava_get_measurement_pref() == "meters":
+    elif measurement_pref == "meters":
         kmh = round(float(recent_ride['average_speed']) * 3.6,1) #meters per second to km/h
         km = float(recent_ride['distance']/1000,1) #meters to km
         max_kmh = round(float(recent_ride['max_speed']) * 3.6,1) #m/s to km/h
@@ -364,7 +369,7 @@ def strava_get_measurement_pref(athlete_id):
         if athlete_info:
             return athlete_info['measurement_preference']
     except:
-        return Null
+        return None
 
 def strava_get_ride_extended_info(ride_id):
     """ Get all the details about a ride. """

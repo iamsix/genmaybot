@@ -349,7 +349,7 @@ def strava_ride_to_string(recent_ride, athlete_id=None): #if the athlete ID is m
         
     elif measurement_pref == "meters":
         kmh = round(float(recent_ride['average_speed']) * 3.6,1) #meters per second to km/h
-        km = float(recent_ride['distance']/1000,1) #meters to km
+        km = round(float(recent_ride['distance']/1000),1) #meters to km
         max_kmh = round(float(recent_ride['max_speed']) * 3.6,1) #m/s to km/h
         m_climbed = recent_ride['total_elevation_gain']
     

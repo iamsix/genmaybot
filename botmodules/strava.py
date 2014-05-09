@@ -313,7 +313,7 @@ strava_achievements.helptext = """
                         Gets the achievements for a Ride ID"""
 
 
-def strava_extract_latest_ride(response, e, athelete_id=None):
+def strava_extract_latest_ride(response, e, athlete_id=None):
     """ Grab the latest ride from a list of rides and gather some statistics about it """
     if response:
         recent_ride = response[0]

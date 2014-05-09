@@ -363,7 +363,7 @@ def strava_get_measurement_pref(athlete_id):
         athlete_info = request_json("https://www.strava.com/api/v3/athletes/%s" % athlete_id)
         if athlete_info:
             return athlete_info['measurement_preference']
-    else:
+    except:
         return Null
 
 def strava_get_ride_extended_info(ride_id):

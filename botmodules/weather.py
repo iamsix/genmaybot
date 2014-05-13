@@ -144,7 +144,7 @@ def get_weather2(self, e):
                 return None
 
 get_weather2.command = "!wu"
-get_weather2.helptext = "Usage: \002!wu <location>\002" \
-                        "Example: !wu hell, mi" \
-                        "Shows weather info from wunderground.com." \
-                        "Use \002!setlocation <location>\002 to save your location"
+get_weather2.helptext = """Usage: \002!wu <location>\002
+Example: !wu hell, mi
+Shows weather info from wunderground.com.
+Use \002!setlocation <location>\002 to save your location"""

@@ -143,7 +143,7 @@ def last_link(self, e):
     #displays last link posted (requires mysql)
     conn = sqlite3.connect("links.sqlite")
     cursor = conn.cursor()
-    if (cursor.execute("SELECT url FROM links ORDER BY rowid DESC LIMIT 1")):
+    if cursor.execute("SELECT url FROM links ORDER BY rowid DESC LIMIT 1"):
         result = cursor.fetchone()
         url = result[0]
 
@@ -152,5 +152,5 @@ def last_link(self, e):
     return e
 
 last_link.command = "!lastlink"
-last_link.helptext = "Usage: !lastlink\nShows the last URL that was posted in the channel"
-
+last_link.helptext = "Usage: \002!lastlink\002" \
+                     "Shows the last URL that was posted in the channel"

@@ -2,15 +2,17 @@ import urllib.request, urllib.error, urllib.parse, urllib, xml.dom.minidom
 import json
 try:
     import botmodules.userlocation as user
-except:
+except ImportError:
+    user = None
     pass
 
 
 def set_wwokey(line, nick, self, c):
-     self.botconfig["APIkeys"]["wwoAPIkey"] = line[7:]
-     with open('genmaybot.cfg', 'w') as configfile:
-         self.botconfig.write(configfile)
+    self.botconfig["APIkeys"]["wwoAPIkey"] = line[7:]
+    with open('genmaybot.cfg', 'w') as configfile:
+        self.botconfig.write(configfile)
 set_wwokey.admincommand = "wwokey"
+
 
 def get_weather(self, e):
     # WWO weather of place specified in 'zip'
@@ -28,7 +30,7 @@ def get_weather(self, e):
         
     if location == "" and user:
         location = user.get_location(e.nick)
-        if location=="":
+        if location == "":
             get_weather.waitfor_callback=True
             user.get_geoIP_location(self, e, "", "", "", get_weather)
             
@@ -47,9 +49,9 @@ def get_weather(self, e):
     
         country = weatherdata['nearest_area'][0]['country'][0]['value']
         
-        if country=="United States Of America" or country=="Canada" or country=="USA":
+        if country == "United States Of America" or country == "Canada" or country == "USA":
             country = ""
-        elif country=="United Kingdom":
+        elif country == "United Kingdom":
             country = ", UK"
         else: 
             country = ", " + country
@@ -87,8 +89,6 @@ def get_weather(self, e):
             wind = "Wind: %s at %s mph (%s km/h) / " % (weatherdata['current_condition'][0]['winddir16Point'], weatherdata['current_condition'][0]['windspeedMiles'], weatherdata['current_condition'][0]['windspeedKmph'])
         else:
             wind = ""
-        
-        
 
         message = "{} / {} / {} / Humidity: {} / {}{}{}{}High: {} - Low: {} Outlook: {}".format(city, desc, temp, humidity, visibility, wind, cloudcover, precip, high, low, outlook)
         e.output = message
@@ -96,17 +96,21 @@ def get_weather(self, e):
     else:
         return get_weather2(self, e)
 
-get_weather.waitfor_callback=False
+get_weather.waitfor_callback = False
 get_weather.command = "!w"
-get_weather.helptext = "Usage: !w <location>\nExample: !w hell, mi\nShows weather info from google.com.\nUse !setlocation <location> to save your location"
+get_weather.helptext = """Usage: \002!w <location>\002
+Example: !w hell, mi
+Shows weather info from google.com.
+Use \002!setlocation <location>\002 to save your location"""
+
 
 def get_weather2(self, e):
-    #wunderground weather of place specified in 'zip'
-    zip = e.input
-    if zip == "" and user:
-        zip = user.get_location(e.nick)
+    #wunderground weather of place specified in 'zipcode'
+    zipcode = e.input
+    if zipcode == "" and user:
+        zipcode = user.get_location(e.nick)
 
-    url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.parse.quote(zip)
+    url = "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=" + urllib.parse.quote(zipcode)
     dom = xml.dom.minidom.parse(urllib.request.urlopen(url))
     city = dom.getElementsByTagName('display_location')[0].getElementsByTagName('full')[0].childNodes[0].data
     if city != ", ":
@@ -126,7 +130,7 @@ def get_weather2(self, e):
             humidity = ""
 
         degree_symbol = chr(176)
-        chanmsg = "%s / %s / %s%sF %s%sC / %s / %s" % (city, condition, temp_f,degree_symbol, temp_c, degree_symbol, humidity, wind)
+        chanmsg = "%s / %s / %s%sF %s%sC / %s / %s" % (city, condition, temp_f, degree_symbol, temp_c, degree_symbol, humidity, wind)
         e.output = chanmsg
         return e
     else:
@@ -140,5 +144,7 @@ def get_weather2(self, e):
                 return None
 
 get_weather2.command = "!wu"
-get_weather2.helptext = "Usage: !wu <location>\nExample: !wu hell, mi\nShows weather info from wunderground.com.\nUse !setlocation <location> to save your location"
-
+get_weather2.helptext = "Usage: \002!wu <location>\002" \
+                        "Example: !wu hell, mi" \
+                        "Shows weather info from wunderground.com." \
+                        "Use \002!setlocation <location>\002 to save your location"

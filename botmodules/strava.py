@@ -169,7 +169,7 @@ def strava_set_athlete(self, e):
             self.irccontext.privmsg(e.nick, "Sorry, that is not a valid Strava user.")
     else:
         # Bark at stupid users.
-        self.irccontext.privmsg(e.nick, "Usage: !strava-set <strava id>")
+        self.irccontext.privmsg(e.nick, "Usage: \002!strava-set <strava id>\002")
 
 
 strava_set_athlete.command = "!strava-set"
@@ -255,9 +255,9 @@ def strava_achievements(self, e):
         if ride_info:
             achievements = strava_get_ride_achievements(e.input)
             if achievements:
-                e.output = "Achievements for %s: %s" % (ride_info['name'], ', '.join(achievements))
+                e.output = "\002Achievements for %s\002: %s" % (ride_info['name'], ', '.join(achievements))
             else:
-                e.output = "There were no achievements on %s, time to harden the fuck up." % (ride_info['name'])
+                e.output = "There were no achievements on \002%s\002, time to harden the fuck up." % (ride_info['name'])
         else:
             e.output = "Sorry, that is an invalid Strava Ride ID."
     elif e.input:
@@ -272,9 +272,9 @@ def strava_achievements(self, e):
                         recent_ride = rides_response['rides'][0]
                         achievements = strava_get_ride_achievements(recent_ride['id'])
                         if achievements:
-                            e.output = "Achievements for %s: %s" % (recent_ride['name'], ', '.join(achievements))
+                            e.output = "\002Achievements for %s\002: %s" % (recent_ride['name'], ', '.join(achievements))
                         else:
-                            e.output = "There were no achievements on %s, time to harden the fuck up." % (recent_ride['name'])
+                            e.output = "There were no achievements on \002%s\002, time to harden the fuck up." % (recent_ride['name'])
                     else:
                         e.output = "%s does not have any recent achievements." % (e.input)
                 else:
@@ -293,9 +293,9 @@ def strava_achievements(self, e):
                     recent_ride = rides_response['rides'][0]
                     achievements = strava_get_ride_achievements(recent_ride['id'])
                     if achievements:
-                        e.output = "Achievements for %s: %s" % (recent_ride['name'], ', '.join(achievements))
+                        e.output = "\002Achievements for %s\002: %s" % (recent_ride['name'], ', '.join(achievements))
                     else:
-                        e.output = "There were no achievements on %s, time to harden the fuck up." % (recent_ride['name'])
+                        e.output = "There were no achievements on \002%s\002, time to harden the fuck up." % (recent_ride['name'])
                 else:
                     e.output = "You do not have any recent achievements."
             else:

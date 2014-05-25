@@ -74,17 +74,13 @@ def google_sun(self, location, sun, nick):
     response = urllib.request.urlopen(request).read().decode('utf-8')
     
 
-    m = re.search('(-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( -\s*\<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
+    m = re.search('(vk_bk vk_ans\"\> )(.*?)( \<\/div\>\s+)(.*?)(\s*? \<\/div\> )',response)
     
     try:
       settime = m.group(2)
-      setday = m.group(4)
-      setday = re.sub("\s+"," ",setday)
-      setword = m.group(6)
-      setcity = m.group(8)
-      settimeword = m.group(10)
-      
-      result = "%s in %s: %s %s (%s)" % (sun, setcity,settime,setday,settimeword)
+      setlocation = m.group(4)
+
+      result = "%s: %s" % (setlocation, settime)
    
       #print result
     except:

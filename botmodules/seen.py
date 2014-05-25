@@ -8,7 +8,10 @@ def __init__(self):
     c = conn.cursor()
     result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='seen';").fetchone()
     if not result:
-        c.execute('create table seen(nick text UNIQUE ON CONFLICT REPLACE, lastline text, channel text, '
+        c.execute('create table seen('
+                  'nick text UNIQUE ON CONFLICT REPLACE, '
+                  'lastline text, '
+                  'channel text, '
                   'ts NOT NULL default CURRENT_TIMESTAMP)')
 
     conn.commit()
@@ -32,11 +35,17 @@ def seen(self, e):
         e.output = "Only you can find yourself."
     elif e.input.lower() == e.botnick.lower():
         e.output = "I'm right here."
+    elif " " in e.input:
+        e.output = "1 nick only! no spaming -.-"
     else:
         conn = sqlite3.connect('seen.sqlite')
         c = conn.cursor()
-        result = c.execute("SELECT nick, lastline, channel, ts FROM "
-                           "seen WHERE lower(nick) = lower(?)", [e.input]).fetchone()
+        if e.input != "*":
+            result = c.execute("SELECT nick, lastline, channel, ts FROM "
+                               "seen WHERE lower(nick) = lower(?)", [e.input]).fetchone()
+        else:
+            result = c.execute("SELECT nick, lastline, channel, ts FROM "
+                               "seen ORDER BY ts DESC LIMIT 1").fetchone()
         if result:
             ago = datetime.datetime.utcnow() - datetime.datetime.strptime(result[3], "%Y-%m-%d %H:%M:%S")
             ago = self.tools['prettytimedelta'](ago)

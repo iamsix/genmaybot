@@ -1,4 +1,4 @@
-import urllib.request, urllib.error, urllib.parse, urllib, re, botmodules.tools as tools
+import urllib.request, urllib.error, urllib.parse, urllib, re, botmodules.tools as tools, time
 try: import botmodules.userlocation as user
 except: pass
 
@@ -79,6 +79,10 @@ def google_sun(self, location, sun, nick):
     try:
       settime = m.group(2)
       setlocation = m.group(4)
+
+      #add math to calculate how long ago or how long until
+      #miltime = time.strftime("%H:%M",time.strptime(settime,"%I:%M %p"))
+
 
       result = "%s: %s" % (setlocation, settime)
    

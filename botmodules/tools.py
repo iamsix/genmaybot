@@ -2,6 +2,7 @@ import re, urllib.request, urllib.error, urllib.parse, urllib, json, traceback
 from html.entities import name2codepoint as n2cp
 from bs4 import BeautifulSoup
 import encodings.idna
+import datetime
 
 
 def decode_htmlentities(string):
@@ -122,3 +123,25 @@ def fixurl(url):
     # put it back together
     netloc = ''.join((host, colon2, port))
     return urllib.parse.urlunsplit((scheme, netloc, path, query, fragment))
+
+
+def prettytimedelta(td):
+    seconds = int(td.total_seconds())
+    periods = [('year',        60*60*24*365),
+               ('month',       60*60*24*30),
+               ('day',         60*60*24),
+               ('hour',        60*60),
+               ('minute',      60),
+               ('second',      1)
+               ]
+
+    strings = []
+    for period_name, period_seconds in periods:
+        if seconds > period_seconds:
+            period_value, seconds = divmod(seconds, period_seconds)
+            if period_value == 1:
+                strings.append("%s %s" % (period_value, period_name))
+            else:
+                strings.append("%s %ss" % (period_value, period_name))
+
+    return ", ".join(strings)

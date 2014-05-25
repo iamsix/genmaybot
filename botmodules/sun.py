@@ -67,7 +67,7 @@ def google_sun(self, location, sun, nick):
     if location == "" and user:
        location = user.get_location(nick)
     location = urllib.parse.quote(location)
-    url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, location)
+    url = "https://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, location)
     request = urllib.request.Request(url, None, {})
     request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
     request.add_header('Range', "bytes=0-40960")

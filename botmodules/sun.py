@@ -1,4 +1,4 @@
-import urllib.request, urllib.error, urllib.parse, urllib, re, botmodules.tools as tools
+import urllib.request, urllib.error, urllib.parse, urllib, re, botmodules.tools as tools, time
 try: import botmodules.userlocation as user
 except: pass
 
@@ -67,24 +67,24 @@ def google_sun(self, location, sun, nick):
     if location == "" and user:
        location = user.get_location(nick)
     location = urllib.parse.quote(location)
-    url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, location)
+    url = "https://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, location)
     request = urllib.request.Request(url, None, {})
     request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
     request.add_header('Range', "bytes=0-40960")
     response = urllib.request.urlopen(request).read().decode('utf-8')
     
 
-    m = re.search('(-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( -\s*\<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
+    m = re.search('(vk_bk vk_ans\"\> )(.*?)( \<\/div\>\s+)(.*?)(\s*? \<\/div\> )',response)
     
     try:
       settime = m.group(2)
-      setday = m.group(4)
-      setday = re.sub("\s+"," ",setday)
-      setword = m.group(6)
-      setcity = m.group(8)
-      settimeword = m.group(10)
-      
-      result = "%s in %s: %s %s (%s)" % (sun, setcity,settime,setday,settimeword)
+      setlocation = m.group(4)
+
+      #add math to calculate how long ago or how long until
+      #miltime = time.strftime("%H:%M",time.strptime(settime,"%I:%M %p"))
+
+
+      result = "%s: %s" % (setlocation, settime)
    
       #print result
     except:

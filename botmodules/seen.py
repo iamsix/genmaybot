@@ -104,6 +104,7 @@ def whomentioned(self, e):
         e.output = "No one has mentioned {}".format(e.input)
 
     c.close()
+    e.source = e.nick
     e.notice = True
     return e
 whomentioned.command = "!whopaged"

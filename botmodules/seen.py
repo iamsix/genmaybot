@@ -14,6 +14,15 @@ def __init__(self):
                   'channel text, '
                   'ts NOT NULL default CURRENT_TIMESTAMP)')
 
+    result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='mentions';").fetchone()
+    if not result:
+        c.execute('create table mentions('
+                  'mentioned text UNIQUE ON CONFLICT REPLACE, '
+                  'mentioner text, '
+                  'line text, '
+                  'channel text, '
+                  'ts NOT NULL default CURRENT_TIMESTAMP)')
+
     conn.commit()
     c.close()
 
@@ -24,6 +33,14 @@ def seenlineparser(self, e):
         conn = sqlite3.connect('seen.sqlite')
         c = conn.cursor()
         c.execute("INSERT INTO seen(nick, lastline, channel) VALUES (?,?,?)", (e.nick, e.input, e.source))
+
+        for chan in self.channels:
+            for user in self.channels[chan].users():
+                if user.lower() in e.input.lower():
+                    c.execute("INSERT INTO mentions"
+                              "(mentioned, mentioner, line, channel) "
+                              "VALUES (?,?,?,?)", (user, e.nick, e.input, e.source))
+
         conn.commit()
         c.close()
 seenlineparser.lineparser = True
@@ -61,3 +78,35 @@ def seen(self, e):
     return e
 
 seen.command = "!seen"
+seen.helptext = """\
+Usage: !seen <nick>
+Example: !seen jeffers
+Shows the last line the <nick> said and how long ago"""
+
+
+def whomentioned(self, e):
+    if not e.input:
+        e.input = e.nick
+
+    conn = sqlite3.connect('seen.sqlite')
+    c = conn.cursor()
+    result = c.execute("SELECT mentioner, line, channel, ts FROM "
+                       "mentions WHERE lower(mentioned) == lower(?)  ORDER BY ts DESC LIMIT 1", [e.input]).fetchone()
+    if result:
+        ago = datetime.datetime.utcnow() - datetime.datetime.strptime(result[3], "%Y-%m-%d %H:%M:%S")
+        ago = self.tools['prettytimedelta'](ago)
+        if not ago:
+            ago = "just now"
+        else:
+            ago += " ago"
+        e.output = '{} in {} :: <{}> {}'.format(ago, result[2], result[0], result[1])
+    else:
+        e.output = "No one has mentioned {}".format(e.input)
+
+    c.close()
+    return e
+whomentioned.command = "!whopaged"
+whomentioned.helptext = """\
+Usage: !whopaged [Optional nick]
+Example: !whopaged jeffers
+Shows the last line where someone mentioned the given name. If nick isn't supplied it checks your nick."""

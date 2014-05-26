@@ -21,7 +21,6 @@ def get_weather(self, e):
     #This callback handling code should be able to be reused in any other function
     if get_weather.waitfor_callback:
         return
-    
 
     try:
         location = e.location

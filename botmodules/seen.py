@@ -99,7 +99,7 @@ def whomentioned(self, e):
             ago = "just now"
         else:
             ago += " ago"
-        e.output = '{} in {} :: <{}> {}'.format(ago, result[2], result[0], result[1])
+        e.output = '{} :: <{}> {} in {}'.format(ago, result[0], result[1], result[2])
     else:
         e.output = "No one has mentioned {}".format(e.input)
 

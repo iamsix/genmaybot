@@ -1,5 +1,5 @@
 import urllib.request
-import xml.etree.ElementTree as ET
+import xml.dom.minidom
 
 def metar(self, e):
   station = e.input.split(' ')[0]
@@ -7,8 +7,8 @@ def metar(self, e):
   + 'dataSource=metars&requestType=retrieve&format=xml&stationString=' \
   + station \
   + '&hoursBeforeNow=2&mostRecent=true'
-  xml =  xml.dom.minidom.parse(urllib.request.urlopen(url))
-  e.output = xml.getElementsByTagName('raw_text')[0].data
+  dom =  xml.dom.minidom.parse(urllib.request.urlopen(url))
+  e.output = dom.getElementsByTagName('raw_text')[0].data
   return e
   
 metar.command = '!metar'

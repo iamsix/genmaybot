@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 def metar(self, e):
   station = e.input.split(' ')[0]
-  url = 'https://aviationweather.gov/adds/dataserver_current/httpparam?' \
+  url = 'http://aviationweather.gov/adds/dataserver_current/httpparam?' \
   + 'dataSource=metars&requestType=retrieve&format=xml&stationString=' \
   + station \
   + '&hoursBeforeNow=2&mostRecent=true'

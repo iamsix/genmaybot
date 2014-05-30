@@ -8,7 +8,7 @@ def metar(self, e):
   + station \
   + '&hoursBeforeNow=2&mostRecent=true'
   response = urllib.request.urlopen(url)
-  xml = ET.parse(response)
+  xml = ET.parse(response.read())
   print(url)
   print(response)
   print(xml)

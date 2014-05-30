@@ -7,12 +7,8 @@ def metar(self, e):
   + 'dataSource=metars&requestType=retrieve&format=xml&stationString=' \
   + station \
   + '&hoursBeforeNow=2&mostRecent=true'
-  response = urllib.request.urlopen(url)
-  xml = ET.parse(response.read())
-  print(url)
-  print(response)
-  print(xml)
-  e.output = xml.getroot().find('raw_text').text
+  xml =  xml.dom.minidom.parse(urllib.request.urlopen(url))
+  e.output = xml.getElementsByTagName('raw_text')[0].data
   return e
   
 metar.command = '!metar'

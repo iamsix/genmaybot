@@ -4,6 +4,7 @@ import urllib.request
 import json
 import datetime
 import time
+import cherrypy
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
@@ -16,6 +17,18 @@ def set_stravatoken(line, nick, self, c):
          self.botconfig.write(configfile)
 set_stravatoken.admincommand = "stravatoken"
 
+
+def set_stravaclientid(line, nick, self, c):
+     self.botconfig["APIkeys"]["stravaClientId"] = line[12:]
+     with open('genmaybot.cfg', 'w') as configfile:
+         self.botconfig.write(configfile)
+set_stravaclientid.admincommand = "stravaclientid"
+
+def set_stravaclientsecret(line, nick, self, c):
+     self.botconfig["APIkeys"]["stravaClientSecret"] = line[12:]
+     with open('genmaybot.cfg', 'w') as configfile:
+         self.botconfig.write(configfile)
+set_stravaclientsecret.admincommand = "stravaclientsecret"
 
 def __init__(self):
     """ On init, read the token to a variable, then do a system check which runs upgrades and creates tables. """
@@ -91,7 +104,8 @@ def strava_check_create_tables():
     c = conn.cursor()
     tables = {
         'version': "CREATE TABLE version (version_field TEXT, version_number INTEGER)",
-        'athletes': "CREATE TABLE athletes (user TEXT UNIQUE ON CONFLICT REPLACE, strava_id TEXT)"
+        'athletes': "CREATE TABLE athletes (user TEXT UNIQUE ON CONFLICT REPLACE, strava_id TEXT)",
+        'tokens': "CREATE TABLE tokens (user TEXT UNIQUE ON CONFLICT REPLACE, token TEXT)"
     }
     # Go through each table and check if it exists, if it doesn't, run the SQL statement to create it.
     for (table_name, sql_statement) in tables.items():
@@ -114,13 +128,47 @@ def strava_insert_athlete(nick, athlete_id):
 
 
 def strava_delete_athlete(nick, athlete_id):
-    """ Delete a user's strava id from the athletestable """
+    """ Delete a user's strava id from the athletes table """
     conn = sqlite3.connect('strava.sqlite')
     c = conn.cursor()
     query = "DELETE FROM athletes WHERE user = :user AND strava_id = :strava_id"
     c.execute(query, {'user': nick, 'strava_id': athlete_id})
     conn.commit()
     c.close()
+
+
+def strava_insert_token(nick, token):
+    """ Insert a user's strava token into the token table """
+    conn = sqlite3.connect('strava.sqlite')
+    c = conn.cursor()
+    query = "INSERT INTO tokens VALUES (:user, :token)"
+    c.execute(query, {'user': nick, 'token': token})
+    conn.commit()
+    c.close()
+
+
+def strava_delete_token(nick, token):
+    """ Delete a user's token from the token table """
+    conn = sqlite3.connect('strava.sqlite')
+    c = conn.cursor()
+    query = "DELETE FROM tokens WHERE user = :user AND token = :token"
+    c.execute(query, {'user': nick, 'token': token})
+    conn.commit()
+    c.close()
+
+
+def strava_get_token(nick):
+    """ Get an token by user """
+    conn = sqlite3.connect('strava.sqlite')
+    c = conn.cursor()
+    query = "SELECT token FROM tokens WHERE UPPER(user) = UPPER(?)"
+    result = c.execute(query, [nick]).fetchone()
+    if (result):
+        c.close()
+        return result[0]
+    else:
+        c.close()
+        return False
 
 
 def strava_get_athlete(nick):
@@ -469,3 +517,9 @@ def strava_convert_meters_to_feet(meters):
     """ Convert meters to feet. """
     feet = 3.28084 * float(meters)
     return round(feet, 1)
+
+@cherrypy.expose
+def strava_callback(self):
+    return """
+    Awww yeah, nuts in the butts!
+    """

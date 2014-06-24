@@ -72,11 +72,11 @@ get_geoIP_location.callback = None
 get_geoIP_location.helptext = "Looks up your IP address and attempts to return a location based on it."
 
 def get_geoIP(ip):
-    location = get_geoIP_netimpact(ip)
+    location = get_geoIP_free(ip)
     if location:
         return location
     #import pdb; pdb.set_trace()
-    location = get_geoIP_free(ip)
+    location = get_geoIP_netimpact(ip)
     if location:
         return location
 

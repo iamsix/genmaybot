@@ -2,12 +2,6 @@ from botmodules.chatterbotapi import ChatterBotFactory, ChatterBotType
 import re
 
 
-def __init__(self):
-    from imp import reload
-    reload(ChatterBotFactory)
-    reload(ChatterBotType)
-
-
 def chatter(self, e):
     botnick = e.botnick.lower()
 

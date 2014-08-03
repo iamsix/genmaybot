@@ -23,6 +23,7 @@ def __init__(self):
                   'channel text, '
                   'ts NOT NULL default CURRENT_TIMESTAMP)')
 
+    c.execute("UPDATE seen SET nick=lower(nick)")
     conn.commit()
     c.close()
 

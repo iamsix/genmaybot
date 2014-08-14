@@ -126,8 +126,9 @@ def list_stock(nick,public):
 			
 			portfolio_day_gain+=days_gain
 			
-			cur_value+=(stock[2]*float(stock_price)
+			cur_value+=(stock[2]*float(stock_price))
 			stock_gain=float(stock_price)-stock[3]
+			
 			if (stock[3] > 0):
 				stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
 			else:

@@ -130,7 +130,7 @@ def list_stock(nick,public):
 			
 	
 			
-			days_gain = "%0.2f (%s)" % (days_gain, day_gain_pct)
+			days_gain = "%0.2f (%s)" % (days_gain, day_gain_pct[1:-1])
 			
 			cur_value+=(stock[2]*float(stock_price))
 			stock_gain=float(stock_price)-stock[3]

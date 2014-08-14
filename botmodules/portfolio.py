@@ -1,4 +1,4 @@
-import sqlite3, locale, urllib.request, urllib.error, urllib.parse
+import sqlite3, locale, urllib.request, urllib.error, urllib.parse, pdb
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -110,7 +110,7 @@ def list_stock(nick,public):
 	conn.close()
 	
 	return_line="%s%s%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price".center(15),"Change".center(18),"Day's Gain".center(15))
-	
+
 	if result:
 		for stock in result:
 			stocks.append(stock[1])
@@ -122,7 +122,7 @@ def list_stock(nick,public):
 			init_value+=(stock[2]*stock[3])
 			stock_price, day_gain = stock_prices[id_counter].split(',')
 			
-			days_gain = round(day_gain*float(stock[2]),2)
+			days_gain = round(float(day_gain)*float(stock[2]),2)
 			
 			portfolio_day_gain+=days_gain
 			
@@ -136,7 +136,7 @@ def list_stock(nick,public):
 			
 			stockgainpct = "%0.2f (%0.2f%%)" % (stock_gain, stock_perc_gain)
 						
-			return_line += "%s%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_price).center(15),stockgainpct.center(18),days_gain.center(15))
+			return_line += "%s%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_price).center(15),stockgainpct.center(18),str(days_gain).center(15))
 			id_counter+=1
 		
 		portfolio_gain = round(cur_value-init_value,2)

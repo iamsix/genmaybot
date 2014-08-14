@@ -121,7 +121,7 @@ def list_stock(nick,public):
 		
 		for stock in result:
 			init_value+=(stock[2]*stock[3])
-			pdb.set_trace()
+
 			stock_price, day_gain, day_gain_pct = stock_prices[id_counter].split(',')
 			
 			days_gain = round(float(day_gain)*float(stock[2]),2)

@@ -98,7 +98,6 @@ def list_stock(nick,public):
 	portfolio_gain=0
 	portfolio_perc_gain=0
 	portfolio_day_gain = 0
-	portfolio_day_gain_pct = 0
 	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
@@ -127,7 +126,7 @@ def list_stock(nick,public):
 			days_gain = round(float(day_gain)*float(stock[2]),2)
 			
 			portfolio_day_gain+=days_gain
-			portfolio_day_gain_pct+=float(day_gain_pct[1:-2])
+			
 			
 	
 			
@@ -148,7 +147,7 @@ def list_stock(nick,public):
 		
 		portfolio_gain = round(cur_value-init_value,2)
 		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
-		portfolio_day_gain = "%0.2f (%0.2f%%)" % (portfolio_day_gain, portfolio_day_gain_pct)
+		portfolio_day_gain = "%0.2f" % (portfolio_day_gain)
 		
 		return_line+=" "*80+"\n"
 		

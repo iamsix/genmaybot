@@ -98,6 +98,7 @@ def list_stock(nick,public):
 	portfolio_gain=0
 	portfolio_perc_gain=0
 	portfolio_day_gain = 0
+	portfolio_day_gain_pct = 0
 	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
@@ -120,11 +121,17 @@ def list_stock(nick,public):
 		
 		for stock in result:
 			init_value+=(stock[2]*stock[3])
-			stock_price, day_gain = stock_prices[id_counter].split(',')
+			pdb.set_trace()
+			stock_price, day_gain, day_gain_pct = stock_prices[id_counter].split(',')
 			
 			days_gain = round(float(day_gain)*float(stock[2]),2)
 			
 			portfolio_day_gain+=days_gain
+			portfolio_day_gain_pct+=float(day_gain_pct[1:-2])
+			
+	
+			
+			days_gain = "%0.2f (%s)" % (days_gain, day_gain_pct)
 			
 			cur_value+=(stock[2]*float(stock_price))
 			stock_gain=float(stock_price)-stock[3]
@@ -141,15 +148,15 @@ def list_stock(nick,public):
 		
 		portfolio_gain = round(cur_value-init_value,2)
 		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
-		
+		portfolio_day_gain = "%0.2f (%0.2f%%)" % (portfolio_day_gain, portfolio_day_gain_pct)
 		
 		return_line+=" "*80+"\n"
 		
 		##only output the value line in a channel, everything else if asked in pm
 		if public:
-			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %0.2f" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
+			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %s" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
 		else:
-			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %0.2f" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
+			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %s" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
 		
 		return return_line
 	else: 
@@ -165,7 +172,7 @@ def get_stocks_prices(stocks):## pass in a list or tuple or a single string
 	if type(stocks) is not str:
 		stocks = "+".join(stocks)
 	
-	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1" % stocks)
+	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1p2" % stocks)
 	quote = pagetmp.read(1024).decode("utf-8")
 
 	return quote.split("\r\n")

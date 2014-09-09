@@ -90,7 +90,7 @@ def url_posted(self, e):
             title = trope.output
     except:
         pass
-    if url.find("imgur.com") != -1 and url.find("/a/") == -1:
+    if url.find("imgur.com") != -1 and url.find("/a/") == -1 and "/gallery/" not in url:
         imgurid = url[url.rfind('/') + 1:]
         if "." in imgurid:
             imgurid = imgurid[:imgurid.rfind('.')]

@@ -48,6 +48,7 @@ def get_wolfram(self, e):
                 result = self.bangcommands["!error"](self, e).output
 
             output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
+            output = output.replace("\\:", "\\u").encode().decode('unicode-escape')
             e.output = output
             return e
         except Exception as inst:

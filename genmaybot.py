@@ -271,7 +271,9 @@ class TestBot(SingleServerIRCBot):
             return True
 
     def isspam(self, user, nick):
-        
+        #Set the number of allowed lines to whatever is in the .cfg file
+        allow_lines = int(self.botconfig['irc']['spam_protect_lines'])
+
         #Clean up ever-growing spam dictionary
         cleanupkeys = []
         for key in self.spam:
@@ -279,24 +281,24 @@ class TestBot(SingleServerIRCBot):
                 cleanupkeys.append(key)
         for key in cleanupkeys:
             self.spam.pop(key)
-        #end clean up job         
-            
+        #end clean up job
+
 
         if not (user in self.spam):
             self.spam[user] = {}
             self.spam[user]['count'] = 0
             self.spam[user]['last'] = 0
             self.spam[user]['first'] = 0
-            self.spam[user]['limit'] = 15
+            self.spam[user]['limit'] = 30
 
         self.spam[user]['count'] += 1
         self.spam[user]['last'] = time.time()
 
-        if self.spam[user]['count'] == 1:
+        if self.spam[user]['count'] <= allow_lines:
             self.spam[user]['first'] = time.time()
             return False
 
-        if self.spam[user]['count'] > 1:
+        if self.spam[user]['count'] > allow_lines:
             self.spam[user]['limit'] = (self.spam[user]['count'] - 1) * 15
 
             if not ((self.spam[user]['last'] - self.spam[user]['first']) > self.spam[user]['limit']):
@@ -305,9 +307,10 @@ class TestBot(SingleServerIRCBot):
                 return True
             else:
                 self.spam[user]['first'] = 0
-                self.spam[user]['count'] = 0
-                self.spam[user]['limit'] = 15
+                self.spam[user]['count'] = 1
+                self.spam[user]['limit'] = 30
                 return False
+
 
     def alerts(self, context):
         try:

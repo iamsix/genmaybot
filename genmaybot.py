@@ -41,6 +41,9 @@ class TestBot(SingleServerIRCBot):
         self.load_config()
         print(self.loadmodules())
 
+        self.keepalive_nick = "OperServ"
+        self.alive = True
+
     def load_config(self):
         config = configparser.ConfigParser()
         try:
@@ -77,13 +80,42 @@ class TestBot(SingleServerIRCBot):
         self.alerts(c)
         self.irccontext = c
         c.who(c.get_nickname())
+
+        self.last_keepalive = time.time()
+
+        self.keepalive(c)       
         
-       
-    
     def on_youreoper(self, c, e):
         print ("I'm an IRCop bitches!")
         
     
+    def on_ison(self,c,e):
+
+        ison_reply = e.arguments()[0][:-1] #strip out extraneous space at the end
+
+        #print ("Got ISON reply: %s" % e.arguments()[0])
+        
+        if ison_reply == self.keepalive_nick:
+            self.last_keepalive = time.time()
+            self.alive = True
+    
+    def keepalive(self, irc_context):
+        if time.time() - self.last_keepalive > 90:
+            if not self.alive:
+                print ("%s: I think we are dead, reconnecting."  % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
+                self.jump_server()     
+                return
+            print ("%s: Keepalive reply not received, sending request" % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
+            # Send ISON command on configured nick 
+            irc_context.ison(self.keepalive_nick)
+            self.alive = False
+        else:
+            #print ("%s: Waiting to send keepalive request" % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
+            pass
+	
+        self.keepaliveTimer = threading.Timer(30, self.keepalive, [irc_context])
+        self.keepaliveTimer.start()
+
     def on_whoishostline(self, c, e):
          try:
             
@@ -192,7 +224,6 @@ class TestBot(SingleServerIRCBot):
         try:
             if botevent.output:
                 for line in botevent.output.split("\n"):
-                    line = self.tools['decode_htmlentities'](line)
                     if botevent.notice:
                         self.irccontext.notice(botevent.source, line)
                     else:
@@ -310,7 +341,6 @@ class TestBot(SingleServerIRCBot):
                 self.spam[user]['count'] = 1
                 self.spam[user]['limit'] = 30
                 return False
-
 
     def alerts(self, context):
         try:

@@ -1,51 +1,35 @@
 import datetime, urllib.request
 import xml.etree.ElementTree as ET
+import json
 
 def get_nhl_live_games(self, e, webCall=False):
-    url = "http://feeds.cdnak.neulion.com/fs/nhl/mobile/feeds/data/%s.xml" % (datetime.date.today().strftime("%Y%m%d"))
-    games = ET.parse(urllib.request.urlopen(url)).getroot().getchildren()
-    
-    gamestext = "" 
-    
-    for game in games:
-        gametext = ""
-        try:
-            awayteam = game.findtext('away-team/name')
-            hometeam = game.findtext('home-team/name')
-            
-            state = game.findtext('game-state')
-            
-            if state == "LIVE":       
-                progress = game.findtext('progress-time')
-            elif state =="": #If the game hasn't started yet, get and show the start time
-                starttime = game.findtext('eastern-start-time')
-                if datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S").minute == 0:
-                    starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I %p Eastern")
-                else:
-                    starttime = datetime.datetime.strftime(datetime.datetime.strptime(starttime,"%m/%d/%Y %H:%M:%S"), "Starts %-I:%M %p Eastern")
-                gametext = "%s - %s (%s)" % (awayteam, hometeam, starttime)
-                if gametext != "":
-                    gamestext += gametext + " | " 
-                continue
-            else:
-                progress = state
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    url = "http://live.nhle.com/GameData/GCScoreboard/{}.jsonp".format(today)
+    request = urllib.request.urlopen(url)
+    data = request.read().decode()[15:-2]
+    data = json.loads(data)
 
-            scoreaway = game.findtext('away-team/goals')
-            scorehome = game.findtext('home-team/goals')
-            
-            gametext = "%s %s - %s %s (%s)" % (awayteam, scoreaway, scorehome, hometeam, progress)
-            if gametext != "":
-                gamestext += gametext + " | " 
-        except:
-            pass
+    games = []
+    for game in data['games']:
+        if not game['bsc']:
+            gametxt = "{} - {} (Starts {} EST)".format(game['atcommon'].title(),
+                                                       game['htcommon'].title(),
+                                                       game['bs'])
+        else:
+            gametxt = "{} {} - {} {} ({})".format(game['atcommon'].title(),
+                                                  game['ats'],
+                                                  game['htcommon'].title(),
+                                                  game['hts'],
+                                                  game['bs'])
 
 
-    gamestext = gamestext[0:-3]
+        games.append(gametxt)
+
     
     if webCall:
-        return gamestext
+        return " | ".join(games)
     
-    e.output = gamestext
+    e.output = " | ".join(games)
     return e
 
 get_nhl_live_games.command = "!nhl"

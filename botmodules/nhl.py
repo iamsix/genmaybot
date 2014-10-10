@@ -1,5 +1,4 @@
 import datetime, urllib.request
-import xml.etree.ElementTree as ET
 import json
 
 def get_nhl_live_games(self, e, webCall=False):
@@ -18,8 +17,8 @@ def get_nhl_live_games(self, e, webCall=False):
         else:
             gametxt = "{} {} - {} {} ({})".format(game['atcommon'].title(),
                                                   game['ats'],
-                                                  game['htcommon'].title(),
                                                   game['hts'],
+                                                  game['htcommon'].title(),
                                                   game['bs'])
         games.append(gametxt)
 

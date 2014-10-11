@@ -11,7 +11,7 @@ def get_nhl_live_games(self, e, webCall=False):
     games = []
     for game in data['games']:
         if not game['bsc']:
-            gametxt = "{} - {} (Starts {} EST)".format(game['atcommon'].title(),
+            gametxt = "{} - {} ({} ET)".format(game['atcommon'].title(),
                                                        game['htcommon'].title(),
                                                        game['bs'])
         else:

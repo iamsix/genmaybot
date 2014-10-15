@@ -2,7 +2,10 @@ import datetime, urllib.request
 import json
 
 def get_nhl_live_games(self, e, webCall=False):
-    today = datetime.date.today().strftime("%Y-%m-%d")
+    if e.input:
+        today = e.input
+    else:
+        today = datetime.date.today().strftime("%Y-%m-%d")
     url = "http://live.nhle.com/GameData/GCScoreboard/{}.jsonp".format(today)
     request = urllib.request.urlopen(url)
     data = request.read().decode()[15:-2]

@@ -149,7 +149,7 @@ nouns = ["action-items", "applications", "architectures", "bandwidth", "channels
 "web services"]
 
 
-def wfl(self, e)
+def wfl(self, e):
     descriptives = ["Stewed", "Broiled", "Sauteed", "Steamed", "Baked", "Toasted", "Grilled", "Peeled", 
     "Barbecued", "Flame-broiled", "Aged", "Fermented", "Spiced", "Spicy", "Hot", "Chilled", "Salted", "Stuffed", 
     "Sweet and Sour", "Creamy", "Dried", "Roasted", "Dry-roasted", "Pan-fried", "Deep-fried", "Savory", "Sweet", 

@@ -64,7 +64,7 @@ def get_redditpics(url):
     cats = json.loads(response.decode('utf-8'))
     catlist = []
     for cat in cats['data']['children']:
-        if 'jpg' in cat['data']['url'] or 'imgur.com' in cat['data']['url']:
+        if 'jpg' in cat['data']['url'] or 'imgur.com' in cat['data']['url'] or 'gfycat.com' in cat['data']['url']:
             pic_title = cat['data']['title']
             pic_title = pic_title.replace('\n', '')
             catlist.append(cat['data']['url'] + " - " + pic_title)

@@ -220,5 +220,5 @@ def generateblehs():
         output = "%s%s" % (output, "e")
         output = "%s%s" % (output, "ee" if random.randint(0, 5) == 0 else "e")
     output = output = "h"
-return output
+    return output
 

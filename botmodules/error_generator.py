@@ -214,10 +214,10 @@ cactus.command = "!cactus"
     
     
 def generateblehs():
-    output = "bl"
+    output = ""
     rand = random.randint(2, 10)
     for n in range(0, rand):
         output = output + "ee" if random.randint(0, 5) == 0 else "e"
-    output = output = "h"
+    output = "bl" + output + "h"
     return output
 

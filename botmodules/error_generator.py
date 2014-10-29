@@ -217,8 +217,7 @@ def generateblehs():
     output = "bl"
     rand = random.randint(2, 10)
     for n in range(0, rand):
-        output = "%s%s" % (output, "e")
-        output = "%s%s" % (output, "ee" if random.randint(0, 5) == 0 else "e")
+        output = output + "ee" if random.randint(0, 5) == 0 else "e"
     output = output = "h"
     return output
 

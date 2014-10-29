@@ -198,3 +198,27 @@ def wfl(self, e):
     return e
 wfl.command = "!wfl"
 wfl.helptext = "Decides what's for lunch"
+
+def cactus(self, e):
+    if (e.nick.lower().startswith('rc')):
+        e.output = "bleh"
+        return e
+    bleh = generateblehs()
+    if (e.nick.lower().startswith('cact')):
+        e.output = "<%s> !cactus\n^\n%s" % (e.nick, bleh)
+    else:
+        e.output = bleh
+
+    return e
+cactus.command = "!cactus"
+    
+    
+def generateblehs():
+    output = "bl"
+    rand = random.randint(2, 10)
+    for n in range(0, rand):
+        output = "%s%s" % (output, "e")
+        output = "%s%s" % (output, "ee" if random.randint(0, 5) == 0 else "e")
+    output = output = "h"
+return output
+

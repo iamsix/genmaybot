@@ -1,4 +1,5 @@
 import urllib.parse
+import re
 
 
 def get_urbandictionary(self, e):

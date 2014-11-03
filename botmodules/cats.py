@@ -68,7 +68,7 @@ def get_redditpics(url):
             pic_title = cat['data']['title']
             pic_title = pic_title.replace('\n', '')
             if cat['data']['over_18']:
-                pic_title = pic_title + " \002NSFW\002"
+                pic_title = "\002NSFW\002 " + pic_title 
             catlist.append(cat['data']['url'] + " - " + pic_title)
 
 

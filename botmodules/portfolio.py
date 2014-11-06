@@ -1,4 +1,4 @@
-import sqlite3, locale, urllib.request, urllib.error, urllib.parse, pdb
+import sqlite3, locale, urllib.request, urllib.error, urllib.parse, pdb, re
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -76,7 +76,12 @@ def add_stock(nick,stock,numshares,pricepaid):
 def del_stock(nick, stock_rowid):
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
-	result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
+	row_format = re.compile("^[1-9]+$")
+	isnumber = re.match(num_format,stock_rowid)
+	if isnumber:
+		result = c.execute("DELETE FROM portfolios WHERE user = ? AND rowid = ?", [nick, stock_rowid]).rowcount
+	else:
+		result = c.execute("DELETE FROM portfolios WHERE user = ? AND stock = ?", [nick, stock_rowid]).rowcount
 	conn.commit()
 	conn.close()
 	

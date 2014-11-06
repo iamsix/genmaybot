@@ -122,7 +122,8 @@ def list_stock(nick,public):
 			init_value+=(stock[2]*stock[3])
 
 			stock_price, day_gain, day_gain_pct = stock_prices[id_counter].split(',')
-			
+			if stock_price == 0:
+				continue
 			days_gain = round(float(day_gain)*float(stock[2]),2)
 			
 			portfolio_day_gain+=days_gain

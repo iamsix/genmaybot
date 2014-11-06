@@ -54,7 +54,7 @@ def add_stock(nick,stock,numshares,pricepaid):
 	if not result:
 		c.execute('''create table portfolios(user text, stock text, numshares real, pricepaid real)''')
 
-	if get_stocks_prices(stock)[0] == "0.00":
+	if get_stocks_prices(stock)[0][0:4] == "0.00":
 		return "Incorrect ticker symbol. Fix it and try again."
 	
 	try:

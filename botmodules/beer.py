@@ -14,7 +14,7 @@ def advocate_beer(self, e):
 
     grade = beerpage.find("span", {"class": "BAscore_big"}).string
     grade_wording = beerpage.find("a", href="/community/threads/beeradvocate-ratings-explained.184726/").b.string
-    num_reviews = beerpage.find(text=re.compile("[0-9]+ Ratings"))
+    num_reviews = beerpage.find("span", {"class": "ba-ratings"}).string + " Ratings"
     style = beerpage.find("a", href=re.compile("/beer/style/[0-9]+/")).b.string
     abv = beerpage.find("a", href=re.compile("/beer/style/[0-9]+/")).next_sibling.replace("|", "").strip()
 

@@ -31,7 +31,7 @@ def read_timeline (user):
     updated = datetime.datetime.strptime(tweet[0]['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
     text = tweet[0]['user']['screen_name'] + ": " + tweet[0]['text']
-    text = tools.decode_htmlentities(text)
+    text = self.tools['decode_htmlentities'](text)
     return text, updated, ago
 
 def latest_breaking(self, e):

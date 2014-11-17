@@ -19,10 +19,11 @@ def __init__(self):
     response = json.loads(response.read().decode('utf-8'))
     read_timeline.holyshitbearstoken = response['access_token']
     print(read_timeline.holyshitbearstoken)
+    read_timeline.self = self
   except Exception as inst:
       print(inst)
 
-def read_timeline (self,user):
+def read_timeline (user):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=%s&count=1" % user
     opener = urllib.request.build_opener()
     opener.addheaders = [('Authorization', 'Bearer ' + read_timeline.holyshitbearstoken)]
@@ -32,20 +33,20 @@ def read_timeline (self,user):
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
     text = tweet[0]['user']['screen_name'] + ": " + tweet[0]['text']
     try:
-      text = self.tools['decode_htmlentities'](text)
+      text = read_timeline.self.tools['decode_htmlentities'](text)
     except:
       pass
     return text, updated, ago
 
 def latest_breaking(self, e):
-    text, updated, ago = read_timeline(self,'breakingnews')
+    text, updated, ago = read_timeline('breakingnews')
     e.output =  "%s (%s minutes ago) " % (text, ago)
     return e
 latest_breaking.command = "!breaking"
 latest_breaking.helptext = "Usage: !breaking\nShows the latest breaking news alert"
 
 def latest_tweet(self, e):
-    text, updated, ago = read_timeline(self,e.input)
+    text, updated, ago = read_timeline(e.input)
     e.output =  "%s (%s minutes ago) " % (text, ago)
     return e
 latest_tweet.command = "!lasttweet"
@@ -53,7 +54,7 @@ latest_tweet.command = "!lasttweet"
 def breaking_alert():
     #returns a new breaking news only if it hasn't returned it before
       try:
-        description, updated, ago = read_timeline(self,'breakingnews')
+        description, updated, ago = read_timeline('breakingnews')
 
         if not breaking_alert.lastcheck:
             breaking_alert.lastcheck = updated

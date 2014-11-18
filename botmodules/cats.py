@@ -9,7 +9,7 @@ get_cat.command = "!cats"
 def get_jeffers(self, e):
     e.output = "http://i.imgur.com/kalVBHv.jpg"
     return e
-get_dvq.command = "!jeffers"
+get_jeffers.command = "!jeffers"
 
 
 def get_dvq(self, e):

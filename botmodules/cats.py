@@ -5,6 +5,13 @@ def get_cat(self, e):
     return e
 get_cat.command = "!cats"
 
+
+def get_jeffers(self, e):
+    e.output = "http://i.imgur.com/kalVBHv.jpg"
+    return e
+get_dvq.command = "!jeffers"
+
+
 def get_dvq(self, e):
     e.output = "http://i.imgur.com/1lq54.jpg"
     return e

@@ -174,8 +174,13 @@ class TestBot(SingleServerIRCBot):
         hostmask = ircevent.source()[ircevent.source().find("!")+1:]
         command = line.split(" ")[0].lower()
         args = line[len(command)+1:].strip()
-
-        if private or hasattr(self.bangcommands[command], 'privateonly'):
+		
+		try:
+			notice = hasattr(self.bangcommands[command], 'privateonly')
+		except:
+			pass 
+		
+        if private or notice:
             linesource = from_nick
         else:
             linesource = ircevent.target()

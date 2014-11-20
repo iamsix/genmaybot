@@ -35,6 +35,6 @@ def commands_help(bot, e):
 
   
 commands_help.command = "!help" 
-
+commands_help.privateonly = True
 commands_help.helptext="Usage: !help <command> or !help\n!help: Shows a list of available bot commands\n!help <command>: get more detailed info on each command"
 

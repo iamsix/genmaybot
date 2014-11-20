@@ -176,7 +176,7 @@ class TestBot(SingleServerIRCBot):
         args = line[len(command)+1:].strip()
 		
         try:
-		    notice = hasattr(self.bangcommands[command], 'privateonly')
+            notice = hasattr(self.bangcommands[command], 'privateonly')
         except:
             pass 
 		

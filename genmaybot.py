@@ -204,8 +204,6 @@ class TestBot(SingleServerIRCBot):
             for command in self.lineparsers:
                 e = self.botEvent(linesource, from_nick, hostmask, line)
                 e.botnick = c.get_nickname()  # store the bot's nick in the event in case we need it.
-                if linesource in self.channels and hasattr(command, 'privateonly'):
-                    continue
                 etmp.append(command(self, e))
 
             firstpass = True

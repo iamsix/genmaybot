@@ -175,10 +175,10 @@ class TestBot(SingleServerIRCBot):
         command = line.split(" ")[0].lower()
         args = line[len(command)+1:].strip()
 		
-		try:
-			notice = hasattr(self.bangcommands[command], 'privateonly')
-		except:
-			pass 
+        try:
+		    notice = hasattr(self.bangcommands[command], 'privateonly')
+        except:
+            pass 
 		
         if private or notice:
             linesource = from_nick

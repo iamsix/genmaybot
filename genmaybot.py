@@ -174,7 +174,8 @@ class TestBot(SingleServerIRCBot):
         hostmask = ircevent.source()[ircevent.source().find("!")+1:]
         command = line.split(" ")[0].lower()
         args = line[len(command)+1:].strip()
-        if private:
+
+        if private or hasattr(self.bangcommands[command], 'privateonly'):
             linesource = from_nick
         else:
             linesource = ircevent.target()
@@ -189,9 +190,7 @@ class TestBot(SingleServerIRCBot):
                 e = self.botEvent(linesource, from_nick, hostmask, args)
                 e.botnick = c.get_nickname() #store the bot's nick in the event in case we need it.
 
-                if linesource in self.channels and hasattr(self.bangcommands[command], 'privateonly'):
-                    self.doingcommand = False
-                    return
+
                 etmp.append(self.bangcommands[command](self, e))
 
             #lineparsers take the whole line and nick for EVERY line

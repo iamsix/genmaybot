@@ -19,7 +19,8 @@ def commands_help(bot, e):
 
   else:
     e.output = "Incorrect command or no help available." 
-    
+  
+  e.notice = True   
   return e 
     
     

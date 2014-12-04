@@ -7,7 +7,7 @@ def get_urbandictionary(self, e):
     
     #super smrt AI code to tell if you want a different definition
     #We only get the first 7 results.
-    number = re.search("[1-7]", searchterm[0:2])
+    number = re.search("[1-7]", searchterm[0:1])
     if number and len(searchterm.split(" ")) > 1:
        searchterm = searchterm[3:]
        number = int(number.group(0)[1:2]) * -1 - 1

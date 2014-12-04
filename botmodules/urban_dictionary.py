@@ -10,7 +10,7 @@ def get_urbandictionary(self, e):
     number = re.search("[1-7]", searchterm[0:1])
     if number and len(searchterm.split(" ")) > 1:
        searchterm = searchterm[3:]
-       number = int(number.group(0)[1:2]) * -1 - 1
+       number = int(number.group(0)[0:1]) - 1
        print(number)
     else:
        number = 0

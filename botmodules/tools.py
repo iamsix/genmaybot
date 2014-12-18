@@ -13,13 +13,13 @@ def set_googleapi(line, nick, self, c):
     google_url.self.botconfig["APIkeys"]["gsearchapi"] = line[11:]
     with open('genmaybot.cfg', 'w') as configfile:
         self.botconfig.write(configfile)
-set_stravatoken.admincommand = "gsearchapi"
+set_googleapi.admincommand = "gsearchapi"
 
 def set_googlecx(line, nick, self, c):
     google_url.self.botconfig["APIkeys"]["gsearchcx"] = line[10:]
     with open('genmaybot.cfg', 'w') as configfile:
         self.botconfig.write(configfile)
-set_stravatoken.admincommand = "gsearchcx"
+set_googlecx.admincommand = "gsearchcx"
 
 def decode_htmlentities(string):
     #decodes things like &amp

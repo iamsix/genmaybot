@@ -10,8 +10,8 @@ def ytinfo(self, e, urlposted=False):
             return
         yt = re.search("(v=|/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:
-        yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch%3Fv%3D')
-        yt = yt[yt.find("%3Fv%3D") + 7:]
+        yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch\?v=')
+        yt = yt[yt.find("?v=") + 3:]
 
     url = "http://gdata.youtube.com/feeds/api/videos/{}?v=2&alt=jsonc".format(yt)
 

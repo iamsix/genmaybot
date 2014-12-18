@@ -5,6 +5,22 @@ import encodings.idna
 import datetime
 
 
+def __init__(self):
+    google_url.self = self
+
+
+def set_googleapi(line, nick, self, c):
+    google_url.self.botconfig["APIkeys"]["gsearchapi"] = line[12:]
+    with open('genmaybot.cfg', 'w') as configfile:
+        self.botconfig.write(configfile)
+set_stravatoken.admincommand = "gsearchapi"
+
+def set_googlecx(line, nick, self, c):
+    google_url.self.botconfig["APIkeys"]["gsearchcx"] = line[12:]
+    with open('genmaybot.cfg', 'w') as configfile:
+        self.botconfig.write(configfile)
+set_stravatoken.admincommand = "gsearchcx"
+
 def decode_htmlentities(string):
     #decodes things like &amp
     entity_re = re.compile("&(#?)(x?)(\w+);")
@@ -38,17 +54,24 @@ def remove_html_tags(data):
 
 
 def google_url(searchterm, regexstring):
-    url = ('http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=' + urllib.parse.quote(searchterm))
+    searchterm = urllib.parse.quote(searchterm)
+    key = google_url.self.botconfig["APIkeys"]["gsearchapi"]
+    cx = google_url.self.botconfig["APIkeys"]["gsearchcx"]
+    url = 'https://www.googleapis.com/customsearch/v1?key={}&cx={}&q={}'
+    url = url.format(key, cx, searchterm)
+
     request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
     response = urllib.request.urlopen(request)
 
     results_json = json.loads(response.read().decode('utf-8'))
-    results = results_json['responseData']['results']
+    results = results_json['items']
 
     for result in results:
-        m = re.search(regexstring, result['url'])
+        print(result['link'])
+        m = re.search(regexstring, result['link'])
+        print(m)
         if (m):
-            url = result['url']
+            url = result['link']
             url = url.replace('%25', '%')
             return url
     return

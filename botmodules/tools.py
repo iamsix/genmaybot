@@ -10,13 +10,13 @@ def __init__(self):
 
 
 def set_googleapi(line, nick, self, c):
-    google_url.self.botconfig["APIkeys"]["gsearchapi"] = line[12:]
+    google_url.self.botconfig["APIkeys"]["gsearchapi"] = line[11:]
     with open('genmaybot.cfg', 'w') as configfile:
         self.botconfig.write(configfile)
 set_stravatoken.admincommand = "gsearchapi"
 
 def set_googlecx(line, nick, self, c):
-    google_url.self.botconfig["APIkeys"]["gsearchcx"] = line[12:]
+    google_url.self.botconfig["APIkeys"]["gsearchcx"] = line[10:]
     with open('genmaybot.cfg', 'w') as configfile:
         self.botconfig.write(configfile)
 set_stravatoken.admincommand = "gsearchcx"

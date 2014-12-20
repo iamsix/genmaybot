@@ -63,7 +63,7 @@ def google_url(searchterm, regexstring):
     try:
         request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
         response = urllib.request.urlopen(request)
-    except HTTPError:
+    except urllib.error.HTTPError:
         print(response)
 
     results_json = json.loads(response.read().decode('utf-8'))

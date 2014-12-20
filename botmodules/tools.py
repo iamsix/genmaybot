@@ -60,12 +60,11 @@ def google_url(searchterm, regexstring):
     url = 'https://www.googleapis.com/customsearch/v1?key={}&cx={}&q={}'
     url = url.format(key, cx, searchterm)
     
-    response = ""
     try:
         request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
         response = urllib.request.urlopen(request)
-    except urllib.error.HTTPError:
-        print(response)
+    except urllib.error.HTTPError as err:
+        print(err.read())
 
     results_json = json.loads(response.read().decode('utf-8'))
     results = results_json['items']

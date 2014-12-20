@@ -59,9 +59,12 @@ def google_url(searchterm, regexstring):
     cx = google_url.self.botconfig["APIkeys"]["gsearchcx"]
     url = 'https://www.googleapis.com/customsearch/v1?key={}&cx={}&q={}'
     url = url.format(key, cx, searchterm)
-
-    request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
-    response = urllib.request.urlopen(request)
+    
+    try:
+        request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+        response = urllib.request.urlopen(request)
+    except HTTPError:
+        print(response)
 
     results_json = json.loads(response.read().decode('utf-8'))
     results = results_json['items']

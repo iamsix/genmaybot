@@ -1,6 +1,7 @@
 import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, socket, traceback
 try: import botmodules.userlocation as user
 except: pass
+import re
 
 
 def get_wolfram(self, e):

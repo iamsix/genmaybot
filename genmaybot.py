@@ -103,7 +103,8 @@ class TestBot(SingleServerIRCBot):
         if time.time() - self.last_keepalive > 90:
             if not self.alive:
                 print ("%s: I think we are dead, reconnecting."  % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
-                self.jump_server()     
+                self.jump_server()   
+                self.alive = True
                 return
             print ("%s: Keepalive reply not received, sending request" % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
             # Send ISON command on configured nick 

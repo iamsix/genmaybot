@@ -173,7 +173,7 @@ def get_stocks_prices(stocks):## pass in a list or tuple or a single string
 	
 	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1p2" % stocks)
 	quote = pagetmp.read(1024).decode("utf-8")
-	return quote.split("\r\n")
+	return quote.split("\n")
       
 	
 

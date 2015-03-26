@@ -46,6 +46,7 @@ def get_goodreads_book_rating(self, e):
     #
     # Example line: <meta property="og:description" content="The irresistible, ever-curious, and always best-selling Mary Roach returns with a new adventure to the invisible realm we carry around in..."/>
     bookdesc = re.search('<meta property="og:description" content="(.*)"/>', bookpage).group(1)
+    bookdesc = re.search('^(.*?)\s.*?\.\.\.', bookdesc).group(1)
     
     
     # Use the bot function to Google shorten the URL

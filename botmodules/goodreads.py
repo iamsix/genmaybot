@@ -38,7 +38,7 @@ def get_goodreads_book_rating(self, e):
     bookurl = self.tools['shorten_url'](bookurl)
     
     # %s gets substituted with variables in % (foo, bar)
-    output = "%s by %s (%s) | %s | Avg rating: %s (%s ratings) - [ %s ]" % (firsttitle, name, pubyear, bookdesc, avgrating, ratingscount, bookurl)    
+    output = "%s by %s (%s) | Avg rating: %s (%s ratings) | %s [ %s ]" % (firsttitle, name, pubyear, avgrating, ratingscount, bookdesc, bookurl)    
     e.output = output
 
     return e

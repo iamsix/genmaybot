@@ -5,7 +5,7 @@ def get_goodreads_book_rating(self, e):
     # Read the API key from the main bot object. It loads the config for us.
     goodreadskey = self.botconfig["APIkeys"]["goodreadskey"]
     
-    query = urllib.parse.urlencode({"key":goodreadskey, "q":e.input) #Pass the command input directly into the URL query
+    query = urllib.parse.urlencode({"key":goodreadskey, "q":e.input}) #Pass the command input directly into the URL query
     url = "https://www.goodreads.com/search.xml"
 
     #Load XML response and parse DOM in one shot

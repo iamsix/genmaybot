@@ -27,11 +27,12 @@ def get_goodreads_book_rating(self, e):
     
     bookurl = "https://www.goodreads.com/book/show/%s" % bookid
     
-    request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
-    response = urllib.request.urlopen(request)
-    bookpage = response.read().decode('utf-8')
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-Agent', "Opera/9.10 (YourMom 8.0)")]
     
-    bookdesc = re.search('<meta property="og:description" content="(.*)"/>').group(1)
+    
+    bookpage = opener.open(bookurl).read
+    bookdesc = re.search('<meta property="og:description" content="(.*)"/>', bookpage).group(1)
     
     
     bookurl = self.tools['shorten_url'](bookurl)

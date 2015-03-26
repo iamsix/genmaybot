@@ -20,9 +20,16 @@ def get_goodreads_book_rating(self, e):
     ratingscount = dom.getElementsByTagName("ratings_count")[0].firstChild.nodeValue
     pubyear = dom.getElementsByTagName("original_publication_year")[0].firstChild.nodeValue
     
+    #No idea wtf is going on here v
+    bookid =  = dom.getElementsByTagName("best_book")[0].getElementsByTagName("id")[0].firstChild.nodeValue
+    #No idea wtf is going on here ^
+    
+    
+    bookurl = "https://www.goodreads.com/book/show/%s" % bookid
+    bookurl = self.tools['shorten_url'](bookurl)
     
     # %s gets substituted with variables in % (foo, bar)
-    output = "%s by %s (%s) | Avg rating: %s (%s ratings)" % (firsttitle, name, pubyear, avgrating, ratingscount)    
+    output = "%s by %s (%s) | Avg rating: %s (%s ratings) - [ %s ]" % (firsttitle, name, pubyear, avgrating, ratingscount, bookurl)    
     e.output = output
 
     return e

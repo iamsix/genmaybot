@@ -32,7 +32,7 @@ def get_goodreads_book_rating(self, e):
     
     
     bookpage = opener.open(bookurl).read
-    bookdesc = re.search('<meta property="og:description" content="(.*)"/>', bookpage).group(1)
+    bookdesc = re.search('''<meta property="og:description" content="(.*)"/>''', bookpage).group(1)
     
     
     bookurl = self.tools['shorten_url'](bookurl)

@@ -31,8 +31,8 @@ def get_goodreads_book_rating(self, e):
     opener.addheaders = [('User-Agent', "Opera/9.10 (YourMom 8.0)")]
     
     
-    bookpage = opener.open(bookurl)
-    bookdesc = re.search('''<meta property="og:description" content="(.*)"/>''', bookpage).group(1)
+    bookpage = opener.open(bookurl).read().decode('utf-8')
+    bookdesc = re.search('<meta property="og:description" content="(.*)"/>', bookpage).group(1)
     
     
     bookurl = self.tools['shorten_url'](bookurl)

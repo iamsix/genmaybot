@@ -21,7 +21,7 @@ def get_goodreads_book_rating(self, e):
     pubyear = dom.getElementsByTagName("original_publication_year")[0].firstChild.nodeValue
     
     #No idea wtf is going on here v
-    bookid =  = dom.getElementsByTagName("best_book")[0].getElementsByTagName("id")[0].firstChild.nodeValue
+    bookid = dom.getElementsByTagName("best_book")[0].getElementsByTagName("id")[0].firstChild.nodeValue
     #No idea wtf is going on here ^
     
     

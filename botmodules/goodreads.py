@@ -65,3 +65,5 @@ def get_goodreads_book_rating(self, e):
 
 get_goodreads_book_rating.command = "!gr"
 get_goodreads_book_rating.helptext = "Usage: !gr <book title> Retrieves book ratings from Goodreads."
+
+# HOLD

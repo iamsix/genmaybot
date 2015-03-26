@@ -1,4 +1,4 @@
-import urllib.request, urllib.parse, xml.dom.minidom
+import urllib.request, urllib.parse, xml.dom.minidom, re
 
 def get_goodreads_book_rating(self, e):
     
@@ -26,10 +26,18 @@ def get_goodreads_book_rating(self, e):
     
     
     bookurl = "https://www.goodreads.com/book/show/%s" % bookid
+    
+    request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+    response = urllib.request.urlopen(request)
+    bookpage = response.read().decode('utf-8')
+    
+    bookdesc = re.search('<meta property="og:description" content="(.*)"/>').group(1)
+    
+    
     bookurl = self.tools['shorten_url'](bookurl)
     
     # %s gets substituted with variables in % (foo, bar)
-    output = "%s by %s (%s) | Avg rating: %s (%s ratings) - [ %s ]" % (firsttitle, name, pubyear, avgrating, ratingscount, bookurl)    
+    output = "%s by %s (%s) | %s | Avg rating: %s (%s ratings) - [ %s ]" % (firsttitle, name, pubyear, bookdesc, avgrating, ratingscount, bookurl)    
     e.output = output
 
     return e

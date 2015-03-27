@@ -22,10 +22,14 @@ def get_rt(self, e):
         url = url.format(results['movies'][0]['id'], self.botconfig["APIkeys"]["rtAPIkey"])
         movie = loadjson(url)
 
+    url = self.tools['shorten_url'](movie['links']['alternate'])
+    
     concensus = ""
     if 'critics_consensus' in movie:
-        concensus = "- " + movie['critics_consensus']
-    url = self.tools['shorten_url'](movie['links']['alternate'])
+        #concensus = "- " + movie['critics_consensus']
+        page = self.tools["load_html_from_URL"](url)
+        concensus = "- " + str(page.find("p", {"class": "critic_consensus"}).contents[2]).strip()
+
     e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'],
                                                                 str(movie['year']),
                                                                 str(movie['ratings']['critics_score']),

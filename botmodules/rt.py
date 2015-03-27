@@ -27,8 +27,11 @@ def get_rt(self, e):
     concensus = ""
     if 'critics_consensus' in movie:
         #concensus = "- " + movie['critics_consensus']
-        page = self.tools["load_html_from_URL"](movie['links']['alternate'])
-        concensus = "- " + str(page.find("p", {"class": "critic_consensus"}).contents[2]).strip()
+        try:
+            page = self.tools["load_html_from_URL"](movie['links']['alternate'])
+            concensus = "- " + str(page.find("p", {"class": "critic_consensus"}).contents[2]).strip()
+        except:
+            pass
 
     e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'],
                                                                 str(movie['year']),

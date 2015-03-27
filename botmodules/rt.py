@@ -26,7 +26,10 @@ def get_rt(self, e):
     
     concensus = ""
     if 'critics_consensus' in movie:
-        concensus = "- " + movie['critics_consensus']
+        flxurl = "http://api.flixster.com/android/api/v1/movies/{}.json".format(movie['id'])
+        flxpage = loadjson(flxurl)
+        concensus = flxpage['reviews']['rottenTomatoes']['consensus']
+        concensus = "- " + self.tools['remove_html_tags'](concensus)
 
     e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'],
                                                                 str(movie['year']),
@@ -45,5 +48,5 @@ def loadjson(url):
         response = gzip.decompress(response)
     except:
         pass
-    response = response.decode("utf-8")
+    response = response.decode("utf-8", "replace")
     return json.loads(response)

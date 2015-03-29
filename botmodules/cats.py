@@ -1,6 +1,6 @@
 import json, urllib.request, urllib.error, urllib.parse, random
 def get_coolmaster(self, e):
-    e.output = "http://i.imgur.com/NhYEMRi.png""
+    e.output = "http://i.imgur.com/NhYEMRi.png"
     return e
 get_coolmaster.command = "!cool"
 

@@ -1,4 +1,9 @@
 import json, urllib.request, urllib.error, urllib.parse, random
+def get_coolmaster(self, e):
+    e.output = "http://i.imgur.com/NhYEMRi.png""
+    return e
+get_coolmaster.command = "!cool"
+
 def get_cat(self, e):
     url = "http://www.reddit.com/r/catpictures+cats/.json"
     e.output = get_redditpics(url)

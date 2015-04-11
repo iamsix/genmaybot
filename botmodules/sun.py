@@ -51,3 +51,4 @@ def get_sun(self, e):
     out = "Sunrise: {} / Sunset: {} / Day Length: {}".format(sunrise, sunset, sunlength)
     e.output = out
     return e
+get_sun.command = "!sun"

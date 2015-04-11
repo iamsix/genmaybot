@@ -8,7 +8,7 @@ def set_wunderkey(line, nick, self, c):
     self.botconfig["APIkeys"]["wunderAPIkey"] = line[10:]
     with open('genmaybot.cfg', 'w') as configfile:
         self.botconfig.write(configfile)
-set_wwokey.admincommand = "wunderkey"
+set_wunderkey.admincommand = "wunderkey"
 
 
 def get_sun(self, e):

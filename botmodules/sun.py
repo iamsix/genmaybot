@@ -2,6 +2,10 @@ import json
 import urllib.request
 import urllib.parse
 from datetime import datetime, timedelta
+try:
+    import botmodules.userlocation as user
+except ImportError:
+    user = None
 
 
 def set_wunderkey(line, nick, self, c):
@@ -13,9 +17,13 @@ set_wunderkey.admincommand = "wunderkey"
 
 def get_sun(self, e):
     apikey = self.botconfig["APIkeys"]["wunderAPIkey"]
-    loc = urllib.parse.quote(e.input)
+    location = e.input
+    if location == "" and user:
+        location = user.get_location(e.nick)
+    
+    location = urllib.parse.quote(location)
     url = "http://api.wunderground.com/api/{}/astronomy/q/{}.json"
-    url = url.format(apikey, loc)
+    url = url.format(apikey, location)
 
     response = urllib.request.urlopen(url).read().decode("utf-8", "replace")
     data = json.loads(response)['moon_phase']

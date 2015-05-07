@@ -10,7 +10,7 @@ def ytinfo(self, e, urlposted=False):
             return
         yt = re.search("(v=|/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:
-        yt = self.tools['google_url'](self, 'site:youtube.com {}'.format(e.input), 'watch\?v=')
+        yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch\?v=')
         print(yt)
         yt = yt[yt.find("?v=") + 3:]
 

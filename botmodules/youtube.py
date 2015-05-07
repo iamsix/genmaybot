@@ -10,29 +10,27 @@ def ytinfo(self, e, urlposted=False):
             return
         yt = re.search("(v=|/)([\w-]+)(&.+|#t=.+|\?t=.+)?$", yt).group(2)
     else:
-        yt = self.tools['google_url']('site:youtube.com {}'.format(e.input), 'watch\?v=')
+        yt = self.tools['google_url'](self, 'site:youtube.com {}'.format(e.input), 'watch\?v=')
+        print(yt)
         yt = yt[yt.find("?v=") + 3:]
 
-    url = "http://gdata.youtube.com/feeds/api/videos/{}?v=2&alt=jsonc".format(yt)
+    url = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2C+contentDetails%2C+statistics&hl=en&id={}&key={}"
+    url = url.format(yt, self.botconfig["APIkeys"]["shorturlkey"])
 
     request = urllib.request.urlopen(url)
     ytjson = json.loads(request.read().decode())
-    ytjson = ytjson['data']
-    mins = ytjson['duration'] // 60
-    if mins:
-        mins = "{}m ".format(str(mins))
-    else:
-        mins = ""
-    secs = ytjson['duration'] % 60
-    if secs:
-        secs = "{}s ".format(str(secs))
-    else:
-        secs = ""
-    duration = "{}{}".format(mins, secs)
+    ytjson = ytjson['items'][0]
     
+    duration = ytjson['contentDetails']['duration']
+    duration = duration[2:].lower()
+
     try:
-        rating = "{0:.1f}/10".format((int(ytjson['likeCount']) / ytjson['ratingCount']) * 10)
-    except KeyError:
+        likes = int(ytjson['statistics']['likeCount'])
+        print(likes)
+        dislikes = int(ytjson['statistics']['dislikeCount'])
+        print(dislikes)
+        rating = "{0:.1f}/10".format((likes / (likes + dislikes)) * 10)
+    except:
         rating = "NA"
     
     ytlink = ""
@@ -41,18 +39,33 @@ def ytinfo(self, e, urlposted=False):
 
     content = ""
     try:
-        if ytjson['contentRating']:
+        if ytjson['contentDetails']['contentRating']:
             content = " - 4NSFW"
     except KeyError:
         pass
 
-    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(ytjson['title'],
-                                                                                            ytjson['category'],
+    title = ytjson['snippet']['title']
+    uploader = ytjson['snippet']['channelTitle']
+    pubdate = ytjson['snippet']['publishedAt'][:10]
+    viewcount = ytjson['statistics']['viewCount']
+
+
+    #All this just to get the category....
+    catid = ytjson['snippet']['categoryId']
+    url = "https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&hl=en&id={}&key={}"
+    url = url.format(catid, self.botconfig["APIkeys"]["shorturlkey"])
+    request = urllib.request.urlopen(url)
+    ytjson2 = json.loads(request.read().decode())
+    category = ytjson2['items'][0]['snippet']['title']
+
+
+    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(title,
+                                                                                            category,
                                                                                             duration,
                                                                                             rating,
-                                                                                            ytjson['viewCount'],
-                                                                                            ytjson['uploader'],
-                                                                                            ytjson['uploaded'][:10],
+                                                                                            viewcount,
+                                                                                            uploader,
+                                                                                            pubdate,
                                                                                             ytlink, content)
     return e
 ytinfo.command = "!yt"

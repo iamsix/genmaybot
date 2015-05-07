@@ -59,7 +59,7 @@ def ytinfo(self, e, urlposted=False):
     category = ytjson2['items'][0]['snippet']['title']
 
 
-    e.output = "Youtube: {} [{}] :: length: {}- rated: {} - {} views - {} on {}{}{}".format(title,
+    e.output = "Youtube: {} [{}] :: length: {} - rated: {} - {} views - {} on {}{}{}".format(title,
                                                                                             category,
                                                                                             duration,
                                                                                             rating,

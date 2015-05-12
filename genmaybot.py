@@ -137,7 +137,9 @@ class TestBot(SingleServerIRCBot):
         line = e.arguments()[0].strip()
         if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != -1:
             c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
-        self.mirror_pm(c, from_nick,line, "NOTICE")
+            
+        if from_nick.find(".") == -1: #Filter out server NOTICEs
+            self.mirror_pm(c, from_nick,line, "NOTICE")
         
     def on_ctcp(self, c, e):
         self.on_ctcp(c,e)

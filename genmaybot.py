@@ -151,9 +151,9 @@ class TestBot(SingleServerIRCBot):
         try:
             for nick in self.pm_monitor_nicks:
                 context.privmsg(nick, output)
-                return
         except:
-                return
+            return
+
             
     def on_whoreply(self, c, e):
         nick = e.arguments()[4]

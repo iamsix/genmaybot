@@ -132,6 +132,11 @@ class TestBot(SingleServerIRCBot):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
         self.mirror_pm(c, from_nick,line, "NOTICE")
+        
+    def on_ctcp(self, c, e):
+        from_nick = e.source().split("!")[0]
+        line = e.arguments()[0].strip()
+        self.mirror_pm(c, from_nick,line, "CTCP")    
 
     def on_privmsg(self, c, e):
         from_nick = e.source().split("!")[0]

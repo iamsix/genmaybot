@@ -66,7 +66,7 @@ class TestBot(SingleServerIRCBot):
         
         c.privmsg("NickServ", "RECOVER %s %s" % (self.botnick, self.botconfig['irc']['identpassword']))
         
-        c.nick(c.get_nickname())
+        c.nick(self.botnick)
 
     def on_kick(self, c, e):
         #attempt to rejoin any channel we're kicked from

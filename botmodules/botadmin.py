@@ -2,7 +2,20 @@ import time, sys, traceback
 import threading
 
 def __init__(self):
-    self.pm_monitor_nicks = ['Trinity']
+    self.pm_monitor_nicks = []
+    
+    conn = sqlite3.connect('admins.sqlite')
+    sqlcur = conn.cursor()
+    result = sqlcur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='admin_info';").fetchone()
+    
+    if not result: #if table is not found
+        sqlcur.execute('''create table admin_info(nick text, pm_monitor_enabled integer)''')
+        conn.commit()
+    else:
+        sqlcur.execute("SELECT nick FROM admin_info WHERE pm_monitor_enabled = ?", [True])
+        for nick in sqlcur.fetchall():
+            self.pm_monitor_nicks.append(nick[0])
+    
     
 def who_partyline(line, nick, self, c): #Returns a list of users who have joined the party line
     try:

@@ -16,8 +16,15 @@ def monitor_pm(line,nick,self,c):
             return "Enabled PM monitoring. All PMs will be mirrored to you."	
 
 
-    elif line.split(" ")[1] == "off": 
-        return "Disabled PM monitoring."
+    elif line.split(" ")[1] == "off":
+        try:
+            if nick in self.pm_monitor_nicks"
+                self.pm_monitor_nicks.remove(nick)
+                return "Disabled PM monitoring."
+            else:
+                return "PM monitoring is not enabled for you. 'monitorpm on' to enable."
+        except: #PM monitoring was NEVER enabled
+            return "PM monitoring is not enabled for you. 'monitorpm on' to enable."
     else:
         return "Usage: monitorpm on|off - mirrors all PMs sent to the bot to you"
 	

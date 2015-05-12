@@ -1,5 +1,5 @@
 import time, sys, traceback
-import threading
+import threading, sqlite3
 
 def __init__(self):
     self.pm_monitor_nicks = []

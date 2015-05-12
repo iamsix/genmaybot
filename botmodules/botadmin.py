@@ -1,6 +1,9 @@
 import time, sys, traceback
 import threading
 
+def __init__(self):
+    self.pm_monitor_nicks = ['Trinity']
+    
 def who_partyline(line, nick, self, c): #Returns a list of users who have joined the party line
     try:
         output = ", ".join(self.pm_monitor_nicks)

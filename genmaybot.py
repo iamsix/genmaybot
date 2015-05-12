@@ -137,8 +137,24 @@ class TestBot(SingleServerIRCBot):
             self.admincommand = line
             c.who(from_nick)
 
+		
+        # Mirror the PM to the list of admin nicks
+        self.mirror_pm(c, from_nick,line)
+        
+        # This sends the PM onward for processing through command parsers
         self.process_line(c, e, True)
 
+    def mirror_pm(self, context, from_nick, line):
+        
+        output = "PM: [%s] %s" % (from_nick, line)
+        
+        try:
+            for nick in self.pm_monitor_nicks:
+                context.privmsg(nick, output)
+                return
+        except:
+                return
+            
     def on_whoreply(self, c, e):
         nick = e.arguments()[4]
         

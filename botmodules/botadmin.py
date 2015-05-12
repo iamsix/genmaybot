@@ -2,7 +2,7 @@ import time, sys, traceback
 import threading
 
 def monitor_pm(line,nick,self,c):
-	return ", ".join((line, nick, self, c))
+	return ", ".join((line, nick))
 	
 monitor_pm.admincommand="monitorpm"
 

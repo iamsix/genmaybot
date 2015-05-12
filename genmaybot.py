@@ -135,7 +135,7 @@ class TestBot(SingleServerIRCBot):
     def on_privnotice(self, c, e):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
-        if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != --1:
+        if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != -1:
             c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
         self.mirror_pm(c, from_nick,line, "NOTICE")
         

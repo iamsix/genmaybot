@@ -29,6 +29,14 @@ def who_partyline(line, nick, self, c): #Returns a list of users who have joined
 who_partyline.admincommand = "who"
 
 def monitor_pm(line,nick,self,c):
+    conn = sqlite3.connect('admins.sqlite')
+    sqlcur = conn.cursor()
+    result = sqlcur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='admin_info';").fetchone()
+    
+    if not result: #if table is not found
+        sqlcur.execute('''create table admin_info(nick text, pm_monitor_enabled integer)''')
+        conn.commit()
+
 
     if line.split(" ")[1] == "on":
         try:
@@ -36,12 +44,20 @@ def monitor_pm(line,nick,self,c):
                 return "PM monitoring already enabled. 'monitorpm off' to disable."
             else:
                 self.pm_monitor_nicks.append(nick)
+                
+                sqlcur.execute("INSERT OR REPLACE INTO admin_info (nick, pm_monitor_enabled) VALUES (?, ?)", [nick, True])
+                conn.commit()
+                
                 for mon_nick in self.pm_monitor_nicks:
                 	c.privmsg(mon_nick, "%s joined the party line." % nick)
                 return "Enabled PM monitoring. All PMs will be mirrored to you."	
         except: # Initialize monitor nick list if it doesn't exist
             self.pm_monitor_nicks = []
             self.pm_monitor_nicks.append(nick)
+            
+            sqlcur.execute("INSERT OR REPLACE INTO admin_info (nick, pm_monitor_enabled) VALUES (?, ?)", [nick, True])
+            conn.commit()
+            
             return "Enabled PM monitoring. All PMs will be mirrored to you. You're the first one on the party line."	
 
 
@@ -49,6 +65,10 @@ def monitor_pm(line,nick,self,c):
         try:
             if nick in self.pm_monitor_nicks:
                 self.pm_monitor_nicks.remove(nick)
+                
+                sqlcur.execute("UPDATE admin_info SET pm_monitor_enabled = ? WHERE nick = ?", [False, nick])
+                conn.commit()
+                
                 for mon_nick in self.pm_monitor_nicks:
                 	c.privmsg(mon_nick, "%s left the party line." % nick)
                 return "Disabled PM monitoring."

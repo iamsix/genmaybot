@@ -3,6 +3,8 @@ import threading
 
 def monitor_pm(line,nick,self,c):
 	return ", ".join(line, nick, self, c)
+	
+monitor_pm.admincommand="monitorpm"
 
 #test commit
 def manual_spamban(line, nick, self, c):

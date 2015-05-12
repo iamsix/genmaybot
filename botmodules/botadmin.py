@@ -2,7 +2,7 @@ import time, sys, traceback
 import threading
 
 def monitor_pm(line,nick,self,c):
-	return ", ".join((line, nick))
+
 	if line.split(" ")[1] == "on":
 	    return "Enabled PM monitoring. All PMs will be mirrored to you."	
 	elif line.split(" ")[1] == "off": 

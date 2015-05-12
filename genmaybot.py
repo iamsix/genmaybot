@@ -144,7 +144,10 @@ class TestBot(SingleServerIRCBot):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
         command = line.split(" ")[0]
-
+        
+        if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != --1:
+            c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
+        
         if command in self.admincommands and self.isbotadmin(from_nick):
             self.admincommand = line
             c.who(from_nick)

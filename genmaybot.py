@@ -142,7 +142,7 @@ class TestBot(SingleServerIRCBot):
             self.mirror_pm(c, from_nick,line, "NOTICE")
         
     def on_ctcp(self, c, e):
-        self.on_ctcp(c,e)
+        self._on_ctcp(c,e)
         if not e.arguments()[0] == "ACTION": #ignore /me messages
             from_nick = e.source().split("!")[0]
             line = " ".join(e.arguments())

@@ -18,7 +18,7 @@ def monitor_pm(line,nick,self,c):
 
     elif line.split(" ")[1] == "off":
         try:
-            if nick in self.pm_monitor_nicks
+            if nick in self.pm_monitor_nicks:
                 self.pm_monitor_nicks.remove(nick)
                 return "Disabled PM monitoring."
             else:

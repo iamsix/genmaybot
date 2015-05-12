@@ -4,7 +4,18 @@ import threading
 def monitor_pm(line,nick,self,c):
 
 	if line.split(" ")[1] == "on":
-	    return "Enabled PM monitoring. All PMs will be mirrored to you."	
+	    try:
+	        if nick in self.pm_monitor_nicks:
+	            return "PM monitoring already enabled. 'monitorpm off' to disable."
+	       else
+	            self.pm_monitor_nicks.append(nick)
+	            return "Enabled PM monitoring. All PMs will be mirrored to you."	
+	   except: # Initialize monitor nick list if it doesn't exist
+	       self.pm_monitor_nicks = []
+	       self.pm_monitor_nicks.append(nick)
+	       return "Enabled PM monitoring. All PMs will be mirrored to you."	
+	       
+	       
 	elif line.split(" ")[1] == "off": 
 		return "Disabled PM monitoring."
 	else:

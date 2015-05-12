@@ -3,10 +3,10 @@ import threading
 
 def monitor_pm(line,nick,self,c):
 
-	if line.split(" ")[1] == "on":
-	    try:
-	        if nick in self.pm_monitor_nicks:
-	            return "PM monitoring already enabled. 'monitorpm off' to disable."
+    if line.split(" ")[1] == "on":
+        try:
+            if nick in self.pm_monitor_nicks:
+                return "PM monitoring already enabled. 'monitorpm off' to disable."
             else
                 self.pm_monitor_nicks.append(nick)
                 return "Enabled PM monitoring. All PMs will be mirrored to you."	
@@ -14,12 +14,12 @@ def monitor_pm(line,nick,self,c):
             self.pm_monitor_nicks = []
             self.pm_monitor_nicks.append(nick)
             return "Enabled PM monitoring. All PMs will be mirrored to you."	
-	       
-	       
-	elif line.split(" ")[1] == "off": 
-		return "Disabled PM monitoring."
-	else:
-		return "Usage: monitorpm on|off - mirrors all PMs sent to the bot to you"
+
+
+    elif line.split(" ")[1] == "off": 
+        return "Disabled PM monitoring."
+    else:
+        return "Usage: monitorpm on|off - mirrors all PMs sent to the bot to you"
 	
 monitor_pm.admincommand="monitorpm"
 

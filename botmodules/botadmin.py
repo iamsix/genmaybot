@@ -9,6 +9,7 @@ def who_partyline(line, nick, self, c): #Returns a list of users who have joined
     except:
         return "No one is online at the moment."
         
+        
 who_partyline.admincommand = "who"
 
 def monitor_pm(line,nick,self,c):

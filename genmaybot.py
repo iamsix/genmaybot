@@ -113,7 +113,7 @@ class TestBot(SingleServerIRCBot):
         else:
             #print ("%s: Waiting to send keepalive request" % time.strftime("%m/%d/%y %H:%M:%S",time.localtime()))
             pass
-	
+    
         self.keepaliveTimer = threading.Timer(30, self.keepalive, [irc_context])
         self.keepaliveTimer.start()
 
@@ -137,7 +137,7 @@ class TestBot(SingleServerIRCBot):
             self.admincommand = line
             c.who(from_nick)
 
-		
+        
         # Mirror the PM to the list of admin nicks
         self.mirror_pm(c, from_nick,line)
         
@@ -191,14 +191,14 @@ class TestBot(SingleServerIRCBot):
         hostmask = ircevent.source()[ircevent.source().find("!")+1:]
         command = line.split(" ")[0].lower()
         args = line[len(command)+1:].strip()
-		
-	    notice = False
-		
+        
+        notice = False
+        
         try:
             notice = hasattr(self.bangcommands[command], 'privateonly')
         except:
             pass 
-		
+        
         if private or notice:
             linesource = from_nick
         else:

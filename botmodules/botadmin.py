@@ -9,7 +9,7 @@ def __init__(self):
     result = sqlcur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='admin_info';").fetchone()
     
     if not result: #if table is not found
-        sqlcur.execute('''create table admin_info(nick text, pm_monitor_enabled integer)''')
+        sqlcur.execute('''create table admin_info(nick text PRIMARY KEY, pm_monitor_enabled integer)''')
         conn.commit()
     else:
         sqlcur.execute("SELECT nick FROM admin_info WHERE pm_monitor_enabled = ?", [True])
@@ -34,7 +34,7 @@ def monitor_pm(line,nick,self,c):
     result = sqlcur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='admin_info';").fetchone()
     
     if not result: #if table is not found
-        sqlcur.execute('''create table admin_info(nick text, pm_monitor_enabled integer)''')
+        sqlcur.execute('''create table admin_info(nick text PRIMARY KEY, pm_monitor_enabled integer)''')
         conn.commit()
 
 

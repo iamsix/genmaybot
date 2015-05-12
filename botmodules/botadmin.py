@@ -2,8 +2,8 @@ import time, sys, traceback
 import threading
 
 def who_partyline(line, nick, self, c): #Returns a list of users who have joined the party line
-	try:
-	    output = ", ".join(self.pm_monitor_nicks)
+    try:
+        output = ", ".join(self.pm_monitor_nicks)
         if output:
             return "Admins online: %s" % output
     except:

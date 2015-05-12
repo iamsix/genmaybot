@@ -62,7 +62,7 @@ class TestBot(SingleServerIRCBot):
         sys.stderr = self.error_log
 
     def on_nicknameinuse(self, c, e):
-        c.privmsg("NickServ", "RECOVER " % (self.botnick, self.botconfig['irc']['identpassword']))
+        c.privmsg("NickServ", "RECOVER %s %s" % (self.botnick, self.botconfig['irc']['identpassword']))
         c.nick(c.get_nickname())
 
     def on_kick(self, c, e):

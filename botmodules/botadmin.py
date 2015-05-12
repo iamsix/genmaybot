@@ -9,17 +9,21 @@ def monitor_pm(line,nick,self,c):
                 return "PM monitoring already enabled. 'monitorpm off' to disable."
             else:
                 self.pm_monitor_nicks.append(nick)
+                for mon_nick in self.pm_monitor_nicks:
+                	c.privmsg(mon_nick, "%s joined the party line." % nick)
                 return "Enabled PM monitoring. All PMs will be mirrored to you."	
         except: # Initialize monitor nick list if it doesn't exist
             self.pm_monitor_nicks = []
             self.pm_monitor_nicks.append(nick)
-            return "Enabled PM monitoring. All PMs will be mirrored to you."	
+            return "Enabled PM monitoring. All PMs will be mirrored to you. You're the first one on the party line."	
 
 
     elif line.split(" ")[1] == "off":
         try:
             if nick in self.pm_monitor_nicks:
                 self.pm_monitor_nicks.remove(nick)
+                for mon_nick in self.pm_monitor_nicks:
+                	c.privmsg(mon_nick, "%s left the party line." % nick)
                 return "Disabled PM monitoring."
             else:
                 return "PM monitoring is not enabled for you. 'monitorpm on' to enable."

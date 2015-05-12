@@ -1,6 +1,9 @@
 import time, sys, traceback
 import threading
 
+def monitor_pm(line,nick,self,c):
+	return ", ".join(line, nick, self, c)
+
 #test commit
 def manual_spamban(line, nick, self, c):
     if len(line.split(" ")) == 3:

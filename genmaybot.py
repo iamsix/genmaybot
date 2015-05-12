@@ -128,6 +128,11 @@ class TestBot(SingleServerIRCBot):
     def on_pubmsg(self, c, e):
         self.process_line(c, e)
 
+    def on_privnotice(self, c, e):
+        from_nick = e.source().split("!")[0]
+        line = e.arguments()[0].strip()
+        self.mirror_pm(c, from_nick,line, "NOTICE")
+
     def on_privmsg(self, c, e):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
@@ -139,14 +144,14 @@ class TestBot(SingleServerIRCBot):
 
         
         # Mirror the PM to the list of admin nicks
-        self.mirror_pm(c, from_nick,line)
+        self.mirror_pm(c, from_nick,line, "PM")
         
         # This sends the PM onward for processing through command parsers
         self.process_line(c, e, True)
 
-    def mirror_pm(self, context, from_nick, line):
+    def mirror_pm(self, context, from_nick, line, msgtype="PM"):
         
-        output = "PM: [%s] %s" % (from_nick, line)
+        output = "%s: [%s] %s" % (msgtype, from_nick, line)
         
         try:
             for nick in self.pm_monitor_nicks:

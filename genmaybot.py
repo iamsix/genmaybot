@@ -131,6 +131,8 @@ class TestBot(SingleServerIRCBot):
     def on_privnotice(self, c, e):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
+        if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != --1:
+            c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
         self.mirror_pm(c, from_nick,line, "NOTICE")
         
     def on_ctcp(self, c, e):
@@ -144,9 +146,6 @@ class TestBot(SingleServerIRCBot):
         from_nick = e.source().split("!")[0]
         line = e.arguments()[0].strip()
         command = line.split(" ")[0]
-        
-        if from_nick == "NickServ" and line.find("This nickname is registered and protected.") != --1:
-            c.privmsg("NickServ", "identify " + self.botconfig['irc']['identpassword'])
         
         if command in self.admincommands and self.isbotadmin(from_nick):
             self.admincommand = line

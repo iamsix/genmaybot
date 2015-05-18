@@ -112,7 +112,9 @@ def get_weather(self, e):
     if not e.output:
         return get_weather2(self, e)
         
-def forecast_io(address):
+    return e
+    
+def forecast_io(self, location):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
 
 

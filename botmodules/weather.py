@@ -189,8 +189,8 @@ def forecast_io(self,e, location=""):
     #    return
     
     output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / Outlook: {}"
-    output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, outlook)
-    return output
+    e.output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, outlook)
+    return e.output
 
 forecast_io.command = "!fio"
 

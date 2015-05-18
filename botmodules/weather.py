@@ -117,7 +117,7 @@ def get_weather(self, e):
 def forecast_io(self, location="", e):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
     
-    if location = "":
+    if location == "":
         location = e.input
         
     try:

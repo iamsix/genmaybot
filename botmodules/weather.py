@@ -135,48 +135,48 @@ def forecast_io(self, location="", e):
     except urllib.error.HTTPError as err:
         print(err.read())
 
+    #try:
+    results_json = json.loads(response.read().decode('utf-8'))
+    current_conditions = results_json['currently']
+
+    temp = current_conditions['temperature']
+    humidity = int(100*current_conditions['humidity'])
+    precip_probability = current_conditions['precipProbability']
+    current_summary = current_conditions['summary']
+    
+    wind_speed = current_conditions['windSpeed']
+    wind_speed_kmh = round(wind_speed * 1.609, 1)
+
+    wind_direction = current_conditions['windBearing']
+    wind_direction = bearing_to_compass(wind_direction)
+
+    cloud_cover = int(100*current_conditions['cloudCover'])
+    
+    feels_like = current_conditions['apparentTemperature']
+
+        
+        
+    if feels_like != temp:
+        feels_like = " / Feels like: %s°F %s°C" % (int(round(feels_like,0)), int(round((feels_like- 32)*5/9,0)))
+    
+    else:
+        feels_like = ""
+    temp_c = int(round((temp - 32)*5/9,0))
+    temp = int(round(temp,0))
+
+    # If the minute by minute outlook isn't available, grab the hourly
     try:
-        results_json = json.loads(response.read().decode('utf-8'))
-        current_conditions = results_json['currently']
-
-        temp = current_conditions['temperature']
-        humidity = int(100*current_conditions['humidity'])
-        precip_probability = current_conditions['precipProbability']
-        current_summary = current_conditions['summary']
-        
-        wind_speed = current_conditions['windSpeed']
-        wind_speed_kmh = round(wind_speed * 1.609, 1)
-
-        wind_direction = current_conditions['windBearing']
-        wind_direction = bearing_to_compass(wind_direction)
-
-        cloud_cover = int(100*current_conditions['cloudCover'])
-        
-        feels_like = current_conditions['apparentTemperature']
-
-        
-        
-        if feels_like != temp:
-            feels_like = " / Feels like: %s°F %s°C" % (int(round(feels_like,0)), int(round((feels_like- 32)*5/9,0)))
-        
-        else:
-            feels_like = ""
-        temp_c = int(round((temp - 32)*5/9,0))
-        temp = int(round(temp,0))
-
-        # If the minute by minute outlook isn't available, grab the hourly
-        try:
-            outlook = results_json['minutely']['summary']
-        except:
-            outlook = results_json['hourly']['summary']
+        outlook = results_json['minutely']['summary']
+    except:
+        outlook = results_json['hourly']['summary']
             
         
         #print(temp,humidity,precip_probability,current_summary,wind_speed,wind_direction,cloud_cover,feels_like)
 
 
 
-    except:
-        return
+    #except:
+    #    return
     
     output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / Outlook: {}"
     output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, outlook)

@@ -121,7 +121,7 @@ def forecast_io(self, location="", e):
         location = e.input
         
     try:
-        address, lat, lng = google_geocode(address, gapikey)
+        address, lat, lng = google_geocode(location, gapikey)
     except: #Google geocode failed
         return False
 

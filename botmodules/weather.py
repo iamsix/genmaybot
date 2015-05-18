@@ -105,16 +105,16 @@ def get_weather(self, e):
             return
     
     # Try weather functions in order
-    e.output = forecast_io(self, location)
+    e.output = forecast_io(self, location, e)
     
     if not e.output:
-        e.output = get_wwo(self, location)
+        e.output = get_wwo(self, location, e)
     if not e.output:
         return get_weather2(self, e)
         
     return e
     
-def forecast_io(self, location):
+def forecast_io(self, location, e):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
 
 
@@ -182,7 +182,7 @@ def forecast_io(self, location):
 
 forecast_io.command = "!fio"
 
-def get_wwo(self, location):
+def get_wwo(self, location, e):
     # WWO weather of place specified in 'zip'
     # http://www.worldweatheronline.com/free-weather-feed.aspx
     

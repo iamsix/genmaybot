@@ -20,7 +20,7 @@ def set_fiokey(line, nick, self, c):
 set_fiokey.admincommand = "forecastiokey"
 
 def google_geocode(address):
-    gapikey = self.botconfig["APIkeys"]["shorturlkey"]) #This uses the same Google API key as URL shortener
+    gapikey = self.botconfig["APIkeys"]["shorturlkey"] #This uses the same Google API key as URL shortener
     address = urllib.parse.quote(address)
 
     url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}"
@@ -113,7 +113,7 @@ def get_weather(self, e):
         return get_weather2(self, e)
         
 def forecast_io(address):
-    apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"])
+    apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
 
 
     try:

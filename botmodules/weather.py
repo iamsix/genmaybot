@@ -86,7 +86,6 @@ def bearing_to_compass(bearing):
 
 def get_weather(self, e):
 
-    
     #This callback handling code should be able to be reused in any other function
     if get_weather.waitfor_callback:
         return
@@ -113,15 +112,25 @@ def get_weather(self, e):
         return get_weather2(self, e)
         
     return e
-    
+
+get_weather.waitfor_callback = False
+get_weather.command = "!w"
+get_weather.helptext = """Usage: \002!w <location>\002
+Example: !w hell, mi
+Shows weather info from a few different providers.
+Use \002!setlocation <location>\002 to save your location"""
+   
 def forecast_io(self,e, location=""):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
     print ("Entered Forecast.IO function. Location %s or %s" % (location, e.input))
     if location == "":
         location = e.input
+    if location == "" and user:
+        location = user.get_location(e.nick)
+
         
     #try:
-    address, lat, lng = google_geocode(location, gapikey)
+    address, lat, lng = google_geocode(location)
     print (address, lat, lng)
     #except: #Google geocode failed
     #    return False
@@ -263,12 +272,7 @@ def get_wwo(self, location, e):
     else:
         return False
 
-get_weather.waitfor_callback = False
-get_weather.command = "!w"
-get_weather.helptext = """Usage: \002!w <location>\002
-Example: !w hell, mi
-Shows weather info from google.com.
-Use \002!setlocation <location>\002 to save your location"""
+
 
 
 def get_weather2(self, e):

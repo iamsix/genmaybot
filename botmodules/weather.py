@@ -272,7 +272,7 @@ def get_wwo(self, location, e):
     else:
         return False
 
-
+get_wwo.command = "!wwo"
 
 
 def get_weather2(self, e):

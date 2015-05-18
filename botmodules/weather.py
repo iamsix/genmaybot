@@ -120,10 +120,10 @@ def forecast_io(self, location="", e):
     if location == "":
         location = e.input
         
-    try:
-        address, lat, lng = google_geocode(location, gapikey)
-    except: #Google geocode failed
-        return False
+    #try:
+    address, lat, lng = google_geocode(location, gapikey)
+    #except: #Google geocode failed
+    #    return False
 
     
     url = "https://api.forecast.io/forecast/{}/{},{}"

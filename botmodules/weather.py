@@ -105,7 +105,7 @@ def get_weather(self, e):
             return
     
     # Try weather functions in order
-    e.output = forecast_io(self, location, e)
+    e.output = forecast_io(self,  e, location)
     
     if not e.output:
         e.output = get_wwo(self, location, e)
@@ -114,7 +114,7 @@ def get_weather(self, e):
         
     return e
     
-def forecast_io(self, location="", e):
+def forecast_io(self,e, location=""):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
     print ("Entered Forecast.IO function. Location %s or %s" % (location, e.input))
     if location == "":

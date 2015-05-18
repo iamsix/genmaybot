@@ -19,7 +19,7 @@ def set_fiokey(line, nick, self, c):
         self.botconfig.write(configfile)
 set_fiokey.admincommand = "forecastiokey"
 
-def google_geocode(address):
+def google_geocode(self, address):
     gapikey = self.botconfig["APIkeys"]["shorturlkey"] #This uses the same Google API key as URL shortener
     address = urllib.parse.quote(address)
 
@@ -130,7 +130,7 @@ def forecast_io(self,e, location=""):
 
         
     #try:
-    address, lat, lng = google_geocode(location)
+    address, lat, lng = google_geocode(self, location)
     print (address, lat, lng)
     #except: #Google geocode failed
     #    return False

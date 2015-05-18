@@ -114,10 +114,12 @@ def get_weather(self, e):
         
     return e
     
-def forecast_io(self, location, e):
+def forecast_io(self, location="", e):
     apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"]
-
-
+    
+    if location = "":
+        location = e.input
+        
     try:
         address, lat, lng = google_geocode(address, gapikey)
     except: #Google geocode failed

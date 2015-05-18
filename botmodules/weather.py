@@ -104,10 +104,10 @@ def get_weather(self, e):
             return
     
     # Try weather functions in order
-    e.output = forecast_io(self,  e, location)
+    forecast_io(self,  e, location)
     
     if not e.output:
-        e.output = get_wwo(self, location, e)
+        get_wwo(self, location, e)
     if not e.output:
         return get_weather2(self, e)
         

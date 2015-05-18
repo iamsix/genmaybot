@@ -13,10 +13,79 @@ def set_wwokey(line, nick, self, c):
         self.botconfig.write(configfile)
 set_wwokey.admincommand = "wwokey"
 
+def set_fiokey(line, nick, self, c):
+    self.botconfig["APIkeys"]["forecastIO_APIkey"] = line[14:]
+    with open('genmaybot.cfg', 'w') as configfile:
+        self.botconfig.write(configfile)
+set_fiokey.admincommand = "forecastiokey"
+
+def google_geocode(address):
+    gapikey = self.botconfig["APIkeys"]["shorturlkey"]) #This uses the same Google API key as URL shortener
+    address = urllib.parse.quote(address)
+
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address={}&key={}"
+    url = url.format(address, gapikey)
+
+
+    try:
+        request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+        response = urllib.request.urlopen(request)
+    except urllib.error.HTTPError as err:
+        print(err.read())
+
+    try:
+        results_json = json.loads(response.read().decode('utf-8'))
+        status = results_json['status']
+
+        if status != "OK":
+            raise
+
+        formatted_address = results_json['results'][0]['formatted_address']
+
+        # Take only the city and state if in the USA
+        if formatted_address.find("USA") != -1:
+            formatted_address = formatted_address.split(",")[0]+", "+formatted_address.split(",")[1].split(" ")[1]
+
+        lng = results_json['results'][0]['geometry']['location']['lng']
+        lat = results_json['results'][0]['geometry']['location']['lat']
+
+        
+    except:
+        print("Failed to geocode location using Google API.")
+        print("Geocode URL: %s" % url)
+        return
+    
+    return formatted_address, lat, lng
+
+def bearing_to_compass(bearing):
+    dirs = {}        
+    dirs['N'] = (348.75, 11.25)
+    dirs['NNE'] = (11.25, 33.75)
+    dirs['NE'] = (33.75, 56.25)
+    dirs['ENE'] = (56.25, 78.75)
+    dirs['E'] = (78.75, 101.25)
+    dirs['ESE'] = (101.25, 122.75)
+    dirs['SE'] = (123.75, 146.25)
+    dirs['SSE'] = (146.25, 168.75)
+    dirs['S'] = (168.75, 191.25)
+    dirs['SSW'] = (191.25, 213.75)
+    dirs['SW'] = (213.75, 236.25)
+    dirs['WSW'] = (236.25, 258.75)
+    dirs['W'] = (258.75, 281.25)
+    dirs['WNW'] = (281.25, 303.75)
+    dirs['NW'] = (303.75, 326.25)
+    dirs['NNW'] = (326.25, 348.75)
+
+    for direction in dirs:
+        min, max = dirs[direction]
+        if bearing >= min and bearing <= max:
+            return direction
+        elif bearing >= dirs['N'][0] or bearing <= dirs['N'][1]:
+            return "N"
+
 
 def get_weather(self, e):
-    # WWO weather of place specified in 'zip'
-    # http://www.worldweatheronline.com/free-weather-feed.aspx
+
     
     #This callback handling code should be able to be reused in any other function
     if get_weather.waitfor_callback:
@@ -34,7 +103,87 @@ def get_weather(self, e):
             user.get_geoIP_location(self, e, "", "", "", get_weather)
             
             return
+    
+    # Try weather functions in order
+    e.output = forecast_io(self, location)
+    
+    if not e.output:
+        e.output = get_wwo(self, location)
+    if not e.output:
+        return get_weather2(self, e)
         
+def forecast_io(address):
+    apikey = self.botconfig["APIkeys"]["forecastIO_APIkey"])
+
+
+    try:
+        address, lat, lng = google_geocode(address, gapikey)
+    except: #Google geocode failed
+        return False
+
+    
+    url = "https://api.forecast.io/forecast/{}/{},{}"
+    url = url.format(apikey, lat, lng)
+
+    try:
+        request = urllib.request.Request(url, None, {'Referer': 'http://irc.00id.net'})
+        response = urllib.request.urlopen(request)
+    except urllib.error.HTTPError as err:
+        print(err.read())
+
+    try:
+        results_json = json.loads(response.read().decode('utf-8'))
+        current_conditions = results_json['currently']
+
+        temp = current_conditions['temperature']
+        humidity = int(100*current_conditions['humidity'])
+        precip_probability = current_conditions['precipProbability']
+        current_summary = current_conditions['summary']
+        
+        wind_speed = current_conditions['windSpeed']
+        wind_speed_kmh = round(wind_speed * 1.609, 1)
+
+        wind_direction = current_conditions['windBearing']
+        wind_direction = bearing_to_compass(wind_direction)
+
+        cloud_cover = int(100*current_conditions['cloudCover'])
+        
+        feels_like = current_conditions['apparentTemperature']
+
+        
+        
+        if feels_like != temp:
+            feels_like = " / Feels like: %s°F %s°C" % (int(round(feels_like,0)), int(round((feels_like- 32)*5/9,0)))
+        
+        else:
+            feels_like = ""
+        temp_c = int(round((temp - 32)*5/9,0))
+        temp = int(round(temp,0))
+
+        # If the minute by minute outlook isn't available, grab the hourly
+        try:
+            outlook = results_json['minutely']['summary']
+        except:
+            outlook = results_json['hourly']['summary']
+            
+        
+        #print(temp,humidity,precip_probability,current_summary,wind_speed,wind_direction,cloud_cover,feels_like)
+
+
+
+    except:
+        return
+    
+    output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / Outlook: {}"
+    output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, outlook)
+    return output
+
+forecast_io.command = "!fio"
+
+def get_wwo(self, location):
+    # WWO weather of place specified in 'zip'
+    # http://www.worldweatheronline.com/free-weather-feed.aspx
+    
     location = urllib.parse.quote(location)
     
     #End callback handling code
@@ -107,7 +256,7 @@ def get_weather(self, e):
         e.output = message
         return e
     else:
-        return get_weather2(self, e)
+        return False
 
 get_weather.waitfor_callback = False
 get_weather.command = "!w"

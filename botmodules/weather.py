@@ -176,10 +176,11 @@ def forecast_io(self,e, location=""):
 
     # If the minute by minute outlook isn't available, grab the hourly
     try:
-        outlook = results_json['minutely']['summary']
+        outlook = "%s %s " % (results_json['minutely']['summary'], results_json['daily']['summary'])
     except:
-        outlook = results_json['hourly']['summary']
-            
+        outlook = "%s %s" % (results_json['hourly']['summary'], results_json['daily']['summary'])
+        
+
         
         #print(temp,humidity,precip_probability,current_summary,wind_speed,wind_direction,cloud_cover,feels_like)
 

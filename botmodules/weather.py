@@ -164,7 +164,8 @@ def forecast_io(self,e, location=""):
     
     feels_like = current_conditions['apparentTemperature']
 
-        
+    min_temp = results_json['daily']['data'][0]['temperatureMin']
+
         
     if feels_like != temp:
         feels_like = " / Feels like: %s°F %s°C" % (int(round(feels_like,0)), int(round((feels_like- 32)*5/9,0)))

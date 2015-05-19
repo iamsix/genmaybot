@@ -154,7 +154,7 @@ def forecast_io(self,e, location=""):
     precip_probability = current_conditions['precipProbability']
     current_summary = current_conditions['summary']
     
-    wind_speed = current_conditions['windSpeed']
+    wind_speed = round(current_conditions['windSpeed'], 1)
     wind_speed_kmh = round(wind_speed * 1.609, 1)
 
     wind_direction = current_conditions['windBearing']
@@ -165,7 +165,12 @@ def forecast_io(self,e, location=""):
     feels_like = current_conditions['apparentTemperature']
 
     min_temp = results_json['daily']['data'][0]['temperatureMin']
-
+    min_temp_time = results_json['daily']['data'][0]['temperatureMinTime']
+    min_temp_c = int(round((min_temp - 32)*5/9,0)) 
+        
+    max_temp = results_json['daily']['data'][0]['temperatureMax']
+    max_temp_time = results_json['daily']['data'][0]['temperatureMaxTime']
+    max_temp_c = int(round((max_temp - 32)*5/9,0))
         
     if feels_like != temp:
         feels_like = " / Feels like: %s°F %s°C" % (int(round(feels_like,0)), int(round((feels_like- 32)*5/9,0)))
@@ -190,7 +195,7 @@ def forecast_io(self,e, location=""):
     #except:
     #    return
     
-    output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / Outlook: {}"
+    output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / High: {}°F {}°C Low: {}°F {}°C / Outlook: {}"
     e.output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, outlook)
     return e
 

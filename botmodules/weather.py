@@ -164,11 +164,11 @@ def forecast_io(self,e, location=""):
     
     feels_like = current_conditions['apparentTemperature']
 
-    min_temp = results_json['daily']['data'][0]['temperatureMin']
+    min_temp = int(round(results_json['daily']['data'][0]['temperatureMin'],0))
     min_temp_time = results_json['daily']['data'][0]['temperatureMinTime']
     min_temp_c = int(round((min_temp - 32)*5/9,0)) 
         
-    max_temp = results_json['daily']['data'][0]['temperatureMax']
+    max_temp = int(round(results_json['daily']['data'][0]['temperatureMax'],0))
     max_temp_time = results_json['daily']['data'][0]['temperatureMaxTime']
     max_temp_c = int(round((max_temp - 32)*5/9,0))
         

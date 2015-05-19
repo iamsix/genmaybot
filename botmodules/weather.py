@@ -166,11 +166,11 @@ def forecast_io(self,e, location=""):
     feels_like = current_conditions['apparentTemperature']
 
     min_temp = int(round(results_json['daily']['data'][0]['temperatureMin'],0))
-    min_temp_time = time.strftime("%I%p",time.gmtime(results_json['daily']['data'][0]['temperatureMinTime'] + (timezone_offset * 3600)))
+    min_temp_time = time.strftime("%I%p",time.gmtime(results_json['daily']['data'][0]['temperatureMinTime'] + (timezone_offset * 3600))).lstrip("0")
     min_temp_c = int(round((min_temp - 32)*5/9,0)) 
         
     max_temp = int(round(results_json['daily']['data'][0]['temperatureMax'],0))
-    max_temp_time = time.strftime("%I%p",time.gmtime(results_json['daily']['data'][0]['temperatureMaxTime'] + (timezone_offset * 3600)))
+    max_temp_time = time.strftime("%I%p",time.gmtime(results_json['daily']['data'][0]['temperatureMaxTime'] + (timezone_offset * 3600))).lstrip("0")
     max_temp_c = int(round((max_temp - 32)*5/9,0))
         
     if feels_like != temp:
@@ -196,7 +196,7 @@ def forecast_io(self,e, location=""):
     #except:
     #    return
     
-    output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / High: {}°F {}°C at {} Low: {}°F {}°C  at {}/ Outlook: {}"
+    output = "{} / {} / {}°F {}°C{} / Humidity: {}% / Wind: {} at {} mph ({} km/h) / Cloud Cover: {}% / High: {}°F {}°C at {} Low: {}°F {}°C at {} / Outlook: {}"
     e.output = output.format(address, current_summary, temp, temp_c, feels_like, humidity, wind_direction, wind_speed, wind_speed_kmh, cloud_cover, max_temp, max_temp_c, max_temp_time, min_temp, min_temp_c, min_temp_time, outlook)
     return e
 

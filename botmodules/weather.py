@@ -188,12 +188,12 @@ def forecast_io(self,e, location=""):
     except:
         outlook = "%s %s" % (results_json['hourly']['summary'], results_json['daily']['summary'])
         
-    outlookt = re.search("(\d+)°F", outlook)
+    outlookt = re.search("(-?\d+)°F", outlook)
     if outlookt:
         try:
             tmp = int(outlookt.group(1))
             tmpstr = "{}°F {}°C".format(tmp, int(round((tmp - 32)*5/9,0)))
-            outlook = re.sub("\d+°F", tmpstr, outlook)
+            outlook = re.sub("-?\d+°F", tmpstr, outlook)
         except:
             pass
 

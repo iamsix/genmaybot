@@ -41,14 +41,23 @@ def google_geocode(self, address):
         if status != "OK":
             raise
 
-        formatted_address = results_json['results'][0]['formatted_address']
+        for component in results_json['results'][0]['address_components']:
+            if 'locality' in component['types']:
+                city = component['short_name']
+            elif 'administrative_area_level_1' in component['types']:
+                state = component['short_name']
+            elif 'country' in component['types']:
+                if component['short_name'] != "US":                
+                    country = component['long_name']
+                else:
+                    country = False
+                    
+        formatted_address = "{}{}{}".format(city,"" if not state else ", " + state,"" if not country else ", " + country)
 
-        # Take only the city and state if in the USA
-        if formatted_address.find("USA") != -1:
-            formatted_address = formatted_address.split(",")[0]+", "+formatted_address.split(",")[1].split(" ")[1]
-
+        
         lng = results_json['results'][0]['geometry']['location']['lng']
         lat = results_json['results'][0]['geometry']['location']['lat']
+
 
         
     except:
@@ -56,7 +65,7 @@ def google_geocode(self, address):
         print("Geocode URL: %s" % url)
         return
     
-    return formatted_address, lat, lng
+    return formatted_address, lat, lng, country
 
 def bearing_to_compass(bearing):
     dirs = {}        
@@ -131,8 +140,8 @@ def forecast_io(self,e, location=""):
 
         
     #try:
-    address, lat, lng = google_geocode(self, location)
-    print (address, lat, lng)
+    address, lat, lng, country = google_geocode(self, location)
+    #print (address, lat, lng)
     #except: #Google geocode failed
     #    return False
 

@@ -156,7 +156,7 @@ def forecast_io(self,e, location=""):
     if location == "" and user:
         location = user.get_location(e.nick)
   
-    address, lat, lng, country = google_geocode(location)
+    address, lat, lng, country = google_geocode(self,location)
 
     url = "https://api.forecast.io/forecast/{}/{},{}"
     url = url.format(apikey, lat, lng)

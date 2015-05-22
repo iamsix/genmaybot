@@ -1,5 +1,6 @@
 import urllib.request, urllib.parse, urllib, xml.dom.minidom
 import json, time
+import re
 try:
     import botmodules.userlocation as user
 except ImportError:
@@ -187,6 +188,14 @@ def forecast_io(self,e, location=""):
     except:
         outlook = "%s %s" % (results_json['hourly']['summary'], results_json['daily']['summary'])
         
+    outlookt = re.search("(\d+)°F", outlook)
+    if outlookt:
+        try:
+            tmp = int(outlookt.group(1))
+            tmpstr = "{}°F {}°C".format(tmp, int(round((tmp - 32)*5/9,0)))
+            outlook = re.sub("\d+°F", tmpstr, outlook)
+        except:
+            pass
 
         
         #print(temp,humidity,precip_probability,current_summary,wind_speed,wind_direction,cloud_cover,feels_like)

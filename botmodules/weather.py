@@ -122,6 +122,8 @@ def get_weather(self, e):
         location = e.location
     except:
         location = e.input
+    
+    if location and user.get_location(location): location = user.get_location(location) #allow looking up by nickname
         
     if location == "" and user:
         location = user.get_location(e.nick)

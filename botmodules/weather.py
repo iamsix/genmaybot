@@ -62,7 +62,7 @@ def google_geocode(self, address):
 
         if not country: #Only show the state if in the US
             country == ""
-        elif country != "Canada":               #We don't care about provinces outside of the US and Canada
+        elif country != "Canada" and city:               #We don't care about provinces outside of the US and Canada, unless the city name is empty
             state = ""
 
         if city:

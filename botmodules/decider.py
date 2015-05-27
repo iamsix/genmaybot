@@ -7,6 +7,10 @@ def decider(self, e):
     regex = "^bot" + "[^\s]? (.*) or ([^?]*)"
     result = re.search(regex, e.input)
     if result:
+        if result.group(1).replace(' ', '').lower() == result.group(2).replace(' ', '').lower():
+            self.irccontext.mode(e.source, '+b {}'.format(e.hostmask))
+            self.irccontext.kick(e.source, e.nick, "Congratulations! You found the word of the day, courtesy of go fuck yourself!")  
+            return e
         if (random.randint(0,1) == 0):
             e.output = e.nick + ": " + result.group(1)
         else:

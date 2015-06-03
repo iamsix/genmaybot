@@ -91,7 +91,7 @@ def advocate_beer(self, e):
     cals = BeerCals(abv[:-1]).solve()
     
     if cals:
-        cals = "Est. calories: %s" % cals
+        cals = "Est. calories (12oz): %s" % cals
 
 
     e.output = "Beer: %s - Grade: %s [%s, %s] Style: %s ABV: %s %s [ %s ]" % (beertitle, 

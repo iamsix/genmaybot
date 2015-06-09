@@ -36,7 +36,6 @@ class webServer:
                 
             
         elif (error != None) or (code==None):
-            cherrypy.engine.exit()
             return "Invalid or empty access code received from Strava. Please try to authenticate again."
             
     def strava_insert_token(self,user,token):

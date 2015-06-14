@@ -120,11 +120,11 @@ def url_posted(self, e):
     return e
 
 
-def get_title(self, e, url):
+def get_title(url):
     length = 51200
     if url.find("amazon.") != -1:
         length = 100096  # because amazon is coded like shit
-    page = self.tools["load_html_from_URL"](url, length)
+    page = load_html_from_URL(url, length)
     title = ""
 
     if page and page.find('meta', attrs={'name': "generator", 'content': re.compile("MediaWiki", re.I)}):
@@ -135,8 +135,16 @@ def get_title(self, e, url):
             pass
     elif page:
         title = "Title: " + page.find('title').string
-
-    return title
+        try:
+            meta_title = "Title: " + page.find('meta', attrs={'property': "og:title"}).get("content")
+        except:
+            meta_title = False
+        
+        
+    if meta_title:
+        return meta_title
+    else:
+        return title
 
 
 def last_link(self, e):

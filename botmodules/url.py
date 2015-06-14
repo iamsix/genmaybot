@@ -120,7 +120,7 @@ def url_posted(self, e):
     return e
 
 
-def get_title(url):
+def get_title(self, e, url):
     length = 51200
     if url.find("amazon.") != -1:
         length = 100096  # because amazon is coded like shit

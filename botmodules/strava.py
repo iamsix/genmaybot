@@ -546,7 +546,14 @@ def strava_ride_to_string(recent_ride, athlete_id=None): #if the athlete ID is m
     moving_time = str(datetime.timedelta(seconds=recent_ride['moving_time']))
     ride_datetime = time.strptime(recent_ride['start_date_local'], "%Y-%m-%dT%H:%M:%SZ")
     time_start = time.strftime("%B %d, %Y at %I:%M %p", ride_datetime)
-    
+
+    # Try to get the average heart rate
+    if 'average_heartrate' in recent_ride:
+        avg_hr = recent_ride['average_heartrate']
+    else:   # Heart not found
+        avg_hr = False 
+
+
     if athlete_id:
         measurement_pref = strava_get_measurement_pref(athlete_id)
     else:
@@ -576,7 +583,11 @@ def strava_ride_to_string(recent_ride, athlete_id=None): #if the athlete ID is m
     # Users who don't have a weight won't have average watts.
     if 'average_watts' in recent_ride:
         return_string += " | %s watts average power" % (int(recent_ride['average_watts']))
+        if avg_hr > 0: 
+            return_string += " | %s watts/bpm" % (round(recent_ride['average_watts']/avg_hr,2))
     return return_string
+
+
 
 def strava_get_measurement_pref(athlete_id):
     try:

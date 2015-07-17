@@ -148,3 +148,76 @@ nouns = ["action-items", "applications", "architectures", "bandwidth", "channels
 "ROI", "synergies", "web-readiness", "schemas", "solutions", "supply-chains", "systems", "technologies", "users", "vortals",
 "web services"]
 
+
+def wfl(self, e):
+    descriptives = ["Stewed", "Broiled", "Sauteed", "Steamed", "Baked", "Toasted", "Grilled", "Peeled", 
+    "Barbecued", "Flame-broiled", "Aged", "Fermented", "Spiced", "Spicy", "Hot", "Chilled", "Salted", "Stuffed", 
+    "Sweet and Sour", "Creamy", "Dried", "Roasted", "Dry-roasted", "Pan-fried", "Deep-fried", "Savory", "Sweet", 
+    "Yellowed", "Greenish", "Beige", "Orange", "Reddish", "Brown", "Colorful", "Delicious", "Sumptuous", "Decadent", 
+    "Fragrant", "Tepid", "Steaming", "Sizzling"]
+    
+    foods = ["Yam", "Carrot", "Rhubarb", "Spinach", "Bell Pepper", "Mushroom", "Kale", "Chard", "Garlic", "Squash", 
+    "Pumpkin", "Rice", "Oatmeal", "Walnut", "Peanut", "Almond", "Hazelnut", "Pine Nut", "Lemon", "Lime", "Grape", 
+    "Tangerine", "Watermelon", "Tamarind", "Pineapple", "Apple", "Banana", "Grapefruit", "Tortilla", "Meat", "Chicken",
+    "Pork", "Lamb", "Veal", "Sausage", "Frankfurter", "Hot Dog", "Polish Sausage", "Kielbasa", "Duck", "Mock-Duck", 
+    "Tofu", "Head Cheese", "Liver", "Cod", "Ham", "Bacon", "Turkey", "Goat", "Pulled Pork", "Pastrami", "Roast Beef", 
+    "Mystery Meat", "Lunch Meat", "Meat", "Salmon", "Trout", "Tuna", "Swordfish", "Sea Urchin", "Oyster", "Clam", 
+    "Mussel", "Scallop", "Shellfish", "Abalone", "Seaweed", "Mustard", "Ketchup", "Cheese", "Cardamom", "Coriander", 
+    "Turmeric", "Rutabaga", "Muskrat", "Beaver", "Bass", "Spam", "Cheese", "Cheddar"]
+    
+    withs = ["with", "with", "with a side of", "tossed with", "topped with", "served with", "on a bed of"]
+
+    servings = ["Slices", "Tea", "Chunks", "Sticks", "Powder", "Noodles", "Pie", "Puree", "Paste", "Oil", "Sauce", 
+    "Stew", "Soup", "Stroganoff", "Tarts", "Balls", "Bread", "Flatbread", "Fritters", "Souffle", "Omelette", "Sushi",
+    "Roll", "Burger", "Sandwich", "Pudding", "Shish-Kebab", "Pizza", "Pasta", "Pilaf", "Scramble", "Paste", "Pie",
+    "Cookies", "Scones", "Cake", "Brownies", "Pastry", "Muffins", "Smoothie", "Milkshake", "Salad", "Chutney", "Jam", 
+    "Fondue", "Jerky", "Beverage", "Drink", "Juice", "Drippings", "Gravy", "Gravy"]
+
+    descr = descriptives[random.randint(0, len(descriptives) - 1)]
+    
+    dupemain = random.randint(0,2)
+    if not dupemain:
+        main = "{} and {}".format(foods[random.randint(0, len(foods) - 1)],
+                                  foods[random.randint(0, len(foods) - 1)])
+    else:
+        main = foods[random.randint(0, len(foods) - 1)]
+    
+    sw = withs[random.randint(0, len(withs) - 1)]
+    
+    dupeseconds = random.randint(0,2)
+    if not dupeseconds:
+        second =  "{} and {}".format(foods[random.randint(0, len(foods) - 1)],
+                                     foods[random.randint(0, len(foods) - 1)])
+    else:
+        second = foods[random.randint(0, len(foods) - 1)]
+        
+    serve = servings[random.randint(0, len(servings) - 1)]
+    
+    e.output = "{} {} {} {} {}".format(descr, main, sw, second, serve)
+    
+    return e
+wfl.command = "!wfl"
+wfl.helptext = "Decides what's for lunch"
+
+def cactus(self, e):
+    if (e.nick.lower().startswith('rc')):
+        e.output = "bleh"
+        return e
+    bleh = generateblehs()
+    if (e.nick.lower().startswith('cact')):
+        e.output = "<%s> !cactus\n^\n%s" % (e.nick, bleh)
+    else:
+        e.output = bleh
+
+    return e
+cactus.command = "!cactus"
+    
+    
+def generateblehs():
+    output = ""
+    rand = random.randint(2, 10)
+    for n in range(0, rand):
+        output = output + ("ee" if random.randint(0, 5) == 0 else "e")
+    output = "bl" + output + "h"
+    return output
+

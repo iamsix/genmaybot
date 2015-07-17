@@ -61,8 +61,8 @@ def nowplaying(self, e):
             except:
                 genres = ""
             try:
-                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch%3Fv%3D')
-                yt = yt[yt.find("%3Fv%3D") + 7:]
+                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch\?v=')
+                yt = yt[yt.find("?v=") + 3:]
                 yt = " - http://youtu.be/" + yt
             except:
                 yt = ""
@@ -73,8 +73,8 @@ def nowplaying(self, e):
             trackname = track['recenttracks']['track']['name']
             played = track['recenttracks']['track']['date']['#text']
             try:
-                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch%3Fv%3D')
-                yt = yt[yt.find("%3Fv%3D") + 7:]
+                yt = self.tools['google_url']('site:youtube.com %s - %s' % (artist, trackname), 'watch\?v=')
+                yt = yt[yt.find("?v=") + 3:]
                 yt = " - http://youtu.be/" + yt
             except:
                 yt = ""

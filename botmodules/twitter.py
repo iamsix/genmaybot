@@ -19,6 +19,7 @@ def __init__(self):
     response = json.loads(response.read().decode('utf-8'))
     read_timeline.holyshitbearstoken = response['access_token']
     print(read_timeline.holyshitbearstoken)
+    read_timeline.self = self
   except Exception as inst:
       print(inst)
 
@@ -31,6 +32,10 @@ def read_timeline (user):
     updated = datetime.datetime.strptime(tweet[0]['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
     ago = round((datetime.datetime.utcnow() - updated).seconds/60)
     text = tweet[0]['user']['screen_name'] + ": " + tweet[0]['text']
+    try:
+      text = read_timeline.self.tools['decode_htmlentities'](text)
+    except:
+      pass
     return text, updated, ago
 
 def latest_breaking(self, e):

@@ -90,7 +90,7 @@ def url_posted(self, e):
             title = trope.output
     except:
         pass
-    if url.find("imgur.com") != -1 and url.find("/a/") == -1:
+    if url.find("imgur.com") != -1 and url.find("/a/") == -1 and "/gallery/" not in url:
         imgurid = url[url.rfind('/') + 1:]
         if "." in imgurid:
             imgurid = imgurid[:imgurid.rfind('.')]
@@ -135,15 +135,23 @@ def get_title(self, e, url):
             pass
     elif page:
         title = "Title: " + page.find('title').string
-
-    return title
+        try:
+            meta_title = "Title: " + page.find('meta', attrs={'property': "og:title"}).get("content")
+        except:
+            meta_title = False
+        
+        
+    if meta_title:
+        return meta_title
+    else:
+        return title
 
 
 def last_link(self, e):
     #displays last link posted (requires mysql)
     conn = sqlite3.connect("links.sqlite")
     cursor = conn.cursor()
-    if (cursor.execute("SELECT url FROM links ORDER BY rowid DESC LIMIT 1")):
+    if cursor.execute("SELECT url FROM links ORDER BY rowid DESC LIMIT 1"):
         result = cursor.fetchone()
         url = result[0]
 
@@ -152,5 +160,5 @@ def last_link(self, e):
     return e
 
 last_link.command = "!lastlink"
-last_link.helptext = "Usage: !lastlink\nShows the last URL that was posted in the channel"
-
+last_link.helptext = "Usage: \002!lastlink\002" \
+                     "Shows the last URL that was posted in the channel"

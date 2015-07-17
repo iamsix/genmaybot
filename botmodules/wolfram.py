@@ -1,6 +1,7 @@
 import urllib, urllib.request, urllib.error, urllib.parse, xml.dom.minidom, socket, traceback
 try: import botmodules.userlocation as user
 except: pass
+import re
 
 
 def get_wolfram(self, e):
@@ -48,6 +49,14 @@ def get_wolfram(self, e):
                 result = self.bangcommands["!error"](self, e).output
 
             output = query.replace("\n", " || ") + " :: " + result.replace("\n", " || ")
+            unicodes = re.findall("\\\\:[0-9a-zA-Z]{4}", output)
+            if unicodes:
+                newchars = []
+                for ch in unicodes:
+                    ch = ch.encode().replace(b"\\:",b"\\u").decode("unicode-escape")
+                    newchars.append(ch)
+                output = re.sub("\\\\:[0-9a-zA-Z]{4}", "{}", output)
+                output = output.format(*newchars)
             e.output = output
             return e
         except Exception as inst:
@@ -66,3 +75,18 @@ def calc_wolfram (self, e):
     return get_wolfram(self, e)
 calc_wolfram.command = "!c"
 get_wolfram.helptext = "Calculator alias for !wolfram"
+
+def wolfram_time(self, e):
+    if e.input:
+        location = user.get_location(e.input)
+        if location:
+            e.input = "current time in %s" % location
+            return get_wolfram(self, e)
+    else:
+        location = user.get_location(e.nick)
+        if location:
+            e.input = "current time in %s" % location
+            return get_wolfram(self, e)
+            
+wolfram_time.command = "!time"
+wolfram_time.helptext = "Usage: !time to get your local time, !time <nick> to get someone else's local time"

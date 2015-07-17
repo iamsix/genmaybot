@@ -208,7 +208,7 @@ class SingleServerIRCBot(SimpleIRCClient):
 
         Used when answering a CTCP VERSION request.
         """
-        return "ircbot.py by Joel Rosdahl <joel@rosdahl.net>"
+        return "ircbot.py by KpaBap <kpabap@gmail.com>"
 
     def jump_server(self, msg="Changing servers"):
         """Connect to a new server, possibly disconnecting from the current.
@@ -222,7 +222,7 @@ class SingleServerIRCBot(SimpleIRCClient):
         self.server_list.append(self.server_list.pop(0))
         self._connect()
 
-    def on_ctcp(self, c, e):
+    def _on_ctcp(self, c, e):
         """Default handler for ctcp events.
 
         Replies to VERSION and PING requests and relays DCC requests

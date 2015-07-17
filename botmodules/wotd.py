@@ -19,7 +19,7 @@ def wotd_trigger(self, e):
     else:
         return
 wotd_trigger.lineparser = False
-wotd_trigger.wotd = "cat"
+wotd_trigger.wotd = "mixy"
 wotd_trigger.wotd_found_timestamp = 0
 wotd_trigger.wotd_setter = ""
 wotd_trigger.wotd_finder = ""
@@ -120,7 +120,7 @@ def do_wotd(self, e):
 
 def ban_user(self, e):
     self.irccontext.privmsg("Angstserv", "deprotect {} {}".format(e.source, e.nick))
-    self.irccontext.privmsg("Angstserv", "ACCESS {} add {} -1".format(e.source, e.nick))
+    #self.irccontext.privmsg("Angstserv", "ACCESS {} add {} -1".format(e.source, e.nick))
     time.sleep(1)
     self.irccontext.mode(e.source, '+b {}'.format(e.hostmask))
     self.irccontext.kick(e.source, e.nick, "Congratulations! You found the word of the day, courtesy of {}!".format(wotd_trigger.wotd_setter or self.irccontext.get_nickname()))
@@ -128,7 +128,7 @@ def ban_user(self, e):
 
 def unban_user(self, nick, hostmask, channel):
     self.irccontext.mode(channel, '-b {}'.format(hostmask))
-    self.irccontext.privmsg("Angstserv", "ACCESS {} add {} 5".format(channel, nick))
+    #self.irccontext.privmsg("Angstserv", "ACCESS {} add {} 5".format(channel, nick))
     self.irccontext.invite(nick, channel)
 
     conn = sqlite3.connect("wotd.sqlite")

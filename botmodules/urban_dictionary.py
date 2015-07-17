@@ -1,8 +1,20 @@
 import urllib.parse
+import re
 
 
 def get_urbandictionary(self, e):
     searchterm = e.input
+    
+    #super smrt AI code to tell if you want a different definition
+    #We only get the first 7 results.
+    number = re.search("[1-7]", searchterm[0:1])
+    if number and len(searchterm.split(" ")) > 1:
+       searchterm = searchterm[2:]
+       number = int(number.group(0)[0:1]) - 1
+       print(number)
+    else:
+       number = 0
+
     url = "http://www.urbandictionary.com/define.php?term=%s" % urllib.parse.quote(searchterm)
 
     if searchterm == "wotd":
@@ -19,11 +31,11 @@ def get_urbandictionary(self, e):
     if page.find(id='not_defined_yet') is not None:
         return None
 
-    first_word = page.findAll('div', attrs={"class": "word"})[0].a.string
+    first_word = page.findAll('a', attrs={"class": "word"})[number].string
 
     first_word = first_word.replace("\n", "")
 
-    for content in page.findAll('div', attrs={"class": "meaning"})[0].contents:
+    for content in page.findAll('div', attrs={"class": "meaning"})[number].contents:
         if content.string is not None:
             first_definition += content.string
 
@@ -54,7 +66,7 @@ def get_urbandictionary_wotd(self):
     page = self.tools["load_html_from_URL"](url)
     first_definition = ""
 
-    first_word = page.findAll('div', attrs={"class": "word"})[0].contents[1].contents[0].string
+    first_word = page.findAll('a', attrs={"class": "word"})[0].string
     first_word = first_word.encode("utf-8", 'ignore')
 
     for content in page.findAll('div', attrs={"class": "meaning"})[0].contents:

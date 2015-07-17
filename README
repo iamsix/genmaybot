@@ -1,3 +1,11 @@
+# Vagrant Easy Setup
+
+1. Install Vagrant (http://www.vagrantup.com/)
+2. Copy genmaybot.cfg.example to genmaybot.cfg and change the config.
+3. cd into the repo's working directory.
+4. vagrant up
+5. Profit, or develop or something?
+
 This is the Python 3.x branch - it works, for Brak's pleasure.
 
 The following non-standard Python modules need to be installed:

@@ -22,10 +22,15 @@ def get_rt(self, e):
         url = url.format(results['movies'][0]['id'], self.botconfig["APIkeys"]["rtAPIkey"])
         movie = loadjson(url)
 
+    url = self.tools['shorten_url'](movie['links']['alternate'])
+    
     concensus = ""
     if 'critics_consensus' in movie:
-        concensus = "- " + movie['critics_consensus']
-    url = self.tools['shorten_url'](movie['links']['alternate'])
+        flxurl = "http://api.flixster.com/android/api/v1/movies/{}.json".format(movie['id'])
+        flxpage = loadjson(flxurl)
+        concensus = flxpage['reviews']['rottenTomatoes']['consensus']
+        concensus = "- " + self.tools['remove_html_tags'](concensus)
+
     e.output = "%s (%s) - Critics: %s - Users: %s %s [ %s ]" % (movie['title'],
                                                                 str(movie['year']),
                                                                 str(movie['ratings']['critics_score']),
@@ -43,5 +48,5 @@ def loadjson(url):
         response = gzip.decompress(response)
     except:
         pass
-    response = response.decode("utf-8")
+    response = response.decode("utf-8", "replace")
     return json.loads(response)

@@ -1,4 +1,5 @@
-import re
+import re, json, urllib.request
+from urllib.parse import urlparse
 
 class BeerCals:
     avg_fg = 1.012
@@ -102,8 +103,86 @@ def advocate_beer(self, e):
                                                                            abv, cals,
                                                                            self.tools['shorten_url'](url))
     return e
-advocate_beer.command = "!beer"
+advocate_beer.command = "!ba"
 advocate_beer.helptext = """\
+Usage: !ba <beer name>
+Example: !ba pliny the elder
+Finds a given beer on beeradvocate.com and returns user ratings and beer info"""
+
+def request_json(url):
+    #if not request_json.token: #if we haven't found a valid client token, fall back to the public one
+        #equest_json.token = self.botconfig["APIkeys"]["stravaToken"]
+    clientid = self.botconfig["APIkeys"]["untappd_clientid"]
+    clientsecret = self.botconfig["APIkeys"]["untappd_clientsecret"]
+
+    params = urllib.parse.urlencode({'client_id': clientid, 'client_secret': clientsecret})
+
+    response = urllib.request.urlopen("%s&%s" % (url, params))
+    response = json.loads(response.read().decode('utf-8'))
+    return response
+
+
+
+
+def untappd_beer_search(self, e):
+
+    top_rating = 4.7
+    beername = e.input
+
+    query = urllib.parse.urlencode({"q":beername})
+    url = "https://api.untappd.com/v4/search/beer"
+
+    url = "%s?%s" % (url, query)
+    response = request_json(url)
+    beerid = response['response']['beers']['items'][0]['beer']['bid']
+    
+    url = "https://api.untappd.com/v4/beer/info/%s?" % beerid
+
+    response = request_json(url)['response']['beer']
+
+    beer_name = response['beer_name']
+    beer_abv = response['beer_abv']
+    beer_ibu = response['beer_ibu']
+    beer_style = response['beer_style']
+    rating = int(round((float(response['rating_score'])/top_rating)*100, 0))
+    rating_count = response['rating_count']
+
+    if rating >=95:
+        rating_word = "world-class"
+    elif rating >= 90 and rating <= 94:
+        rating_word = "outstanding"
+    elif rating >=85 and rating <= 89:
+        rating_word = "very good"
+    elif rating >=80 and rating <= 84:
+        rating_word = "good"
+    elif rating >=70 and rating <=79:
+        rating_word = "okay"
+    elif rating >=60 and rating <=69:
+        rating_word = "poor"
+    elif rating < 60:
+        rating_word = "awful"
+
+    cals = BeerCals(beer_abv).solve()
+
+    if cals:
+        cals = "Est. calories (12oz): %s" % cals
+
+    beerline = "Beer: %s - Grade: %s [%s, %s ratings] Style: %s ABV: %s%% %s [ %s ]" % (beer_name, 
+                                                                           rating,
+                                                                           rating_word,
+                                                                           rating_count,
+                                                                           beer_style,
+                                                                           beer_abv, cals,
+                                                                           self.tools['shorten_url'](url))
+     
+
+    e.output = beerline
+    return e
+
+
+
+untappd_beer_search.command = "!beer"
+untappd_beer_search.helptext = """\
 Usage: !beer <beer name>
 Example: !beer pliny the elder
-Finds a given beer on beeradvocate.com and returns user ratings and beer info"""
+Finds a given beer on Untappd and returns user ratings and beer info"""

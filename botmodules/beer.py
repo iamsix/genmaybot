@@ -112,12 +112,9 @@ Finds a given beer on beeradvocate.com and returns user ratings and beer info"""
 def request_json(url):
     #if not request_json.token: #if we haven't found a valid client token, fall back to the public one
         #equest_json.token = self.botconfig["APIkeys"]["stravaToken"]
-    clientid = self.botconfig["APIkeys"]["untappd_clientid"]
-    clientsecret = self.botconfig["APIkeys"]["untappd_clientsecret"]
 
-    params = urllib.parse.urlencode({'client_id': clientid, 'client_secret': clientsecret})
 
-    response = urllib.request.urlopen("%s&%s" % (url, params))
+    response = urllib.request.urlopen(url)
     response = json.loads(response.read().decode('utf-8'))
     return response
 
@@ -125,18 +122,24 @@ def request_json(url):
 
 
 def untappd_beer_search(self, e):
+    clientid = self.botconfig["APIkeys"]["untappd_clientid"]
+    clientsecret = self.botconfig["APIkeys"]["untappd_clientsecret"]
 
+    auth = urllib.parse.urlencode({'client_id': clientid, 'client_secret': clientsecret})
+    
+    
     top_rating = 4.7
     beername = e.input
 
     query = urllib.parse.urlencode({"q":beername})
     url = "https://api.untappd.com/v4/search/beer"
 
-    url = "%s?%s" % (url, query)
+    url = "%s?%s&%s" % (url, query, auth)
     response = request_json(url)
     beerid = response['response']['beers']['items'][0]['beer']['bid']
     
-    url = "https://api.untappd.com/v4/beer/info/%s?" % beerid
+    
+    url = "https://api.untappd.com/v4/beer/info/%s?%s" % (beerid, auth)
 
     response = request_json(url)['response']['beer']
 
@@ -144,6 +147,9 @@ def untappd_beer_search(self, e):
     beer_abv = response['beer_abv']
     beer_ibu = response['beer_ibu']
     beer_style = response['beer_style']
+    
+    beer_url = "https://untappd.com/b/%s/%s" % (response['beer_slug'], beerid)
+    
     rating = int(round((float(response['rating_score'])/top_rating)*100, 0))
     rating_count = response['rating_count']
 
@@ -173,7 +179,7 @@ def untappd_beer_search(self, e):
                                                                            rating_count,
                                                                            beer_style,
                                                                            beer_abv, cals,
-                                                                           self.tools['shorten_url'](url))
+                                                                           self.tools['shorten_url'](beer_url))
      
 
     e.output = beerline

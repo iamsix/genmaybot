@@ -28,7 +28,7 @@ def get_stock_quote(self, e):
     
        if change != "N/A":
            change = change + ' ({0:.2%})'.format((float(change)/(float(price) - float(change))))
-       if volume != "N/A" && avg_volume != "N/A":
+       if volume != "N/A" and avg_volume != "N/A":
            volume = '{0:n}'.format(int(volume))
            avg_volume = '{0:n}'.format(int(avg_volume))
        

@@ -103,7 +103,7 @@ def url_posted(self, e):
         title = get_title(self, e, url)
 
     if title:
-        if title.find("imgur: the simple") != -1:
+        if "imgur:" in title.lower():
             title = ""
         title = title.replace("\n", " ")
         title = re.sub('\s+', ' ', title)

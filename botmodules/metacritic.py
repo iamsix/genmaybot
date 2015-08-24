@@ -42,15 +42,15 @@ def get_metacritic(self, e):
         userNum = userScoreDiv.find('span', attrs={"class": "count"}).a.string
 
     if metaScore:
-        metaScore = "Metascore: " + metaScore
+        metaScore = " | Metascore: " + metaScore
         metaScore += " out of 100 - %s (%s Reviews)" % (metaDesc.strip(), metaNum.strip())
-        metaScore = "%s | " % metaScore
+        metaScore = "%s" % metaScore
     if userScore:
-        userScore = "User Score: " + userScore
+        userScore = " | User Score: " + userScore
         userScore += " out of 10 - %s (%s)" % (userDesc.strip(), userNum.strip())
-
+    short = self.tools['shorten_url'](url)
     if metaScore or userScore:
-        e.output = "%s %s| %s%s" % (title, category, metaScore, userScore)
+        e.output = "%s %s%s%s [ %s ]" % (title, category, metaScore, userScore, short)
     return e
 
 get_metacritic.command = "!mc"

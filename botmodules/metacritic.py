@@ -2,7 +2,7 @@
 def get_metacritic(self, e):
     url = self.tools['google_url']("site:metacritic.com " + e.input, "www.metacritic.com/")
     page = self.tools["load_html_from_URL"](url)
-    titleDiv = page.findAll('div', attrs={"class": "product_title"})[0]
+    titleDiv = page.findAll('h1', attrs={"class": "product_title"})[0]
     try:
         title = titleDiv.a.span.string.strip()
     except: #tv shows have an extra span
@@ -34,10 +34,12 @@ def get_metacritic(self, e):
     metaDesc = metaScoreDiv.findAll('span', attrs={"class": "desc"})[0].string.strip()
     metaNum = metaScoreDiv.findAll('span', attrs={"itemprop": "reviewCount"})[0].string.strip()
 
-    userScoreDiv = page.findAll('div', attrs={"class": "userscore_wrap feature_userscore"})[0]
-    userScore = userScoreDiv.a.div.string
-    userDesc = userScoreDiv.findAll('span', attrs={"class": "desc"})[0].string
-    userNum = userScoreDiv.find('span', attrs={"class": "count"}).a.string
+    userScoreDiv = page.find('div', attrs={"class": "userscore_wrap feature_userscore"})
+    userScore = ""
+    if userScoreDiv:
+        userScore = userScoreDiv.a.div.string
+        userDesc = userScoreDiv.findAll('span', attrs={"class": "desc"})[0].string
+        userNum = userScoreDiv.find('span', attrs={"class": "count"}).a.string
 
     if metaScore:
         metaScore = "Metascore: " + metaScore

@@ -1,5 +1,5 @@
 import re
-import cleverbot
+import botmodules.cleverbot
 
 def chatter(self, e):
     botnick = e.botnick.lower()

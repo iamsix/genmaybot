@@ -39,3 +39,4 @@ _ReSharper*/
 .DS_Store
 error_log
 event_log
+*.py-current

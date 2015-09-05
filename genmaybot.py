@@ -99,7 +99,7 @@ class TestBot(SingleServerIRCBot):
         self.keepalive(c)
 
     def on_youreoper(self, c, e):
-        print ("I'm an IRCop bitches!")
+        print("I'm an IRCop bitches!")
 
     def on_ison(self, c, e):
 
@@ -115,13 +115,13 @@ class TestBot(SingleServerIRCBot):
     def keepalive(self, irc_context):
         if time.time() - self.last_keepalive > 90:
             if not self.alive:
-                print ("%s: I think we are dead, reconnecting." %
-                       time.strftime("%m/%d/%y %H:%M:%S", time.localtime()))
+                print("%s: I think we are dead, reconnecting." %
+                      time.strftime("%m/%d/%y %H:%M:%S", time.localtime()))
                 self.jump_server()
                 self.alive = True
                 return
-            print ("%s: Keepalive reply not received, sending request" %
-                   time.strftime("%m/%d/%y %H:%M:%S", time.localtime()))
+            print("%s: Keepalive reply not received, sending request" %
+                  time.strftime("%m/%d/%y %H:%M:%S", time.localtime()))
             # Send ISON command on configured nick
             irc_context.ison(self.keepalive_nick)
             self.alive = False

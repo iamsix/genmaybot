@@ -1,5 +1,6 @@
 import urllib.request
 import json
+import random
 
 
 class Leafly:
@@ -9,7 +10,7 @@ class Leafly:
     class Strain:
         def __init__(self, name, tags, negatives, review_count, rating_count, rating, flavors, category, permalink):
             self.name = name
-            self.tags = tags
+            
 
             self.review_count = review_count
             self.rating_count = rating_count
@@ -27,6 +28,9 @@ class Leafly:
             for flavor in flavors:
                 if flavor['Active'] == True:
                     self.flavors.append(flavor['Name'])
+
+            # Try to shuffle the tags to get some more interesting ones out
+            self.tags = random.shuffle(tags)
 
             if self.rating >=95:
                 self.rating_word = "world-class"

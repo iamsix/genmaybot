@@ -63,15 +63,18 @@ class Leafly:
             elif self.rating < 60:
                 self.rating_word = "awful"
 
+                
+    def request_json(self, url, data=None, headers={}):
+        # Request and parse JSON and return the object
+        req = urllib.request.Request(url)
 
+        for header in headers:
+            req.add_header(header, headers[header])
 
-    def __init__(self, app_id=None, app_key=None):
-        if app_id is None or app_key is None:
-            self.get_strain = self.get_strain_scraper
-        else:
-            self.app_id = app_id
-            self.app_key = app_key
-            self.get_strain = get_strain_api
+        response = urllib.request.urlopen(req, data)
+        response = json.loads(response.read().decode('utf-8'))
+
+        return response
 
     def get_strain_api(self, name=None, params={"page":0, "take":1}):
         if name is None:
@@ -156,17 +159,14 @@ class Leafly:
                             effects=effects,
                             permalink=permalink)
 
-    def request_json(self, url, data=None, headers={}):
-        # Request and parse JSON and return the object
-        req = urllib.request.Request(url)
 
-        for header in headers:
-            req.add_header(header, headers[header])
-
-        response = urllib.request.urlopen(req, data)
-        response = json.loads(response.read().decode('utf-8'))
-
-        return response
+    def __init__(self, app_id=None, app_key=None):
+        if app_id is None or app_key is None:
+            self.get_strain = self.get_strain_scraper
+        else:
+            self.app_id = app_id
+            self.app_key = app_key
+            self.get_strain = get_strain_api
 
 
 ## BOT SPECIFIC STUFF BEGINS HERE

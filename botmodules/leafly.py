@@ -90,8 +90,6 @@ class Leafly:
         return response
 
 
-
-
 def leafly_search(self, e):
     app_id = self.botconfig["APIkeys"]["leafly_app_id"]
     app_key = self.botconfig["APIkeys"]["leafly_app_key"]
@@ -102,7 +100,7 @@ def leafly_search(self, e):
         e.output = "Please enter a strain name to search for"
         return e
 
-    rating = strain.ratings
+    rating = strain.rating
     try:
         tags = ", ".join(strain.tags[0:5])
     except:

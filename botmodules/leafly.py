@@ -64,17 +64,14 @@ class Leafly:
                 self.rating_word = "awful"
 
 
-    def request_json(self, url, data=None, headers={}):
-        # Request and parse JSON and return the object
-        req = urllib.request.Request(url)
 
-        for header in headers:
-            req.add_header(header, headers[header])
-
-        response = urllib.request.urlopen(req, data)
-        response = json.loads(response.read().decode('utf-8'))
-
-        return response
+    def __init__(self, app_id=None, app_key=None):
+        if app_id is None or app_key is None:
+            self.get_strain = self.get_strain_scraper
+        else:
+            self.app_id = app_id
+            self.app_key = app_key
+            self.get_strain = self.get_strain_api
 
     def get_strain_api(self, name=None, params={"page":0, "take":1}):
         if name is None:
@@ -88,7 +85,14 @@ class Leafly:
         opts = json.dumps(opts).encode()
         url = "http://data.leafly.com/strains"
 
-        strain = self.request_json(url, opts, auth_headers)['Strains'][0]
+        #Auto fall back to scraping if API call fails (rate limit, etc)
+        try:
+            strain = self.request_json(url, opts, auth_headers)['Strains'][0]
+        except urllib.error.HTTPError:
+            strain = self.get_strain_scraper(name)
+            return strain
+            # Exit early
+            #############
         
         return self.Strain( name=strain['Name'], 
                             tags=strain['LogTags'], 
@@ -159,14 +163,17 @@ class Leafly:
                             effects=effects,
                             permalink=permalink)
 
+    def request_json(self, url, data=None, headers={}):
+        # Request and parse JSON and return the object
+        req = urllib.request.Request(url)
 
-    def __init__(self, app_id=None, app_key=None):
-        if app_id is None or app_key is None:
-            self.get_strain = self.get_strain_scraper
-        else:
-            self.app_id = app_id
-            self.app_key = app_key
-            self.get_strain = self.get_strain_api
+        for header in headers:
+            req.add_header(header, headers[header])
+
+        response = urllib.request.urlopen(req, data)
+        response = json.loads(response.read().decode('utf-8'))
+
+        return response
 
 
 ## BOT SPECIFIC STUFF BEGINS HERE

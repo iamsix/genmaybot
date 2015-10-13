@@ -67,12 +67,13 @@ class Leafly:
 
     def __init__(self, app_id=None, app_key=None):
         if app_id is None or app_key is None:
-            raise self.LeaflyException("Leafly object init: API info missing or invalid")
+            self.get_strain = self.get_strain_scraper
         else:
             self.app_id = app_id
             self.app_key = app_key
+            self.get_strain = get_strain_api
 
-    def get_strain(self, name=None, params={"page":0, "take":1}):
+    def get_strain_api(self, name=None, params={"page":0, "take":1}):
         if name is None:
             raise self.LeaflyException("get_strain: name not provided")
         opts = {}
@@ -171,11 +172,15 @@ class Leafly:
 ## BOT SPECIFIC STUFF BEGINS HERE
 
 def leafly_search(self, e):
-    app_id = self.botconfig["APIkeys"]["leafly_app_id"]
-    app_key = self.botconfig["APIkeys"]["leafly_app_key"]
+    app_id, app_key = None, None
+    try:
+        app_id = self.botconfig["APIkeys"]["leafly_app_id"]
+        app_key = self.botconfig["APIkeys"]["leafly_app_key"]
+    except:
+        pass
 
     if e.input:
-        strain = Leafly(app_id, app_key).get_strain_scraper(e.input)
+        strain = Leafly(app_id, app_key).get_strain(e.input)
     else:
         e.output = "Please enter a strain name to search for"
         return e

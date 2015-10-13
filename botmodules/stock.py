@@ -13,7 +13,7 @@ def get_stock_quote(self, e):
     #first runs a search to get a ticker symbol:
     pagetmp = opener.open("https://s.yimg.com/aq/autoc?query=%s&region=CA&lang=en-CA&callback=YAHOO.util.ScriptNodeDataSource.callbacks" % urllib.parse.quote(e.input)).read()
     pagetmp = pagetmp.decode('utf-8')
-    pagetmp = pagetmp.replace('YAHOO.Finance.SymbolSuggest.ssCallback({"ResultSet":', "").replace("})", "")
+    pagetmp = pagetmp.replace('YAHOO.util.ScriptNodeDataSource.callbacks({"ResultSet":', "").replace("});", "")
     pagetmp = json.loads(pagetmp)
     #we assume the first result is correct:
     stock = pagetmp['Result'][0]['symbol']

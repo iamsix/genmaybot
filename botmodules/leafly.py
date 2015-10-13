@@ -23,6 +23,10 @@ class Leafly:
             # Process some of the more annoyingly presented info
             if type(effects) is list:
                 self.effects = effects
+                
+
+            if type(negatives) is list:
+                self.negatives = negatives
             else:
                 self.negatives = []
                 for negative in negatives:

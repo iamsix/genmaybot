@@ -106,7 +106,7 @@ def leafly_search(self, e):
     except:
         tags = False
     try:    
-        negatives = ", ".join(strain.tags[0:5])
+        negatives = ", ".join(strain.negatives[0:5])
     except:
         negatives = False
 

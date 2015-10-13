@@ -19,6 +19,8 @@ class Leafly:
             self.category = category
             self.url = permalink
             self.effects = effects
+            self.tags = tags
+            self.negatives = negatives
 
             # Process some of the more annoyingly presented info
             if type(effects) is list:
@@ -44,6 +46,7 @@ class Leafly:
             # Try to shuffle the tags to get some more interesting ones out
             if tags is not None:
                 self.tags = random.shuffle(tags)
+
 
             if self.rating >=95:
                 self.rating_word = "world-class"

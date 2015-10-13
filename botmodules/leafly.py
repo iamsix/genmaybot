@@ -186,7 +186,7 @@ def leafly_search(self, e):
         strain_line += " Flavors: [%s]" % (", ".join(strain.flavors[0:5]))
 
     if type(strain.effects) is list:
-        strain_line += " Flavors: [%s]" % (", ".join(strain.effects[0:5]))
+        strain_line += " Effects: [%s]" % (", ".join(strain.effects[0:5]))
     
     if type(strain.negatives) is list:
         strain_line += " Negatives: [%s]" % (", ".join(strain.negatives[0:5]))

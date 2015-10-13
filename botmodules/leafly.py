@@ -1,7 +1,8 @@
 import urllib.request
 import json
 import random
-
+from bs4 import BeautifulSoup
+import re
 
 class Leafly:
     class LeaflyException(Exception):

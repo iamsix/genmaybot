@@ -120,13 +120,13 @@ def leafly_search(self, e):
     strain_line = "Strain: %s - Grade: %s [%s, %s ratings] Category: %s" % (strain.name, strain.rating, strain.rating_word, strain.rating_count, strain.category)
 
     if flavors:
-        strain_line += " Flavors: %s" % flavors
+        strain_line += " Flavors: [%s]" % flavors
 
     if negatives:
-        strain_line += " Negatives: %s" % negatives
+        strain_line += " Negatives: [%s]" % negatives
 
     if tags:
-        strain_line += " Tags: %s" % tags
+        strain_line += " Tags: [%s]" % tags
 
     strain_line +=  "[ %s ]" % self.tools['shorten_url'](strain.url)
 

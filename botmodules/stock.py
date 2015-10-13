@@ -11,7 +11,7 @@ def get_stock_quote(self, e):
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
     #first runs a search to get a ticker symbol:
-    pagetmp = opener.open("http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=%s&callback=YAHOO.Finance.SymbolSuggest.ssCallback" % urllib.parse.quote(e.input)).read()
+    pagetmp = opener.open("https://s.yimg.com/aq/autoc?query=%s&region=CA&lang=en-CA&callback=YAHOO.util.ScriptNodeDataSource.callbacks" % urllib.parse.quote(e.input)).read()
     pagetmp = pagetmp.decode('utf-8')
     pagetmp = pagetmp.replace('YAHOO.Finance.SymbolSuggest.ssCallback({"ResultSet":', "").replace("})", "")
     pagetmp = json.loads(pagetmp)

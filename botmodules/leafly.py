@@ -117,7 +117,7 @@ def leafly_search(self, e):
 
 
 
-    strain_line = "Strain: %s - Grade: %s [%s, %s ratings] Category: %s" % (strain.name, strain.rating, strain.rating_word, strain.rating_count, strain.category)
+    strain_line = "Strain: %s (%s) - Grade: %s [%s, %s ratings]" % (strain.name, strain.category, strain.rating, strain.rating_word, strain.rating_count)
 
     if flavors:
         strain_line += " Flavors: [%s]" % flavors

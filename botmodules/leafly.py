@@ -9,29 +9,37 @@ class Leafly:
         pass
 
     class Strain:
-        def __init__(self, name, tags, negatives, review_count, rating_count, rating, flavors, category, permalink):
+        def __init__(self, name=None, tags=None, negatives=None, review_count=None, rating_count=None, rating=None, flavors=None, category=None, permalink=None, effects=None):
             self.name = name
             
 
             self.review_count = review_count
             self.rating_count = rating_count
-            self.rating = int(round(rating/10*100,0))
+            self.rating = rating
             self.category = category
             self.url = permalink
+            self.effects = effects
 
             # Process some of the more annoyingly presented info
-            self.negatives = []
-            for negative in negatives:
-                if negative['Active'] == True:
-                    self.negatives.append(negative['Name'])
+            if type(effects) is list:
+                self.effects = effects
+            else:
+                self.negatives = []
+                for negative in negatives:
+                    if negative['Active'] == True:
+                        self.negatives.append(negative['Name'])
 
-            self.flavors = []
-            for flavor in flavors:
-                if flavor['Active'] == True:
-                    self.flavors.append(flavor['Name'])
+            if type(flavors) is list:
+                self.flavors = flavors
+            else:
+                self.flavors = []
+                for flavor in flavors:
+                    if flavor['Active'] == True:
+                        self.flavors.append(flavor['Name'])
 
             # Try to shuffle the tags to get some more interesting ones out
-            self.tags = random.shuffle(tags)
+            if tags is not None:
+                self.tags = random.shuffle(tags)
 
             if self.rating >=95:
                 self.rating_word = "world-class"
@@ -52,14 +60,14 @@ class Leafly:
 
     def __init__(self, app_id=None, app_key=None):
         if app_id is None or app_key is None:
-            raise LeaflyException("API info missing or invalid")
+            raise self.LeaflyException("Leafly object init: API info missing or invalid")
         else:
             self.app_id = app_id
             self.app_key = app_key
 
     def get_strain(self, name=None, params={"page":0, "take":1}):
         if name is None:
-            raise LeaflyException("get_strain: name not provided")
+            raise self.LeaflyException("get_strain: name not provided")
         opts = {}
         opts.update({"search":name})
         opts.update(params)
@@ -76,7 +84,7 @@ class Leafly:
                             negatives=strain['NegativeEffects'], 
                             review_count=strain['ReviewCount'],
                             rating_count=strain['RatingCount'],
-                            rating=strain['Rating'],
+                            rating=int(round(strain['Rating']/10*100,0)),
                             category=strain['Category'],
                             flavors=strain['Flavors'],
                             permalink=strain['permalink'])
@@ -140,7 +148,6 @@ class Leafly:
                             effects=effects,
                             permalink=permalink)
 
-
     def request_json(self, url, data=None, headers={}):
         # Request and parse JSON and return the object
         req = urllib.request.Request(url)
@@ -153,6 +160,8 @@ class Leafly:
 
         return response
 
+
+## BOT SPECIFIC STUFF BEGINS HERE
 
 def leafly_search(self, e):
     app_id = self.botconfig["APIkeys"]["leafly_app_id"]

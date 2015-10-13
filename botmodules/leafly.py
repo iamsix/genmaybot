@@ -63,7 +63,7 @@ class Leafly:
             elif self.rating < 60:
                 self.rating_word = "awful"
 
-                
+
     def request_json(self, url, data=None, headers={}):
         # Request and parse JSON and return the object
         req = urllib.request.Request(url)
@@ -166,7 +166,7 @@ class Leafly:
         else:
             self.app_id = app_id
             self.app_key = app_key
-            self.get_strain = get_strain_api
+            self.get_strain = self.get_strain_api
 
 
 ## BOT SPECIFIC STUFF BEGINS HERE

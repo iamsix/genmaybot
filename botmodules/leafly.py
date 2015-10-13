@@ -80,6 +80,65 @@ class Leafly:
                             flavors=strain['Flavors'],
                             permalink=strain['permalink'])
 
+    def get_strain_scraper(self, name=None):
+
+        if name is None: 
+            raise self.LeaflyException("get_strain_scraper: name not provided")
+
+
+        url = "https://www.leafly.com/search?%s" % (urllib.parse.urlencode({"q":name}))
+        req = urllib.request.Request(url)
+        req.add_header("User-Agent","Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11")        
+
+        search_results = urllib.request.urlopen(req).read()
+        search_page = BeautifulSoup(search_results, "html.parser")
+        search_section = search_page.findAll("section", attrs={"class":"search"})[0]
+        first_result = search_section.findNext("li", attrs={"class":"search__item info-block divider bottom padding-listItem"})
+        link = first_result.findAll("a")[0].attrs['href']
+
+        permalink = "https://www.leafly.com"+link
+        req = urllib.request.Request(permalink)
+        req.add_header("User-Agent","Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11")
+        strain_page = urllib.request.urlopen(req).read()
+        strain_page = BeautifulSoup(strain_page, "html.parser")
+
+        name = strain_page.findAll("h1",attrs={"itemprop":"name"})[0].text
+        rating = strain_page.findAll("span", attrs={"itemprop":"ratingValue"})[0].text
+        rating = int(round(float(rating)/5*100,0))
+
+        review_count = strain_page.findAll("span", attrs={"itemprop":"reviewCount"})[0].text
+
+        effects_tab = strain_page.findAll("div", attrs={"ng-show":"currentAttributeTab==='Effects'"})[0]
+        effects_tags = effects_tab.findAll("div", attrs={"class":"m-attr-label copy--sm"})
+        
+        effects = []
+        for effect_tag in effects_tags:
+            effects.append(effect_tag.text)
+
+
+        negatives_tab = strain_page.findAll("div", attrs={"ng-show":"currentAttributeTab==='Negatives'"})[0]
+        negatives_tags = negatives_tab.findAll("div", attrs={"class":"m-attr-label copy--sm"})
+
+        negatives = []
+        for negatives_tag in negatives_tags:
+            negatives.append(negatives_tag.text)       
+        
+        flavors_section = strain_page.findAll("section",attrs={"class":"strain__flavors padding-listItem divider bottom"})[0]
+        flavors = []
+        for flavor_tag in flavors_section.findAll("li"): 
+            flavors.append(flavor_tag.attrs['title'])
+
+        category = strain_page.findAll("div", attrs={"data-ng-bind":re.compile("category")})[0].text
+        
+        return self.Strain( name=name,  
+                            negatives=negatives, 
+                            rating_count=review_count,
+                            rating=rating,
+                            category=category,
+                            flavors=flavors,
+                            effects=effects,
+                            permalink=permalink)
+
 
     def request_json(self, url, data=None, headers={}):
         # Request and parse JSON and return the object
@@ -99,40 +158,26 @@ def leafly_search(self, e):
     app_key = self.botconfig["APIkeys"]["leafly_app_key"]
 
     if e.input:
-        strain = Leafly(app_id, app_key).get_strain(e.input)
+        strain = Leafly(app_id, app_key).get_strain_scraper(e.input)
     else:
         e.output = "Please enter a strain name to search for"
         return e
 
-    rating = strain.rating
-    try:
-        tags = ", ".join(strain.tags[0:5])
-    except:
-        tags = False
-    try:    
-        negatives = ", ".join(strain.negatives[0:5])
-    except:
-        negatives = False
-
-    try:
-        flavors = ", ".join(strain.flavors[0:5])
-    except:
-        flavors = False
-
-
-
     strain_line = "Strain: %s (%s) - Grade: %s [%s, %s ratings]" % (strain.name, strain.category, strain.rating, strain.rating_word, strain.rating_count)
 
-    if flavors:
-        strain_line += " Flavors: [%s]" % flavors
+    if type(strain.flavors) is list:
+        strain_line += " Flavors: [%s]" % (", ".join(strain.flavors[0:5]))
 
-    if negatives:
-        strain_line += " Negatives: [%s]" % negatives
+    if type(strain.effects) is list:
+        strain_line += " Flavors: [%s]" % (", ".join(strain.effects[0:5]))
+    
+    if type(strain.negatives) is list:
+        strain_line += " Negatives: [%s]" % (", ".join(strain.negatives[0:5]))
 
-    if tags:
-        strain_line += " Tags: [%s]" % tags
+    if type(strain.tags) is list:
+        strain_line += " Tags: [%s]" % (", ".join(strain.tags[0:5]))
 
-    strain_line +=  "[ %s ]" % self.tools['shorten_url'](strain.url)
+    strain_line +=  " [ %s ]" % self.tools['shorten_url'](strain.url)
 
     e.output = strain_line
     return e

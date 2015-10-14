@@ -23,11 +23,11 @@ class Leafly:
             self.negatives = negatives
 
             # Process some of the more annoyingly presented info
-            if type(effects) is list:
+            if type(effects) is list and type(effects[0]) is not dict:
                 self.effects = effects
                 
 
-            if type(negatives) is list:
+            if type(negatives) is list and type(negatives[0]) is not dict:
                 self.negatives = negatives
             else:
                 self.negatives = []
@@ -35,7 +35,7 @@ class Leafly:
                     if negative['Active'] == True:
                         self.negatives.append(negative['Name'])
 
-            if type(flavors) is list:
+            if type(flavors) is list and type(flavors[0]) is not dict:
                 self.flavors = flavors
             else:
                 self.flavors = []

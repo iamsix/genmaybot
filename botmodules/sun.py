@@ -56,7 +56,7 @@ def get_sun(self, e):
     til = self.tools['prettytimedelta'](td)
     sunset = "{} ({} {})".format(sunset, til, ago)
 
-    out = "Sunrise: {} / Sunset: {} / Day Length: {}".format(sunrise, sunset, sunlength)
+    out = "[ {} ] Sunrise: {} / Sunset: {} / Day Length: {}".format(location, sunrise, sunset, sunlength)
     e.output = out
     return e
 get_sun.command = "!sun"

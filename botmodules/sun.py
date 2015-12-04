@@ -21,9 +21,8 @@ def get_sun(self, e):
     if location == "" and user:
         location = user.get_location(e.nick)
     
-    location = urllib.parse.quote(location)
     url = "http://api.wunderground.com/api/{}/astronomy/q/{}.json"
-    url = url.format(apikey, location)
+    url = url.format(apikey, urllib.parse.quote(location))
 
     response = urllib.request.urlopen(url).read().decode("utf-8", "replace")
     data = json.loads(response)['moon_phase']

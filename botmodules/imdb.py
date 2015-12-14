@@ -23,24 +23,21 @@ def get_imdb(self, e, urlposted=False):
         movietitle = movietitle.replace("IMDb - ", "")
         movietitle = "Title: " + movietitle
 
-        if page.find(id="overview-top") != None:
-            page = page.find(id="overview-top").extract()
+        if page.find(itemprop="ratingValue") != None:
+            rating = page.find(itemprop="ratingValue").get_text()
+            rating = " - Rating: " + rating.replace("\n", "")  # remove newlines since BS4 adds them in there
 
-            if page.find("div", "star-box-giga-star") != None:
-                rating = self.tools['remove_html_tags'](str(page.find("div", "star-box-giga-star").text))
-                rating = " - Rating: " + rating.replace("\n", "")  # remove newlines since BS4 adds them in there
+        try:
 
-            try:
+            summary = str(page.find(itemprop='description'))
 
-                summary = str(page.find('p', itemprop='description'))
-
-                summary = re.sub(r'\<a.*\/a\>', '', summary)
-                summary = self.tools['remove_html_tags'](summary)
-                summary = summary.replace('&raquo;', "")
-                summary = summary.replace("\n", "")
-                summary = " - " + summary
-            except:
-                pass
+            summary = re.sub(r'\<a.*\/a\>', '', summary)
+            summary = self.tools['remove_html_tags'](summary)
+            summary = summary.replace('&raquo;', "")
+            summary = summary.replace("\n", "").strip()
+            summary = " - " + summary
+        except:
+            pass
 
         title = movietitle + rating + summary
         if not urlposted:

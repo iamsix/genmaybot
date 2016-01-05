@@ -33,6 +33,15 @@ def get_rat(self, e):
     return e
 get_rat.command = "!rats"
 
+def get_rip(self, e):
+    e.output = "  ____  ___ ____  \n"
+    e.output += " |  _ \|_ _|  _ \ \n"
+    e.output += " | |_) || || |_) |\n"
+    e.output += " |  _ < | ||  __/ \n"
+    e.output += " |_| \_\___|_|    \n"
+    return e
+get_rip.command = "!rip"
+
 def get_dog(self, e):
     url = "http://www.reddit.com/r/dogpictures+dogs/.json"
     e.output = get_redditpics(url)

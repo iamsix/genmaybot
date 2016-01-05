@@ -39,6 +39,7 @@ def get_rip(self, e):
     e.output += " | |_) || || |_) |\n"
     e.output += " |  _ < | ||  __/ \n"
     e.output += " |_| \_\___|_|    \n"
+    e.output += "\n"
     return e
 get_rip.command = "!rip"
 

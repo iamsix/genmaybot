@@ -224,8 +224,8 @@ def brak(self, e):
     if (e.nick.lower().startswith('rc')):
         e.output = "rcpilot gets boiled beef"
         return e
-    else 
+    else:
         rand = random.randint(2, 10)
         e.output = "%s gets %i boiled chickens\n" % (e.nick, rand)
-        
+        return e
 brak.command = "!brak"

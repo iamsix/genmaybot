@@ -227,5 +227,5 @@ def brak(self, e):
     else 
         rand = random.randint(2, 10)
         e.output = "%s gets %i boiled chickens\n" % (e.nick, rand)
-        
+        return e
 brak.command = "!brak"

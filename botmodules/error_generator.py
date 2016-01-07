@@ -212,7 +212,6 @@ def cactus(self, e):
     return e
 cactus.command = "!cactus"
     
-    
 def generateblehs():
     output = ""
     rand = random.randint(2, 10)
@@ -221,3 +220,12 @@ def generateblehs():
     output = "bl" + output + "h"
     return output
 
+def brak(self, e):
+    if (e.nick.lower().startswith('rc')):
+        e.output = "rcpilot gets boiled beef"
+        return e
+    else 
+        rand = random.randint(2, 10)
+        e.output = "%s gets %i boiled chickens\n" % (e.nick, rand)
+        
+brak.command = "!brak"

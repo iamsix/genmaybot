@@ -239,6 +239,6 @@ goodshit.command = "!goodshit"
 def mixomatosys(self, e):
         e.output = "we actually wasnt my friend "
         return e
-goodshit.command = "!mixomatosys"
+mixomatosys.command = "!mixomatosys"
 
 

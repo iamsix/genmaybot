@@ -234,7 +234,7 @@ brak.command = "!brak"
 def goodshit(self, e):
         e.output = "👌👀👌👀👌👀👌👀👌👀 good shit go౦ԁ sHit👌 thats ✔ some good👌👌shit right👌👌there👌👌👌 right✔there ✔✔if i do ƽaү so my self 💯 i say so 💯 thats what im talking about right there right there (chorus: ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ) mMMMMᎷМ💯 👌👌 👌НO0ОଠOOOOOОଠଠOoooᵒᵒᵒᵒᵒᵒᵒᵒᵒ👌 👌👌 👌 💯 👌 👀 👀 👀 👌👌Good shit "
         return e
-goodshit.command = "!oculus"
+goodshit.command = "!goodshit"
 
 def mixomatosys(self, e):
         e.output = "we actually wasnt my friend "
@@ -244,6 +244,6 @@ mixomatosys.command = "!mixomatosys"
 def oculus(self, e):
         e.output = "👌👀👌👀👌👀👌👀👌👀 slow ship slo౦w ship👌 thats ✔ some slow👌👌ship right👌👌there👌👌👌 right✔there ✔✔if i do ƽaү so my self 💯 i say so 💯 thats what im talking about right there right there (chorus: ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ) mMMMMᎷМ💯 👌👌 👌НO0ОଠOOOOOОଠଠOoooᵒᵒᵒᵒᵒᵒᵒᵒᵒ👌 👌👌 👌 💯 👌 👀 👀 👀 👌👌slow ship "
         return e
-goodshit.command = "!goodshit"
+goodshit.command = "!oculus"
 
 

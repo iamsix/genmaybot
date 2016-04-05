@@ -244,6 +244,6 @@ mixomatosys.command = "!mixomatosys"
 def oculus(self, e):
         e.output = "👌👀👌👀👌👀👌👀👌👀 slow ship slo౦w ship👌 thats ✔ some slow👌👌ship right👌👌there👌👌👌 right✔there ✔✔if i do ƽaү so my self 💯 i say so 💯 thats what im talking about right there right there (chorus: ʳᶦᵍʰᵗ ᵗʰᵉʳᵉ) mMMMMᎷМ💯 👌👌 👌НO0ОଠOOOOOОଠଠOoooᵒᵒᵒᵒᵒᵒᵒᵒᵒ👌 👌👌 👌 💯 👌 👀 👀 👀 👌👌slow ship "
         return e
-goodshit.command = "!oculus"
+oculus.command = "!oculus"
 
 

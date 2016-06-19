@@ -1,47 +1,61 @@
-import urllib2, urllib, re, botmodules.tools as tools
-try: import botmodules.userlocation as user
-except: pass
+import json
+import urllib.request
+import urllib.parse
+from datetime import datetime, timedelta
+try:
+    import botmodules.userlocation as user
+except ImportError:
+    user = None
 
-def google_sunrise(self, e):
-    #returns the next sunrise time and time from now of the place specified
-    e.output = google_sun(e.input, "Sunrise", e.nick)
-    return e
-google_sunrise.command = "!sunrise"
-google_sunrise.helptext = "Usage: !sunrise <location>\nExample: !sunrise las vegas, nv\nShows the time of sunrise at a given location\nUse !setlocation <location> to save your location\nThen, using !sunrise without arguments will always show sunrise at your location"
+
+def set_wunderkey(line, nick, self, c):
+    self.botconfig["APIkeys"]["wunderAPIkey"] = line[10:]
+    with open('genmaybot.cfg', 'w') as configfile:
+        self.botconfig.write(configfile)
+set_wunderkey.admincommand = "wunderkey"
+
+
+def get_sun(self, e):
+    apikey = self.botconfig["APIkeys"]["wunderAPIkey"]
+    location = e.input
+    if location == "" and user:
+        location = user.get_location(e.nick)
     
-def google_sunset(self, e):
-    #returns the next sunset time and time from now of the place specified
-    e.output = google_sun(e.input, "Sunset", e.nick)
+    url = "http://api.wunderground.com/api/{}/astronomy/q/{}.json"
+    url = url.format(apikey, urllib.parse.quote(location))
+
+    response = urllib.request.urlopen(url).read().decode("utf-8", "replace")
+    data = json.loads(response)['moon_phase']
+    time = "{}:{}".format(data['current_time']['hour'], data['current_time']['minute'])
+
+    sunrise = "{}:{}".format(data['sunrise']['hour'], data['sunrise']['minute'])
+    sunset = "{}:{}".format(data['sunset']['hour'], data['sunset']['minute'])
+
+    now = datetime.strptime(time, "%H:%M")
+    sunriseobj = datetime.strptime(sunrise, "%H:%M")
+    sunsetobj = datetime.strptime(sunset, "%H:%M")
+
+    sunlength = sunsetobj - sunriseobj
+    if sunriseobj > now:
+       ago = "from now"
+       td = sunriseobj - now
+    else:
+       td = now - sunriseobj
+       ago = "ago"
+    til = self.tools['prettytimedelta'](td)
+    #til = td
+    sunrise = "{} ({} {})".format(sunrise, til, ago)
+    if sunsetobj > now:
+       ago = "from now"
+       td = sunsetobj - now
+    else:
+       ago = "ago"
+       td = now - sunsetobj
+    #til = td
+    til = self.tools['prettytimedelta'](td)
+    sunset = "{} ({} {})".format(sunset, til, ago)
+
+    out = "[ {} ] Sunrise: {} / Sunset: {} / Day Length: {}".format(location, sunrise, sunset, sunlength)
+    e.output = out
     return e
-google_sunset.command = "!sunset"
-google_sunset.helptext = "Usage: !sunset <location>\nExample: !sunset las vegas, nv\nShows the time of sunset at a given location\nUse !setlocation <location> to save your location\nThen, using !sunset without arguments will always show sunset at your location"
-
-def google_sun(term, sun, nick):
-    if term == "" and user:
-       term = user.get_location(nick)
-    term = urllib.quote(term)
-    url = "http://www.google.com/search?hl=en&client=opera&hs=6At&rls=en&q=%s+%s&aq=f&aqi=g1&aql=&oq=&gs_rfai=" % (sun, term)
-    request = urllib2.Request(url, None, {})
-    request.add_header('User-Agent', "Opera/9.80 (Windows NT 6.0; U; en) Presto/2.2.15 Version/10.10")
-    request.add_header('Range', "bytes=0-40960")
-    response = urllib2.urlopen(request).read()
-
-    m = re.search('(-40.gif.*?\<b\>)(.*?)(\<\/b\> )(.*?)( -\s*\<b\>)(.*?)(\<\/b\> in\s*)(.*?)(\s*?\<tr\>.*?top\"\>)(.*?)(\<\/table\>)', response)
-    
-    try:
-      settime = m.group(2)
-      setday = m.group(4)
-      setday = re.sub("\s+"," ",setday)
-      setword = m.group(6)
-      setcity = m.group(8)
-      settimeword = m.group(10)
-      
-      result = "%s in %s: %s %s (%s)" % (sun, setcity,settime,setday,settimeword)
-   
-      #print result
-    except:
-      pass
-      return
-
-    return tools.remove_html_tags(result)
-
+get_sun.command = "!sun"

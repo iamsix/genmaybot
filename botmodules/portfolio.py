@@ -1,4 +1,4 @@
-import sqlite3, locale, urllib2
+import sqlite3, locale, urllib.request, urllib.error, urllib.parse, pdb
 try:
     locale.setlocale(locale.LC_ALL, 'English_United States')
 except:
@@ -52,15 +52,15 @@ def add_stock(nick,stock,numshares,pricepaid):
 	c = conn.cursor()
 	result = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='portfolios';").fetchone()
 	if not result:
-		c.execute('''create table portfolios(user text, stock text, numshares integer, pricepaid real)''')
+		c.execute('''create table portfolios(user text, stock text, numshares real, pricepaid real)''')
 
-	if get_stocks_prices(stock)[0] == "0.00":
+	if get_stocks_prices(stock)[0][0:4] == "0.00":
 		return "Incorrect ticker symbol. Fix it and try again."
 	
 	try:
-		numshares = int(numshares)
+		numshares = float(numshares)
 		pricepaid = float(pricepaid)
-		if numshares <= 0 or pricepaid <=0 or numshares != numshares or pricepaid != pricepaid:
+		if numshares <= 0 or pricepaid < 0 or numshares != numshares or pricepaid != pricepaid:
 			raise BaseException
 	except:
 		return "The number of shares or the price is incorrect. Fix it and try again."
@@ -97,6 +97,7 @@ def list_stock(nick,public):
 	stock_perc_gain=0
 	portfolio_gain=0
 	portfolio_perc_gain=0
+	portfolio_day_gain = 0
 	
 	conn = sqlite3.connect('portfolios.sqlite')
 	c = conn.cursor()
@@ -108,37 +109,53 @@ def list_stock(nick,public):
 	
 	conn.close()
 	
-	return_line="%s%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price".center(15),"Change".center(18))
-	
+	return_line="%s%s%s%s%s%s%s\n" % ("ID".center(5),"Symbol".center(10),"# of Shares".center(15),"Price Paid".center(15), "Current Price".center(15),"Change".center(18),"Day's Gain".center(15))
+
 	if result:
 		for stock in result:
 			stocks.append(stock[1])
 		
 		stock_prices = get_stocks_prices(stocks)
-
+        
 		
 		for stock in result:
 			init_value+=(stock[2]*stock[3])
-			cur_value+=(stock[2]*float(stock_prices[id_counter]))
-			stock_gain=float(stock_prices[id_counter])-stock[3]
-			stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+
+			stock_price, day_gain, day_gain_pct = stock_prices[id_counter].split(',')
+
+			days_gain = round(float(day_gain)*float(stock[2]),2)
+			
+			portfolio_day_gain+=days_gain
+			
+			
+	
+			
+			days_gain = "%0.2f (%s)" % (days_gain, day_gain_pct[1:-1])
+			
+			cur_value+=(stock[2]*float(stock_price))
+			stock_gain=float(stock_price)-stock[3]
+			
+			if (stock[3] > 0):
+				stock_perc_gain= round(float(stock_gain)/stock[3],4)*100
+			else:
+				stock_perc_gain= float('nan')
 			
 			stockgainpct = "%0.2f (%0.2f%%)" % (stock_gain, stock_perc_gain)
 						
-			return_line += "%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_prices[id_counter]).center(15),stockgainpct.center(18))
+			return_line += "%s%s%s%s%s%s%s\n" % (str(stock[0]).center(5),stock[1].center(10),str(stock[2]).center(15),str(stock[3]).center(15),str(stock_price).center(15),stockgainpct.center(18),str(days_gain).center(15))
 			id_counter+=1
 		
 		portfolio_gain = round(cur_value-init_value,2)
 		portfolio_perc_gain= round(float(portfolio_gain)/init_value,4)*100
-		
+		portfolio_day_gain = "%0.2f" % (portfolio_day_gain)
 		
 		return_line+=" "*80+"\n"
 		
 		##only output the value line in a channel, everything else if asked in pm
 		if public:
-			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+			return_line="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %s" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
 		else:
-			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%)" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain)
+			return_line+="Starting Value: %0.2f   Current: %0.2f   Gain: %0.2f (%0.2f%%) Day's Gain: %s" % (init_value, cur_value, portfolio_gain, portfolio_perc_gain, portfolio_day_gain)
 		
 		return return_line
 	else: 
@@ -147,19 +164,18 @@ def list_stock(nick,public):
 def get_stocks_prices(stocks):## pass in a list or tuple or a single string
 						## of stocks and get back their prices in a tuple
 						
-	opener = urllib2.build_opener()
+	opener = urllib.request.build_opener()
 	opener.addheaders = [('User-Agent',"Opera/9.10 (YourMom 8.0)")]
 
 	#if you pass in a string we dont want to insert + signs
 	if type(stocks) is not str:
 		stocks = "+".join(stocks)
 	
-	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1" % stocks)
-	quote = pagetmp.read(1024)
-
-	return quote.split("\r\n")
+	pagetmp = opener.open("http://download.finance.yahoo.com/d/quotes.csv?s=%s&f=l1c1p2" % stocks)
+	quote = pagetmp.read(1024).decode("utf-8")
+	return quote.split("\n")
       
 	
 
 portfolio.command = "!portfolio"
-portfolio.helptext = "!portfolio help text"
+portfolio.helptext = "!portfolio ADD <symbol> <# of shares> <price> - to add stocks to your portfolio \n!portfolio LIST - will list all your stocks and gains\n!portfolio - show only the gains and values\n!portfolio DEL <id> - use the ID number given in !portfolio list"

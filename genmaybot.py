@@ -27,6 +27,7 @@ import socket
 import configparser
 import threading
 import traceback
+import html
 
 socket.setdefaulttimeout(5)
 
@@ -286,7 +287,7 @@ class TestBot(SingleServerIRCBot):
         try:
             if botevent.output:
                 for line in botevent.output.split("\n"):
-                    line = self.tools['decode_htmlentities'](line)
+                    line = html.unescape(line)
                     if botevent.notice:
                         self.irccontext.notice(botevent.source, line)
                     else:

@@ -110,11 +110,11 @@ def load_html_from_URL(url, readlength="", returnurl=False):
 def shorten_url(url):
     #goo.gl url shortening service, not used directly but used by some commands
   try:
-    key = google_url.self.botconfig["APIkeys"]["shorturlkey"]
-    values = json.dumps({'longUrl': url})
-    headers = {'Content-Type': 'application/json'}
-    requestUrl = "https://www.googleapis.com/urlshortener/v1/url?key={}".format(key)
-    req = urllib.request.Request(requestUrl, values.encode(), headers)
+    key = bot_object.botconfig["APIkeys"]["shorturlkey"]
+    values = json.dumps({'long_url': url})
+    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(key)}
+    request_url = "https://api-ssl.bitly.com/v4/shorten"
+    req = urllib.request.Request(request_url, values.encode(), headers)
     response = urllib.request.urlopen(req)
     results = json.loads(response.read().decode('utf-8'))
     shorturl = results['id']
